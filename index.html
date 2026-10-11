@@ -1,195 +1,1113 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#11131a">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Theme Studio — محرر ثيمات تيليجرام</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<title>Theme Studio | محرّر ثيمات تيليجرام</title>
 <style>
-:root{color-scheme:dark;--bg:#101219;--panel:#191c26;--panel2:#222634;--text:#f4f5fb;--muted:#a8adbf;--accent:#8c7cff;--border:#303548;--good:#67d9ad}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% -10%,#292449 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
-button,input,select{font:inherit}button{cursor:pointer}.app{max-width:1440px;margin:auto;padding:18px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#8b7bff,#48d8bd);display:grid;place-items:center;color:#111;font-size:23px;font-weight:900}.brand h1{font-size:20px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.pill{border:1px solid #3a3c54;background:#211f37;color:#c9c2ff;border-radius:999px;padding:6px 10px;font-size:12px;white-space:nowrap}
-.layout{display:grid;grid-template-columns:minmax(300px,390px) minmax(300px,1fr);gap:18px;align-items:start}.panel{background:linear-gradient(180deg,#1b1e29,#171a23);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 12px 40px #0002}.panel-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}.panel-head h2{font-size:15px;margin:0}.panel-body{padding:16px}.section{border:1px solid var(--border);border-radius:15px;margin-bottom:12px;overflow:hidden}.section summary{padding:13px 14px;cursor:pointer;list-style:none;font-weight:700;display:flex;align-items:center;justify-content:space-between;background:#ffffff03}.section summary::-webkit-details-marker{display:none}.section summary:after{content:"＋";color:var(--muted)}.section[open] summary:after{content:"−"}.section-content{padding:12px;display:grid;gap:12px}.field{display:grid;gap:7px}.field-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}.field-top label{color:#e5e7f2}.field-top output{color:var(--muted);font-variant-numeric:tabular-nums;direction:ltr}.color-line{display:grid;grid-template-columns:42px minmax(0,1fr) 35px;gap:8px;align-items:center}.color-line input[type=color]{width:42px;height:36px;border:1px solid #ffffff24;border-radius:9px;background:transparent;padding:3px}.hex{width:100%;min-width:0;background:#11141c;border:1px solid var(--border);border-radius:9px;padding:8px;color:var(--text);direction:ltr;text-align:left}.reset{border:1px solid var(--border);background:#ffffff06;color:var(--muted);border-radius:9px;height:35px}.range{width:100%;accent-color:var(--accent)}.btn{border:1px solid var(--border);background:#252a3a;color:var(--text);border-radius:11px;padding:10px 12px}.btn.primary{background:linear-gradient(135deg,#8b7bff,#7063e8);border:0;color:white;font-weight:750}.btn.ghost{background:transparent}.btn.small{padding:7px 9px;font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}.upload{display:flex;align-items:center;justify-content:center;gap:10px;border:1px dashed #5d5c86;background:#201f32;border-radius:14px;padding:15px;text-align:center;cursor:pointer}.upload input{display:none}.upload strong{display:block}.upload small{color:var(--muted)}.palette{display:flex;gap:7px;flex-wrap:wrap}.swatch{width:35px;height:35px;border-radius:10px;border:2px solid #ffffff25;position:relative}.swatch:active{transform:scale(.96)}.hint{font-size:12px;color:var(--muted);margin:0}.workspace{display:grid;gap:18px}.preview-panel .panel-body{padding:18px}.preview-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,300px);gap:18px;align-items:start}.preview-stage{background:linear-gradient(135deg,#24283a,#171923);border-radius:17px;padding:22px;min-height:500px;display:grid;place-items:center;position:relative;overflow:hidden}.preview-stage:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#ffffff0a 1px,transparent 1px);background-size:17px 17px;pointer-events:none}.phone{position:relative;width:min(100%,340px);height:590px;border:7px solid #08090d;border-radius:34px;overflow:hidden;background:#202534;box-shadow:0 20px 55px #0008;display:flex;flex-direction:column}.phone-top{height:28px;background:var(--bar);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0}.chat-header{background:var(--bar);color:var(--headtext);padding:12px;display:flex;align-items:center;gap:10px;z-index:1}.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#9c8aff,#60d7b2);display:grid;place-items:center;color:#fff;font-weight:800}.head-meta{flex:1}.head-meta b{display:block;font-size:14px}.head-meta small{font-size:11px;color:var(--subtext)}.chat-header .more{font-size:22px}.chat-wallpaper{position:absolute;inset:76px 0 62px;background-position:center;background-size:cover;opacity:var(--wall-alpha);pointer-events:none}.chat-wallpaper:after{content:"";position:absolute;inset:0;background:var(--wall-color);opacity:var(--wall-tint)}.messages{position:relative;flex:1;padding:18px 10px 12px;display:flex;flex-direction:column;gap:11px;overflow:hidden;background:transparent}.day{align-self:center;font-size:10px;color:var(--subtext);background:var(--day);padding:4px 10px;border-radius:10px;margin-bottom:2px}.msg{max-width:86%;padding:9px 10px 6px;border-radius:14px;box-shadow:0 1px 2px #0002;position:relative;font-size:12px;line-height:1.55;backdrop-filter:none}.msg.in{align-self:flex-start;background:var(--incoming);color:var(--intext);border:1px solid var(--inborder)}.msg.out{align-self:flex-end;background:var(--outgoing);color:var(--outtext);border:1px solid var(--outborder)}.msg .meta{display:flex;justify-content:flex-end;gap:4px;font-size:9px;opacity:.8;margin-top:2px}.composer{background:var(--bar);padding:9px;display:flex;align-items:center;gap:8px;z-index:1}.composebox{flex:1;background:var(--compose);color:var(--subtext);border-radius:20px;padding:9px 12px;font-size:11px}.send{width:35px;height:35px;border-radius:50%;background:var(--send);display:grid;place-items:center;color:white}.preview-side{display:grid;gap:12px}.mini-card{background:#141720;border:1px solid var(--border);border-radius:14px;padding:13px}.mini-card h3{font-size:13px;margin:0 0 10px}.mini-card .field{margin-bottom:11px}.mini-card .field:last-child{margin-bottom:0}.status{font-size:12px;color:var(--good);display:flex;align-items:center;gap:6px}.footer-note{color:var(--muted);font-size:11px;text-align:center;padding:12px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#252a3a;border:1px solid #484e65;padding:11px 16px;border-radius:12px;box-shadow:0 8px 30px #0007;display:none;z-index:20}.toast.show{display:block}.mobile-tabs{display:none}
-@media(max-width:900px){.layout{grid-template-columns:1fr}.workspace{order:-1}.preview-wrap{grid-template-columns:1fr}.preview-side{grid-template-columns:repeat(2,minmax(0,1fr))}.preview-stage{min-height:0;padding:15px}.phone{height:560px}.app{padding:12px}.topbar{align-items:flex-start}.pill{max-width:120px;white-space:normal;text-align:center}}
-@media(max-width:480px){.preview-side{grid-template-columns:1fr}.brand h1{font-size:17px}.phone{height:540px}.panel-body{padding:12px}.preview-panel .panel-body{padding:10px}.actions .btn{flex:1}.topbar{margin-bottom:12px}}
+  :root{
+    --bg:#0e1116; --bg2:#161b22; --bg3:#1f2630;
+    --line:#2a3240; --txt:#e6edf3; --muted:#8b98a9;
+    --accent:#5b8def; --accent2:#7aa2f7;
+    --danger:#f7768e; --ok:#9ece6a;
+    --r:12px; --r2:8px;
+    --shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
+    font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;
+    font-size:14px;line-height:1.5}
+  button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+  button{cursor:pointer;border:none;background:none}
+
+  /* ---------- Layout ---------- */
+  .app{max-width:1200px;margin:0 auto;padding:12px}
+  header.top{
+    display:flex;align-items:center;gap:10px;
+    padding:12px 14px;background:var(--bg2);border:1px solid var(--line);
+    border-radius:var(--r);margin-bottom:12px;position:sticky;top:8px;z-index:50;
+    backdrop-filter:blur(8px);
+  }
+  .logo{
+    width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--accent),#bb9af7);
+    display:grid;place-items:center;font-weight:800;color:#fff;font-size:16px;
+  }
+  .title{font-weight:700;font-size:15px}
+  .title small{display:block;color:var(--muted);font-weight:400;font-size:11px}
+  .spacer{flex:1}
+
+  .layout{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:960px){
+    .layout{grid-template-columns:minmax(0,1fr) 380px;align-items:start}
+    .preview-col{position:sticky;top:78px}
+  }
+
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);
+    padding:14px;margin-bottom:12px}
+  .card h3{margin:0 0 10px;font-size:13px;color:var(--muted);font-weight:600;
+    text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+  .card h3 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 12px;border-radius:var(--r2);
+    background:var(--bg3);border:1px solid var(--line);
+    font-size:12px;font-weight:600;transition:.15s;
+  }
+  .btn:hover{background:#252c37;border-color:#3a4353}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{background:var(--accent2)}
+  .btn.ghost{background:transparent}
+  .btn.danger{color:var(--danger)}
+  .btn.small{padding:5px 9px;font-size:11px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* ---------- Mode switch ---------- */
+  .modes{display:flex;background:var(--bg3);padding:3px;border-radius:10px;border:1px solid var(--line)}
+  .modes button{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted)}
+  .modes button.on{background:var(--accent);color:#fff}
+
+  /* ---------- Upload ---------- */
+  .upload{
+    border:2px dashed var(--line);border-radius:var(--r);
+    padding:20px;text-align:center;cursor:pointer;transition:.15s;
+    background:var(--bg3);
+  }
+  .upload:hover{border-color:var(--accent);background:#1a2130}
+  .upload input{display:none}
+  .upload .ico{font-size:24px;margin-bottom:6px}
+  .upload .hint{color:var(--muted);font-size:11px;margin-top:4px}
+
+  /* ---------- Palettes strip ---------- */
+  .palettes{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+  .palette{
+    flex:0 0 auto;border-radius:10px;overflow:hidden;cursor:pointer;
+    border:1px solid var(--line);transition:.15s;
+  }
+  .palette:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .palette .strip{display:flex;height:36px}
+  .palette .strip span{width:26px}
+  .palette .lbl{font-size:10px;padding:4px 6px;background:var(--bg3);text-align:center;color:var(--muted)}
+
+  /* ---------- Color control rows ---------- */
+  .ctrl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
+    padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
+  .ctrl:last-child{border-bottom:none}
+  .ctrl .lbl{font-size:12px;color:var(--txt)}
+  .ctrl .tools{display:flex;align-items:center;gap:6px}
+  .ctrl input[type=color]{
+    width:32px;height:32px;padding:0;border:1px solid var(--line);
+    border-radius:8px;background:transparent;cursor:pointer
+  }
+  .ctrl input[type=color]::-webkit-color-swatch-wrapper{padding:2px}
+  .ctrl input[type=color]::-webkit-color-swatch{border:none;border-radius:5px}
+  .ctrl input.hex{
+    width:80px;padding:6px 8px;background:var(--bg);border:1px solid var(--line);
+    border-radius:6px;font-size:11px;font-family:ui-monospace,Menlo,monospace;
+    text-transform:lowercase;
+  }
+  .ctrl .reset{color:var(--muted);font-size:11px;padding:4px;border-radius:5px}
+  .ctrl .reset:hover{color:var(--danger);background:rgba(247,118,142,.1)}
+
+  /* ---------- Sliders ---------- */
+  .slider{display:grid;grid-template-columns:1fr 46px;gap:8px;align-items:center;
+    padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
+  .slider:last-child{border-bottom:none}
+  .slider label{font-size:12px;display:block;margin-bottom:4px}
+  .slider input[type=range]{
+    -webkit-appearance:none;width:100%;height:6px;border-radius:3px;
+    background:var(--bg3);outline:none
+  }
+  .slider input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+    background:var(--accent);cursor:pointer;border:2px solid var(--bg2)
+  }
+  .slider .val{text-align:center;font-size:11px;color:var(--muted);
+    font-family:ui-monospace,monospace}
+
+  /* ---------- Phone preview ---------- */
+  .phone-wrap{display:flex;justify-content:center}
+  .phone{
+    width:100%;max-width:340px;height:600px;
+    background:var(--pv-chat-bg,#111);
+    border-radius:28px;overflow:hidden;
+    display:flex;flex-direction:column;position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05) inset;
+  }
+  .pv-header{
+    padding:10px 12px;display:flex;align-items:center;gap:10px;
+    background:var(--pv-header-bg);
+    color:var(--pv-header-txt);
+    border-bottom:1px solid rgba(0,0,0,.15);
+    z-index:3;
+  }
+  .pv-back{font-size:18px;opacity:.85;width:20px}
+  .pv-avatar{
+    width:32px;height:32px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pv-accent),#bb9af7);
+  }
+  .pv-name{font-size:14px;font-weight:600}
+  .pv-status{font-size:11px;opacity:.7;color:var(--pv-link)}
+  .pv-chat{flex:1;position:relative;overflow:hidden;background:var(--pv-chat-bg)}
+  .pv-bg-img{
+    position:absolute;inset:0;background-size:cover;background-position:center;
+    opacity:var(--pv-img-op,1);pointer-events:none;
+  }
+  .pv-bg-dim{
+    position:absolute;inset:0;background:var(--pv-chat-bg);
+    opacity:var(--pv-dim,0);pointer-events:none;
+  }
+  .pv-messages{
+    position:relative;padding:12px;display:flex;flex-direction:column;gap:8px;
+    height:100%;overflow-y:auto;scrollbar-width:none;
+  }
+  .pv-messages::-webkit-scrollbar{display:none}
+  .pv-msg{
+    max-width:78%;padding:7px 11px;border-radius:14px;
+    font-size:12.5px;line-height:1.45;position:relative;
+    word-wrap:break-word;
+  }
+  .pv-msg.in{
+    align-self:flex-start;
+    background:rgba(var(--pv-in-bg-rgb),var(--pv-bubble-op,1));
+    color:var(--pv-in-txt);
+    border:1px solid rgba(var(--pv-in-bd-rgb),var(--pv-border-op,1));
+    border-end-start-radius:5px;
+  }
+  .pv-msg.out{
+    align-self:flex-end;
+    background:rgba(var(--pv-out-bg-rgb),var(--pv-bubble-op,1));
+    color:var(--pv-out-txt);
+    border:1px solid rgba(var(--pv-out-bd-rgb),var(--pv-border-op,1));
+    border-end-end-radius:5px;
+  }
+  .pv-msg .time{font-size:9px;opacity:.6;margin-inline-start:6px;float:left}
+  .pv-msg a{color:var(--pv-link);text-decoration:underline}
+  .pv-sep{height:1px;background:var(--pv-sep);margin:4px 0;opacity:.5}
+  .pv-input{
+    padding:8px 10px;display:flex;gap:8px;align-items:center;
+    background:var(--pv-header-bg);
+    border-top:1px solid var(--pv-sep);
+    z-index:3;
+  }
+  .pv-field{
+    flex:1;padding:8px 12px;border-radius:18px;
+    background:var(--pv-input-bg);color:var(--pv-input-txt);
+    font-size:12.5px;
+  }
+  .pv-send{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--pv-send-bg);color:var(--pv-send-txt);
+    display:grid;place-items:center;font-size:13px;flex-shrink:0;
+  }
+
+  /* ---------- Footer / toast ---------- */
+  .toast{
+    position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);
+    background:var(--bg3);border:1px solid var(--line);color:var(--txt);
+    padding:10px 16px;border-radius:10px;font-size:12px;z-index:999;
+    transition:transform .3s;box-shadow:var(--shadow);
+  }
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  /* Accordion */
+  details.acc{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);
+    margin-bottom:10px;overflow:hidden}
+  details.acc summary{
+    cursor:pointer;list-style:none;padding:12px 14px;display:flex;align-items:center;
+    gap:8px;font-weight:600;font-size:13px;
+  }
+  details.acc summary::-webkit-details-marker{display:none}
+  details.acc summary::after{
+    content:"▾";margin-inline-start:auto;color:var(--muted);transition:.2s
+  }
+  details.acc[open] summary::after{transform:rotate(180deg)}
+  details.acc .body{padding:0 14px 14px}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="topbar">
-  <div class="brand"><div class="logo">T</div><div><h1>Theme Studio</h1><p>محرّر ثيمات تيليجرام · الإصدار التجريبي</p></div></div>
-  <div class="pill" id="platformStatus">جاهز للفتح داخل تيليجرام</div>
-</header>
-<div class="layout">
-  <aside class="panel">
-    <div class="panel-head"><h2>أدوات التصميم</h2><button class="btn small ghost" id="resetAll">إعادة ضبط</button></div>
-    <div class="panel-body">
-      <label class="upload" for="imageInput"><span style="font-size:25px">▧</span><span><strong>ارفع صورة الخلفية</strong><small>PNG أو JPG أو WebP · تبقى على جهازك</small></span><input id="imageInput" type="file" accept="image/*"></label>
-      <div style="margin-top:13px">
-        <div class="field-top" style="margin-bottom:8px"><label>ألوان مقترحة من الصورة</label><button class="btn small" id="generatePalette">تحليل الصورة</button></div>
-        <div class="palette" id="palette"><button class="swatch" style="background:#8c7cff" data-palette="#8c7cff" title="استخدم اللون"></button><button class="swatch" style="background:#48d8bd" data-palette="#48d8bd" title="استخدم اللون"></button><button class="swatch" style="background:#f0a6ca" data-palette="#f0a6ca" title="استخدم اللون"></button><button class="swatch" style="background:#232638" data-palette="#232638" title="استخدم اللون"></button></div>
-        <p class="hint" style="margin-top:7px">اضغط على أي لون لتطبيقه على الخلفية. التحليل يعمل داخل المتصفح.</p>
+
+  <header class="top">
+    <div class="logo">T</div>
+    <div class="title">Theme Studio<small>محرر ثيمات تيليجرام</small></div>
+    <div class="spacer"></div>
+    <div class="modes">
+      <button id="modeDark" class="on">داكن</button>
+      <button id="modeLight">فاتح</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ================= CONTROLS ================= -->
+    <div class="col">
+
+      <!-- Image -->
+      <div class="card">
+        <h3><span class="dot"></span> الصورة المصدر</h3>
+        <label class="upload" for="imgInput">
+          <div class="ico">🖼️</div>
+          <div>اضغط لاختيار صورة</div>
+          <div class="hint">سيتم اقتراح لوحة ألوان متناسقة منها</div>
+          <input type="file" id="imgInput" accept="image/*">
+        </label>
+        <div class="row" style="margin-top:10px">
+          <button class="btn small primary" id="btnExtract">🎨 استخراج لوحة جديدة</button>
+          <button class="btn small" id="btnRandom">🎲 عشوائي</button>
+          <button class="btn small danger" id="btnRemoveImg">🗑️ إزالة الصورة</button>
+        </div>
       </div>
-      <details class="section" open style="margin-top:15px">
-        <summary>ألوان المحادثة</summary><div class="section-content" id="chatColors"></div>
-      </details>
-      <details class="section" open>
-        <summary>الشفافية</summary><div class="section-content" id="opacityControls"></div>
-      </details>
-      <details class="section">
-        <summary>عناصر الواجهة</summary><div class="section-content" id="uiColors"></div>
-      </details>
-      <details class="section">
-        <summary>الخلفية والمؤثرات</summary><div class="section-content" id="wallControls"></div>
-      </details>
-      <details class="section">
-        <summary>أدوات متقدمة</summary><div class="section-content">
-          <div class="field"><div class="field-top"><label for="themeName">اسم الثيم</label></div><input id="themeName" class="hex" style="direction:rtl;text-align:right" value="Midnight Dream"></div>
-          <div class="field"><div class="field-top"><label for="mode">نمط المعاينة</label></div><select id="mode" class="hex"><option value="dark">داكن</option><option value="light">فاتح</option></select></div>
-          <div class="actions"><button class="btn" id="savePreset">حفظ إعدادات</button><button class="btn" id="loadPreset">استرجاع</button><button class="btn primary" id="exportJson">تصدير الإعدادات</button><button class="btn ghost" id="closeMiniApp">إغلاق التطبيق</button></div>
-          <p class="hint">التصدير الحالي يحفظ إعدادات المشروع بصيغة JSON. تصدير ملف ثيم تيليجرام فعلي سيُضاف بعد بناء محرك الصيغة واختباره.</p>
+
+      <!-- Suggested palettes -->
+      <div class="card" id="paletteCard" style="display:none">
+        <h3><span class="dot"></span> لوحات مقترحة</h3>
+        <div class="palettes" id="palettesList"></div>
+      </div>
+
+      <!-- Accent HSL -->
+      <div class="card">
+        <h3><span class="dot"></span> اللون الأساسي</h3>
+        <div class="slider">
+          <div><label>درجة اللون (Hue)</label>
+            <input type="range" id="hRange" min="0" max="360" value="220"></div>
+          <div class="val" id="hVal">220</div>
+        </div>
+        <div class="slider">
+          <div><label>التشبع (Saturation)</label>
+            <input type="range" id="sRange" min="0" max="100" value="60"></div>
+          <div class="val" id="sVal">60%</div>
+        </div>
+        <div class="slider">
+          <div><label>الإضاءة (Lightness)</label>
+            <input type="range" id="lRange" min="0" max="100" value="55"></div>
+          <div class="val" id="lVal">55%</div>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn small primary" id="btnRebuild">♻️ إعادة بناء اللوحة</button>
+        </div>
+      </div>
+
+      <!-- Background -->
+      <details class="acc" open>
+        <summary><span class="dot"></span> الخلفية</summary>
+        <div class="body">
+          <div id="ctrlBackground"></div>
+          <div class="slider">
+            <div><label>شفافية صورة الخلفية</label>
+              <input type="range" id="imgOpacity" min="0" max="100" value="100"></div>
+            <div class="val" id="imgOpacityVal">100%</div>
+          </div>
+          <div class="slider">
+            <div><label>تعتيم فوق الصورة</label>
+              <input type="range" id="bgDim" min="0" max="100" value="40"></div>
+            <div class="val" id="bgDimVal">40%</div>
+          </div>
         </div>
       </details>
+
+      <!-- Header -->
+      <details class="acc">
+        <summary><span class="dot"></span> شريط العنوان</summary>
+        <div class="body"><div id="ctrlHeader"></div></div>
+      </details>
+
+      <!-- Bubbles -->
+      <details class="acc" open>
+        <summary><span class="dot"></span> الفقاعات</summary>
+        <div class="body">
+          <div id="ctrlBubbles"></div>
+          <div class="slider">
+            <div><label>شفافية الفقاعات</label>
+              <input type="range" id="bubbleOp" min="0" max="100" value="100"></div>
+            <div class="val" id="bubbleOpVal">100%</div>
+          </div>
+          <div class="slider">
+            <div><label>شفافية الحدود</label>
+              <input type="range" id="borderOp" min="0" max="100" value="100"></div>
+            <div class="val" id="borderOpVal">100%</div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Inputs -->
+      <details class="acc">
+        <summary><span class="dot"></span> حقل الإرسال</summary>
+        <div class="body"><div id="ctrlInput"></div></div>
+      </details>
+
+      <!-- Misc -->
+      <details class="acc">
+        <summary><span class="dot"></span> عناصر أخرى</summary>
+        <div class="body"><div id="ctrlMisc"></div></div>
+      </details>
+
+      <!-- Storage -->
+      <div class="card">
+        <h3><span class="dot"></span> الحفظ والتصدير</h3>
+        <div class="row">
+          <button class="btn small primary" id="btnSave">💾 حفظ محلي</button>
+          <button class="btn small" id="btnLoad">📂 استرجاع</button>
+          <button class="btn small" id="btnExport">⬇️ تصدير JSON</button>
+          <button class="btn small" id="btnImport">⬆️ استيراد JSON</button>
+          <button class="btn small danger" id="btnResetAll">🔄 إعادة ضبط الكل</button>
+        </div>
+        <input type="file" id="importInput" accept=".json" style="display:none">
+        <p style="color:var(--muted);font-size:11px;margin:10px 0 0">
+          تصدير JSON هو حفظ لإعدادات Theme Studio فقط، وليس ملف ثيم تيليجرام بعد.
+        </p>
+      </div>
+
     </div>
-    <div class="footer-note">Theme Studio · نموذج Mini App أولي</div>
-  </aside>
-  <main class="workspace">
-    <section class="panel preview-panel">
-      <div class="panel-head"><h2>معاينة مباشرة</h2><span class="status">● تتحدث تلقائيًا</span></div>
-      <div class="panel-body">
-        <div class="preview-wrap">
-          <div class="preview-stage">
-            <div class="phone" id="phone">
-              <div class="phone-top">9:41 ◉ ▰ ▴</div>
-              <div class="chat-header"><div style="font-size:18px">‹</div><div class="avatar">س</div><div class="head-meta"><b>سراج ✨</b><small>متصل الآن</small></div><div class="more">⋮</div></div>
-              <div class="chat-wallpaper" id="wallpaper"></div>
-              <div class="messages">
-                <div class="day">اليوم</div>
-                <div class="msg in" id="msgIn">شفت الثيم الجديد؟ الألوان طالعة متناسقة جدًا!<div class="meta"><span>10:41</span></div></div>
-                <div class="msg out" id="msgOut">لسه أعدّل التفاصيل، أهم شيء أتحكم بكل عنصر لحاله 😎<div class="meta"><span>10:42</span><span>✓✓</span></div></div>
-                <div class="msg in" id="msgIn2">والشفافية؟ خصوصًا مع الخلفيات الفنية 👀<div class="meta"><span>10:42</span></div></div>
-                <div class="msg out" id="msgOut2">موجودة، ونقدر نغيّرها بشكل مستقل.<div class="meta"><span>10:43</span><span>✓✓</span></div></div>
+
+    <!-- ================= PREVIEW ================= -->
+    <div class="col preview-col">
+      <div class="card">
+        <h3><span class="dot"></span> المعاينة الحيّة</h3>
+        <div class="phone-wrap">
+          <div class="phone" id="phone">
+            <div class="pv-header">
+              <div class="pv-back">‹</div>
+              <div class="pv-avatar"></div>
+              <div style="flex:1;min-width:0">
+                <div class="pv-name">Theme Studio</div>
+                <div class="pv-status">متصل الآن</div>
               </div>
-              <div class="composer"><span style="font-size:18px">☺</span><div class="composebox">اكتب رسالة...</div><span style="font-size:18px">⌁</span><div class="send">➤</div></div>
+            </div>
+            <div class="pv-chat">
+              <div class="pv-bg-img" id="pvBgImg"></div>
+              <div class="pv-bg-dim" id="pvBgDim"></div>
+              <div class="pv-messages">
+                <div class="pv-msg in">مرحباً! 👋 جاهز لتصميم ثيمك؟<span class="time">10:30</span></div>
+                <div class="pv-msg out">أهلاً! جرّب رفع صورة وشاهد كيف تتغير الألوان.<span class="time">10:31</span></div>
+                <div class="pv-msg in">هل يمكنني تخصيص كل عنصر؟<span class="time">10:31</span></div>
+                <div class="pv-msg out">نعم، كل الألوان والشفافية قابلة للتعديل.<span class="time">10:32</span></div>
+                <div class="pv-sep"></div>
+                <div class="pv-msg in">رائع، <a href="#" onclick="return false">اقرأ المزيد</a> عن الميزات.<span class="time">10:32</span></div>
+              </div>
+            </div>
+            <div class="pv-input">
+              <div class="pv-field">اكتب رسالة…</div>
+              <div class="pv-send">➤</div>
             </div>
           </div>
-          <div class="preview-side">
-            <div class="mini-card"><h3>لوحة الألوان الحالية</h3><div class="palette" id="currentPalette"></div><p class="hint" style="margin-top:8px">اضغط على اللون لنسخ كوده.</p></div>
-            <div class="mini-card"><h3>ملخص التصميم</h3><div class="field"><div class="field-top"><label>العناصر المعدّلة</label><output id="editedCount">0</output></div></div><div class="field"><div class="field-top"><label>شفافية الرسائل</label><output id="opacitySummary">100%</output></div></div><div class="field"><div class="field-top"><label>الخلفية</label><output id="wallSummary">بدون صورة</output></div></div></div>
-            <div class="mini-card"><h3>إجراءات سريعة</h3><div class="actions"><button class="btn small" id="randomize">اقترح ألوانًا</button><button class="btn small" id="copyColors">نسخ لوحة الألوان</button><button class="btn small" id="clearImage">إزالة الصورة</button></div></div>
-            <div class="mini-card"><h3>ملاحظة تقنية</h3><p class="hint">المعاينة هنا تحاكي عناصر المحادثة. بعض التفاصيل قد تختلف عن تطبيق تيليجرام الحقيقي. لا يتم رفع صورك إلى أي خادم.</p></div>
-          </div>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script>
-// Telegram Mini App lifecycle integration
-const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-if (tg) {
-  try { tg.ready(); tg.expand(); } catch (e) {}
-  const status = document.getElementById("platformStatus");
-  if (status) status.textContent = "داخل تيليجرام · Mini App";
+'use strict';
+
+/* =========================================================
+   1) أدوات الألوان
+   ========================================================= */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const round=(v,n=2)=>Math.round(v*10**n)/10**n;
+
+function hexToRgb(hex){
+  hex=hex.replace('#','').trim();
+  if(hex.length===3) hex=hex.split('').map(c=>c+c).join('');
+  const n=parseInt(hex,16);
+  return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
 }
-const defaults = {
-  incoming:"#303849", outgoing:"#51448b", inText:"#f4f5fb", outText:"#ffffff",
-  inBorder:"#424a5d", outBorder:"#6d5cba", wallColor:"#11131a", bar:"#191c26",
-  headText:"#f4f5fb", subText:"#a8adbf", compose:"#242938", send:"#8c7cff",
-  day:"#34394b", accent:"#8c7cff", link:"#b7aaff", divider:"#34394b",
-  incomingOpacity:100, outgoingOpacity:94, wallOpacity:100, wallTint:0,
-  inBorderOpacity:100, outBorderOpacity:100, motion:0
+function rgbToHex(r,g,b){
+  return '#'+[r,g,b].map(x=>clamp(Math.round(x),0,255).toString(16).padStart(2,'0')).join('');
+}
+function rgbToHsl(r,g,b){
+  r/=255;g/=255;b/=255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);
+  let h=0,s=0;const l=(max+min)/2;
+  const d=max-min;
+  if(d!==0){
+    s=l>0.5?d/(2-max-min):d/(max+min);
+    switch(max){
+      case r:h=((g-b)/d+(g<b?6:0));break;
+      case g:h=((b-r)/d+2);break;
+      case b:h=((r-g)/d+4);break;
+    }
+    h*=60;
+  }
+  return {h,s,l};
+}
+function hslToRgb(h,s,l){
+  h=((h%360)+360)%360;
+  const c=(1-Math.abs(2*l-1))*s;
+  const x=c*(1-Math.abs((h/60)%2-1));
+  const m=l-c/2;
+  let r=0,g=0,b=0;
+  if(h<60){r=c;g=x}
+  else if(h<120){r=x;g=c}
+  else if(h<180){g=c;b=x}
+  else if(h<240){g=x;b=c}
+  else if(h<300){r=x;b=c}
+  else{r=c;b=x}
+  return {r:(r+m)*255,g:(g+m)*255,b:(b+m)*255};
+}
+const hslToHex=(h,s,l)=>rgbToHex(...Object.values(hslToRgb(h,s,l)));
+const hexToHsl=(hex)=>{const {r,g,b}=hexToRgb(hex);return rgbToHsl(r,g,b)};
+
+function relLuminance({r,g,b}){
+  const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};
+  return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b);
+}
+function contrastText(bgHsl){
+  const bg=hslToRgb(bgHsl.h,bgHsl.s,bgHsl.l);
+  const lum=relLuminance(bg);
+  return lum>0.5
+    ? {h:bgHsl.h,s:Math.min(bgHsl.s,0.15),l:0.14}
+    : {h:bgHsl.h,s:Math.min(bgHsl.s,0.10),l:0.96};
+}
+const rgbStr = hex=>{const {r,g,b}=hexToRgb(hex);return `${r}, ${g}, ${b}`};
+
+/* =========================================================
+   2) استخراج الألوان من الصورة
+   ========================================================= */
+function loadImage(src){
+  return new Promise((res,rej)=>{
+    const im=new Image();
+    im.crossOrigin='anonymous';
+    im.onload=()=>res(im);
+    im.onerror=rej;
+    im.src=src;
+  });
+}
+
+async function extractColors(src){
+  const img=await loadImage(src);
+  const S=128;
+  const c=document.createElement('canvas');
+  c.width=c.height=S;
+  const ctx=c.getContext('2d');
+  const k=Math.max(S/img.width,S/img.height);
+  const w=img.width*k,h=img.height*k;
+  ctx.drawImage(img,(S-w)/2,(S-h)/2,w,h);
+  const data=ctx.getImageData(0,0,S,S).data;
+
+  const buckets=new Map();
+  for(let i=0;i<data.length;i+=4){
+    const r=data[i],g=data[i+1],b=data[i+2],a=data[i+3];
+    if(a<128) continue;
+    const {h,s,l}=rgbToHsl(r,g,b);
+    if(l<0.07||l>0.93) continue;
+    if(s<0.08) continue;
+    const qh=Math.round(h/15)*15%360;
+    const qs=Math.round(s*10)/10;
+    const ql=Math.round(l*10)/10;
+    const key=`${qh}|${qs}|${ql}`;
+    let e=buckets.get(key);
+    if(!e){e={h:qh,s:qs,l:ql,count:0,rs:0,gs:0,bs:0};buckets.set(key,e)}
+    e.count++;e.rs+=r;e.gs+=g;e.bs+=b;
+  }
+  const sorted=[...buckets.values()].sort((a,b)=>b.count-a.count);
+  const picked=[];
+  for(const c of sorted){
+    if(picked.length>=7) break;
+    const tooClose=picked.some(p=>{
+      let dh=Math.abs(p.h-c.h); dh=Math.min(dh,360-dh);
+      return dh<25 && Math.abs(p.l-c.l)<0.15;
+    });
+    if(tooClose) continue;
+    picked.push({
+      h:c.h, s:c.s, l:c.l,
+      hex:rgbToHex(c.rs/c.count,c.gs/c.count,c.bs/c.count),
+      count:c.count
+    });
+  }
+  return picked;
+}
+
+/* =========================================================
+   3) بناء اللوحة الكاملة
+   ========================================================= */
+function pickAccent(colors,mode){
+  if(!colors.length) return {h:215,s:0.65,l:0.55};
+  const ranked=[...colors].sort((a,b)=>{
+    const va=a.s*Math.log(a.count+2);
+    const vb=b.s*Math.log(b.count+2);
+    return vb-va;
+  });
+  const top=ranked[0];
+  return {
+    h:top.h,
+    s:clamp(top.s,0.45,0.82),
+    l:mode==='dark'?clamp(top.l,0.55,0.68):clamp(top.l,0.38,0.50)
+  };
+}
+
+function buildPalette(colors,mode,accentOverride){
+  const dark=mode==='dark';
+  const A=accentOverride || pickAccent(colors,mode);
+  const bgHue=A.h;
+
+  const bgSat = dark?0.16:0.22;
+  const chatBg  = {h:bgHue,s:bgSat,l:dark?0.10:0.95};
+  const headerBg= {h:bgHue,s:bgSat+0.04,l:dark?0.13:0.90};
+
+  const inBubble  = {h:bgHue,s:bgSat*0.7,l:dark?0.20:0.99};
+  const outBubble = {h:A.h,s:dark?0.55:0.50,l:dark?0.32:0.72};
+
+  const chatText   = contrastText(chatBg);
+  const headerText = contrastText(headerBg);
+  const inText     = contrastText(inBubble);
+  const outText    = contrastText(outBubble);
+
+  const inBorder  = {h:A.h,s:0.40,l:dark?0.34:0.70};
+  const outBorder = {h:A.h,s:0.45,l:dark?0.50:0.55};
+
+  const inputBg   = {h:bgHue,s:bgSat,l:dark?0.18:0.90};
+  const inputText = contrastText(inputBg);
+
+  const sendBg    = {h:A.h,s:A.s,l:A.l};
+  const sendIcon  = contrastText(sendBg);
+
+  const linkColor = {h:A.h,s:0.70,l:dark?0.68:0.42};
+  const separator = {h:bgHue,s:bgSat*0.5,l:dark?0.24:0.82};
+
+  return {
+    accentColor:    hslToHex(A.h,A.s,A.l),
+    chatBg:         hslToHex(chatBg.h,chatBg.s,chatBg.l),
+    chatText:       hslToHex(chatText.h,chatText.s,chatText.l),
+    headerBg:       hslToHex(headerBg.h,headerBg.s,headerBg.l),
+    headerText:     hslToHex(headerText.h,headerText.s,headerText.l),
+    inBubbleBg:     hslToHex(inBubble.h,inBubble.s,inBubble.l),
+    inBubbleText:   hslToHex(inText.h,inText.s,inText.l),
+    inBubbleBorder: hslToHex(inBorder.h,inBorder.s,inBorder.l),
+    outBubbleBg:    hslToHex(outBubble.h,outBubble.s,outBubble.l),
+    outBubbleText:  hslToHex(outText.h,outText.s,outText.l),
+    outBubbleBorder:hslToHex(outBorder.h,outBorder.s,outBorder.l),
+    inputBg:        hslToHex(inputBg.h,inputBg.s,inputBg.l),
+    inputText:      hslToHex(inputText.h,inputText.s,inputText.l),
+    sendBtnBg:      hslToHex(sendBg.h,sendBg.s,sendBg.l),
+    sendBtnIcon:    hslToHex(sendIcon.h,sendIcon.s,sendIcon.l),
+    linkColor:      hslToHex(linkColor.h,linkColor.s,linkColor.l),
+    separatorColor: hslToHex(separator.h,separator.s,separator.l)
+  };
+}
+
+/* =========================================================
+   4) الحالة
+   ========================================================= */
+const DEFAULTS={
+  accentColor:'#4a86e8',
+  chatBg:'#0f1218',
+  chatText:'#e6edf3',
+  headerBg:'#151a22',
+  headerText:'#e6edf3',
+  inBubbleBg:'#1a1f2a',
+  inBubbleText:'#e6edf3',
+  inBubbleBorder:'#2b3342',
+  outBubbleBg:'#3a6cb5',
+  outBubbleText:'#ffffff',
+  outBubbleBorder:'#5b8def',
+  inputBg:'#1a1f2a',
+  inputText:'#e6edf3',
+  sendBtnBg:'#4a86e8',
+  sendBtnIcon:'#ffffff',
+  linkColor:'#7aa2f7',
+  separatorColor:'#20262f'
 };
-let state={...defaults}, imageUrl=null, originalImage=null;
-const colorGroups=[
- {target:"chatColors",items:[["incoming","فقاعة الرسائل الواردة"],["outgoing","فقاعة الرسائل الصادرة"],["inText","نص الرسائل الواردة"],["outText","نص الرسائل الصادرة"],["inBorder","حدود الرسائل الواردة"],["outBorder","حدود الرسائل الصادرة"]]},
- {target:"uiColors",items:[["bar","شريط العنوان والكتابة"],["headText","نص العنوان"],["subText","النص الثانوي"],["compose","حقل كتابة الرسالة"],["send","زر الإرسال"],["day","شارة التاريخ"],["accent","اللون الأساسي"],["link","لون الروابط"],["divider","الفواصل"]]}
-];
-const opacityDefs=[
- ["incomingOpacity","شفافية الرسائل الواردة"],["outgoingOpacity","شفافية الرسائل الصادرة"],
- ["inBorderOpacity","شفافية حدود الرسائل الواردة"],["outBorderOpacity","شفافية حدود الرسائل الصادرة"],
- ["wallOpacity","شفافية صورة الخلفية"],["wallTint","تعتيم طبقة الخلفية"]
-];
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function addColorControl(container,key,label){
- const wrap=document.createElement("div");wrap.className="field";
- wrap.innerHTML=`<div class="field-top"><label>${label}</label><output id="out-${key}">${state[key]}</output></div><div class="color-line"><input type="color" id="color-${key}" value="${state[key]}" aria-label="${label}"><input class="hex" id="hex-${key}" value="${state[key]}" maxlength="7" aria-label="HEX ${label}"><button class="reset" data-reset="${key}" title="إعادة ضبط">↺</button></div>`;
- container.appendChild(wrap);
- const picker=wrap.querySelector(`#color-${key}`),hex=wrap.querySelector(`#hex-${key}`);
- picker.addEventListener("input",()=>{state[key]=picker.value;hex.value=picker.value;document.getElementById(`out-${key}`).textContent=picker.value;render();});
- hex.addEventListener("change",()=>{let v=hex.value.trim();if(/^#[0-9a-fA-F]{6}$/.test(v)){state[key]=v.toLowerCase();picker.value=state[key];document.getElementById(`out-${key}`).textContent=state[key];render()}else{hex.value=state[key];toast("أدخل لون HEX صحيحًا مثل #8C7CFF")}});
- wrap.querySelector("[data-reset]").addEventListener("click",()=>{state[key]=defaults[key];picker.value=state[key];hex.value=state[key];document.getElementById(`out-${key}`).textContent=state[key];render()});
+
+const state={
+  mode:'dark',
+  colors:{...DEFAULTS},
+  image:null,
+  imgOpacity:100,
+  dim:40,
+  bubbleOp:100,
+  borderOp:100,
+  sourceColors:[],
+  accentOverride:null
+};
+
+/* =========================================================
+   5) تعريف عناصر التحكم
+   ========================================================= */
+const COLOR_GROUPS={
+  background:[
+    ['chatBg','خلفية المحادثة'],
+    ['chatText','نص المحادثة']
+  ],
+  header:[
+    ['headerBg','خلفية الشريط'],
+    ['headerText','نص الشريط']
+  ],
+  bubbles:[
+    ['inBubbleBg','فقاعة واردة'],
+    ['inBubbleText','نص الواردة'],
+    ['inBubbleBorder','حدود الواردة'],
+    ['outBubbleBg','فقاعة صادرة'],
+    ['outBubbleText','نص الصادرة'],
+    ['outBubbleBorder','حدود الصادرة']
+  ],
+  input:[
+    ['inputBg','خلفية الحقل'],
+    ['inputText','نص الحقل'],
+    ['sendBtnBg','زر الإرسال'],
+    ['sendBtnIcon','أيقونة الإرسال']
+  ],
+  misc:[
+    ['accentColor','اللون الأساسي'],
+    ['linkColor','الروابط'],
+    ['separatorColor','الفواصل']
+  ]
+};
+
+function renderColorGroup(containerId,keys){
+  const el=document.getElementById(containerId);
+  el.innerHTML='';
+  for(const [key,label] of keys){
+    const row=document.createElement('div');
+    row.className='ctrl';
+    row.innerHTML=`
+      <div class="lbl">${label}</div>
+      <div class="tools">
+        <input type="color" data-k="${key}" value="${state.colors[key]}">
+        <input class="hex" data-k="${key}" value="${state.colors[key]}">
+        <button class="reset" data-reset="${key}" title="إعادة ضبط">↺</button>
+      </div>`;
+    el.appendChild(row);
+  }
+  el.querySelectorAll('input[type=color]').forEach(inp=>{
+    inp.addEventListener('input',e=>{
+      state.colors[e.target.dataset.k]=e.target.value;
+      syncInputs();applyPreview();
+    });
+  });
+  el.querySelectorAll('input.hex').forEach(inp=>{
+    inp.addEventListener('change',e=>{
+      let v=e.target.value.trim();
+      if(!v.startsWith('#')) v='#'+v;
+      if(/^#[0-9a-fA-F]{6}$/.test(v)){
+        state.colors[e.target.dataset.k]=v.toLowerCase();
+        syncInputs();applyPreview();
+      }else{
+        e.target.value=state.colors[e.target.dataset.k];
+      }
+    });
+  });
+  el.querySelectorAll('[data-reset]').forEach(b=>{
+    b.addEventListener('click',e=>{
+      const k=e.target.dataset.reset;
+      state.colors[k]=DEFAULTS[k];
+      syncInputs();applyPreview();
+      toast('تم ضبط '+k);
+    });
+  });
 }
-function addRange(container,key,label,max=100){
- const wrap=document.createElement("div");wrap.className="field";
- wrap.innerHTML=`<div class="field-top"><label for="range-${key}">${label}</label><output id="range-out-${key}">${state[key]}%</output></div><input class="range" type="range" id="range-${key}" min="0" max="${max}" step="1" value="${state[key]}"><div style="display:flex;gap:8px;align-items:center"><input class="hex" id="num-${key}" type="number" min="0" max="${max}" value="${state[key]}" style="max-width:92px"><span class="hint">من 0 إلى ${max}%</span><button class="reset" data-reset="${key}" style="margin-inline-start:auto;width:35px">↺</button></div>`;
- container.appendChild(wrap);
- const range=wrap.querySelector(`#range-${key}`),num=wrap.querySelector(`#num-${key}`),out=wrap.querySelector(`#range-out-${key}`);
- function set(v){v=Math.max(0,Math.min(max,Number(v)||0));state[key]=v;range.value=v;num.value=v;out.textContent=v+"%";render()}
- range.addEventListener("input",()=>set(range.value));num.addEventListener("change",()=>set(num.value));
- wrap.querySelector("[data-reset]").addEventListener("click",()=>set(defaults[key]));
+
+function syncInputs(){
+  for(const k in state.colors){
+    const v=state.colors[k];
+    document.querySelectorAll(`input[type=color][data-k="${k}"]`).forEach(i=>i.value=v);
+    document.querySelectorAll(`input.hex[data-k="${k}"]`).forEach(i=>i.value=v);
+  }
+  // sync accent HSL sliders from accentColor
+  const h=hexToHsl(state.colors.accentColor);
+  document.getElementById('hRange').value=Math.round(h.h);
+  document.getElementById('sRange').value=Math.round(h.s*100);
+  document.getElementById('lRange').value=Math.round(h.l*100);
+  document.getElementById('hVal').textContent=Math.round(h.h);
+  document.getElementById('sVal').textContent=Math.round(h.s*100)+'%';
+  document.getElementById('lVal').textContent=Math.round(h.l*100)+'%';
 }
-colorGroups.forEach(g=>g.items.forEach(([k,l])=>addColorControl(document.getElementById(g.target),k,l)));
-opacityDefs.forEach(([k,l])=>addRange(document.getElementById("opacityControls"),k,l));
-addColorControl(document.getElementById("wallControls"),"wallColor","لون خلفية أساسي");
-addRange(document.getElementById("wallControls"),"wallTint","تعتيم اللون فوق الصورة");
-addRange(document.getElementById("wallControls"),"motion","قوة حركة المعاينة",100);
-function hexToRgb(hex){let n=parseInt(hex.slice(1),16);return {r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
-function rgba(hex,a){let c=hexToRgb(hex);return `rgba(${c.r},${c.g},${c.b},${Math.max(0,Math.min(1,a))})`}
-function render(){
- const root=document.documentElement;
- root.style.setProperty("--incoming",rgba(state.incoming,state.incomingOpacity/100));
- root.style.setProperty("--outgoing",rgba(state.outgoing,state.outgoingOpacity/100));
- root.style.setProperty("--intext",state.inText);root.style.setProperty("--outtext",state.outText);
- root.style.setProperty("--inborder",rgba(state.inBorder,state.inBorderOpacity/100));
- root.style.setProperty("--outborder",rgba(state.outBorder,state.outBorderOpacity/100));
- root.style.setProperty("--wall-color",state.wallColor);
- root.style.setProperty("--wall-alpha",state.wallOpacity/100);
- root.style.setProperty("--wall-tint",state.wallTint/100);
- root.style.setProperty("--bar",state.bar);root.style.setProperty("--headtext",state.headText);
- root.style.setProperty("--subtext",state.subText);root.style.setProperty("--compose",state.compose);
- root.style.setProperty("--send",state.send);root.style.setProperty("--day",state.day);
- root.style.setProperty("--accent",state.accent);
- const wall=document.getElementById("wallpaper");wall.style.backgroundImage=imageUrl?`url("${imageUrl}")`:"none";
- wall.style.transform=state.motion>0?`scale(${1+state.motion/1000})`:"none";
- document.getElementById("opacitySummary").textContent=`${state.incomingOpacity}% / ${state.outgoingOpacity}%`;
- document.getElementById("wallSummary").textContent=imageUrl?"صورة مرفوعة":"بدون صورة";
- const edited=Object.keys(state).filter(k=>state[k]!==defaults[k]).length;
- document.getElementById("editedCount").textContent=edited;
- const keys=["incoming","outgoing","wallColor","bar","accent","link","send","day"];
- document.getElementById("currentPalette").innerHTML=keys.map(k=>`<button class="swatch" data-copy="${state[k]}" style="background:${state[k]}" title="${k} ${state[k]}"></button>`).join("");
- document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{navigator.clipboard?.writeText(b.dataset.copy);toast("لون "+b.dataset.copy+" جاهز للنسخ")});
+
+/* =========================================================
+   6) المعاينة
+   ========================================================= */
+function applyPreview(){
+  const p=document.getElementById('phone');
+  const c=state.colors;
+  p.style.setProperty('--pv-chat-bg',c.chatBg);
+  p.style.setProperty('--pv-header-bg',c.headerBg);
+  p.style.setProperty('--pv-header-txt',c.headerText);
+  p.style.setProperty('--pv-accent',c.accentColor);
+  p.style.setProperty('--pv-in-bg-rgb',rgbStr(c.inBubbleBg));
+  p.style.setProperty('--pv-in-txt',c.inBubbleText);
+  p.style.setProperty('--pv-in-bd-rgb',rgbStr(c.inBubbleBorder));
+  p.style.setProperty('--pv-out-bg-rgb',rgbStr(c.outBubbleBg));
+  p.style.setProperty('--pv-out-txt',c.outBubbleText);
+  p.style.setProperty('--pv-out-bd-rgb',rgbStr(c.outBubbleBorder));
+  p.style.setProperty('--pv-input-bg',c.inputBg);
+  p.style.setProperty('--pv-input-txt',c.inputText);
+  p.style.setProperty('--pv-send-bg',c.sendBtnBg);
+  p.style.setProperty('--pv-send-txt',c.sendBtnIcon);
+  p.style.setProperty('--pv-link',c.linkColor);
+  p.style.setProperty('--pv-sep',c.separatorColor);
+  p.style.setProperty('--pv-bubble-op',state.bubbleOp/100);
+  p.style.setProperty('--pv-border-op',state.borderOp/100);
+  p.style.setProperty('--pv-img-op',state.imgOpacity/100);
+  p.style.setProperty('--pv-dim',state.dim/100);
+
+  const bgImg=document.getElementById('pvBgImg');
+  if(state.image){
+    bgImg.style.backgroundImage=`url("${state.image}")`;
+  }else{
+    bgImg.style.backgroundImage='none';
+  }
+  const pc=document.querySelector('.pv-chat');
+  if(pc) pc.style.color=c.chatText;
+
+  // تحديث لون الهيدر في تيليجرام لو متاح
+  try{
+    if(window.Telegram && Telegram.WebApp && Telegram.WebApp.setHeaderColor){
+      Telegram.WebApp.setHeaderColor(c.headerBg);
+    }
+  }catch(_){}
 }
-function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),2200)}
-function colorDistance(a,b){let A=hexToRgb(a),B=hexToRgb(b);return (A.r-B.r)**2+(A.g-B.g)**2+(A.b-B.b)**2}
-function extractPalette(img){
- const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});const w=80,h=Math.max(1,Math.round(img.height/img.width*80));c.width=w;c.height=h;ctx.drawImage(img,0,0,w,h);
- let d=ctx.getImageData(0,0,w,h).data, bins={};
- for(let i=0;i<d.length;i+=4*3){if(d[i+3]<200)continue;let r=Math.round(d[i]/32)*32,g=Math.round(d[i+1]/32)*32,b=Math.round(d[i+2]/32)*32;let key=[Math.min(255,r),Math.min(255,g),Math.min(255,b)].map(x=>x.toString(16).padStart(2,"0")).join("");bins[key]=(bins[key]||0)+1}
- return Object.entries(bins).sort((a,b)=>b[1]-a[1]).map(([k])=>"#"+k).filter((v,i,a)=>a.slice(0,i).every(x=>colorDistance(v,x)>4200)).slice(0,8);
+
+/* =========================================================
+   7) اللوحات المقترحة
+   ========================================================= */
+function renderPalettes(colors){
+  const card=document.getElementById('paletteCard');
+  const list=document.getElementById('palettesList');
+  if(!colors.length){card.style.display='none';return}
+  card.style.display='block';
+  list.innerHTML='';
+  const variants=[
+    {name:'متوازن', sat:1, l:1},
+    {name:'هادئ',   sat:0.65, l:0.9},
+    {name:'زاهي',   sat:1.15, l:1.05}
+  ];
+  for(const v of variants){
+    const acc=pickAccent(colors,state.mode);
+    const tuned={
+      h:acc.h,
+      s:clamp(acc.s*v.sat,0.2,0.95),
+      l:clamp(acc.l*v.l,0.25,0.75)
+    };
+    const pal=buildPalette(colors,state.mode,tuned);
+    const el=document.createElement('div');
+    el.className='palette';
+    el.innerHTML=`
+      <div class="strip">
+        <span style="background:${pal.chatBg}"></span>
+        <span style="background:${pal.inBubbleBg}"></span>
+        <span style="background:${pal.outBubbleBg}"></span>
+        <span style="background:${pal.accentColor}"></span>
+        <span style="background:${pal.headerBg}"></span>
+      </div>
+      <div class="lbl">${v.name}</div>`;
+    el.addEventListener('click',()=>{
+      Object.assign(state.colors,pal);
+      state.accentOverride=tuned;
+      syncInputs();applyPreview();
+      toast('تم تطبيق اللوحة: '+v.name);
+    });
+    list.appendChild(el);
+  }
 }
-function showPalette(colors){
- const p=document.getElementById("palette");p.innerHTML=colors.map(c=>`<button class="swatch" style="background:${c}" data-palette="${c}" title="${c}"></button>`).join("");
- p.querySelectorAll("[data-palette]").forEach(b=>b.onclick=()=>{state.wallColor=b.dataset.palette;const input=document.getElementById("color-wallColor"),hex=document.getElementById("hex-wallColor");if(input)input.value=state.wallColor;if(hex)hex.value=state.wallColor;const out=document.getElementById("out-wallColor");if(out)out.textContent=state.wallColor;render();toast("تم تطبيق اللون على الخلفية")});
+
+/* =========================================================
+   8) Toast
+   ========================================================= */
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
 }
-function analyze(){if(!originalImage){toast("ارفع صورة أولًا لتحليل ألوانها");return}try{const colors=extractPalette(originalImage);showPalette(colors);if(colors.length){state.wallColor=colors[0];state.outgoing=colors[1]||state.outgoing;state.accent=colors[2]||state.accent;syncColorInputs();render();toast("تم استخراج لوحة ألوان من الصورة")}}catch(e){toast("تعذّر تحليل الصورة؛ جرّب صورة أخرى")}}
-function syncColorInputs(){Object.keys(state).forEach(k=>{let c=document.getElementById("color-"+k),h=document.getElementById("hex-"+k),o=document.getElementById("out-"+k);if(c&&h){c.value=state[k];h.value=state[k];o.textContent=state[k]}})}
-document.getElementById("imageInput").addEventListener("change",e=>{const file=e.target.files?.[0];if(!file)return;if(!file.type.startsWith("image/")){toast("اختر ملف صورة");return}if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=URL.createObjectURL(file);const img=new Image();img.onload=()=>{originalImage=img;render();analyze()};img.onerror=()=>toast("تعذّر فتح الصورة");img.src=imageUrl;});
-document.getElementById("generatePalette").onclick=analyze;
-document.getElementById("clearImage").onclick=()=>{if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=null;originalImage=null;document.getElementById("imageInput").value="";render();toast("تمت إزالة الخلفية")};
-document.getElementById("randomize").onclick=()=>{const schemes=[["#2b3143","#6c5ce7","#9c8aff","#e9e8ff"],["#252a30","#286b63","#51b7a6","#effaf7"],["#32232e","#a74472","#d778a3","#fff0f7"],["#1f283c","#2c76a8","#61bce6","#edf8ff"],["#2b2925","#9b7048","#d3a878","#fff6e8"]];const s=schemes[Math.floor(Math.random()*schemes.length)];state.incoming=s[0];state.outgoing=s[1];state.accent=s[2];state.outText=s[3];syncColorInputs();render();toast("تم اقتراح نظام ألوان جديد")};
-document.getElementById("resetAll").onclick=()=>{state={...defaults};syncColorInputs();document.querySelectorAll('input[type=range]').forEach(el=>{const k=el.id.replace("range-","");el.value=state[k];const num=document.getElementById("num-"+k),out=document.getElementById("range-out-"+k);if(num)num.value=state[k];if(out)out.textContent=state[k]+"%"});render();toast("أعيدت الإعدادات الافتراضية")};
-document.getElementById("mode").onchange=e=>{if(e.target.value==="light"){state.bar="#f2f3f8";state.headText="#202333";state.subText="#626779";state.incoming="#ffffff";state.outgoing="#d9fdd3";state.inText="#202333";state.outText="#1b2922";state.compose="#ffffff";state.day="#e2e5ee"}else{state.bar=defaults.bar;state.headText=defaults.headText;state.subText=defaults.subText;state.incoming=defaults.incoming;state.outgoing=defaults.outgoing;state.inText=defaults.inText;state.outText=defaults.outText;state.compose=defaults.compose;state.day=defaults.day}syncColorInputs();render()};
-document.getElementById("closeMiniApp").onclick=()=>{if(tg){try{tg.close()}catch(e){toast("يمكنك إغلاق النافذة من تيليجرام")}}else{toast("زر الإغلاق يعمل عند فتح المحرّر داخل تيليجرام")}};
-document.getElementById("savePreset").onclick=()=>{localStorage.setItem("themeStudioPreset",JSON.stringify(state));toast("تم حفظ الإعدادات على هذا الجهاز")};
-document.getElementById("loadPreset").onclick=()=>{let v=localStorage.getItem("themeStudioPreset");if(!v){toast("لا توجد إعدادات محفوظة");return}try{state={...defaults,...JSON.parse(v)};syncColorInputs();document.querySelectorAll('input[type=range]').forEach(el=>{let k=el.id.replace("range-","");el.value=state[k];let n=document.getElementById("num-"+k),o=document.getElementById("range-out-"+k);if(n)n.value=state[k];if(o)o.textContent=state[k]+"%"});render();toast("تم استرجاع الإعدادات")}catch(e){toast("ملف الإعدادات غير صالح")}};
-document.getElementById("exportJson").onclick=()=>{const data={app:"Theme Studio",version:1,name:document.getElementById("themeName").value,settings:state,wallpaperIncluded:false,note:"Settings export only; not a Telegram theme file."};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="theme-studio-settings.json";a.click();URL.revokeObjectURL(a.href);toast("تم تنزيل إعدادات المشروع بصيغة JSON")};
-document.getElementById("copyColors").onclick=()=>{const txt=Object.entries(state).filter(([k,v])=>/^#[0-9a-f]{6}$/i.test(String(v))).map(([k,v])=>`${k}: ${v}`).join("\n");navigator.clipboard?.writeText(txt).then(()=>toast("تم نسخ لوحة الألوان")).catch(()=>toast("تعذّر النسخ؛ يمكنك تصدير الإعدادات"))};
-document.getElementById("palette").querySelectorAll("[data-palette]").forEach(b=>b.onclick=()=>{state.wallColor=b.dataset.palette;syncColorInputs();render()});
-render();
+
+/* =========================================================
+   9) الأحداث
+   ========================================================= */
+// Mode
+document.getElementById('modeDark').addEventListener('click',()=>setMode('dark'));
+document.getElementById('modeLight').addEventListener('click',()=>setMode('light'));
+function setMode(m){
+  state.mode=m;
+  document.getElementById('modeDark').classList.toggle('on',m==='dark');
+  document.getElementById('modeLight').classList.toggle('on',m==='light');
+  if(state.sourceColors.length){
+    const pal=buildPalette(state.sourceColors,m,state.accentOverride);
+    Object.assign(state.colors,pal);
+  }
+  syncInputs();applyPreview();
+}
+
+// Upload
+document.getElementById('imgInput').addEventListener('change',async e=>{
+  const f=e.target.files&&e.target.files[0];
+  if(!f) return;
+  if(f.size>4*1024*1024){toast('الصورة كبيرة (>4MB)، اختر أصغر');return}
+  const reader=new FileReader();
+  reader.onload=async ()=>{
+    state.image=reader.result;
+    await runExtraction();
+  };
+  reader.readAsDataURL(f);
+  e.target.value='';
+});
+
+async function runExtraction(){
+  if(!state.image){toast('ارفع صورة أولاً');return}
+  try{
+    toast('جاري تحليل الصورة…');
+    const colors=await extractColors(state.image);
+    if(!colors.length){toast('لم أستطع استخراج ألوان مناسبة');return}
+    state.sourceColors=colors;
+    state.accentOverride=null;
+    const pal=buildPalette(colors,state.mode);
+    Object.assign(state.colors,pal);
+    renderPalettes(colors);
+    syncInputs();applyPreview();
+    toast('تم استخراج '+colors.length+' ألوان');
+  }catch(err){
+    console.error(err);
+    toast('فشل تحليل الصورة');
+  }
+}
+
+document.getElementById('btnExtract').addEventListener('click',runExtraction);
+
+document.getElementById('btnRemoveImg').addEventListener('click',()=>{
+  state.image=null;state.sourceColors=[];
+  document.getElementById('paletteCard').style.display='none';
+  applyPreview();toast('تمت إزالة الصورة');
+});
+
+// Random
+document.getElementById('btnRandom').addEventListener('click',()=>{
+  const h=Math.floor(Math.random()*360);
+  const s=0.45+Math.random()*0.35;
+  const l=state.mode==='dark'?0.55+Math.random()*0.10:0.40+Math.random()*0.10;
+  const acc={h,s,l};
+  const pal=buildPalette(state.sourceColors,state.mode,acc);
+  Object.assign(state.colors,pal);
+  state.accentOverride=acc;
+  syncInputs();applyPreview();
+});
+
+// Accent HSL
+['h','s','l'].forEach(k=>{
+  document.getElementById(k+'Range').addEventListener('input',()=>{
+    const h=+document.getElementById('hRange').value;
+    const s=+document.getElementById('sRange').value/100;
+    const l=+document.getElementById('lRange').value/100;
+    document.getElementById('hVal').textContent=h;
+    document.getElementById('sVal').textContent=Math.round(s*100)+'%';
+    document.getElementById('lVal').textContent=Math.round(l*100)+'%';
+    state.accentOverride={h,s,l};
+    // Regenerate everything from this accent
+    const pal=buildPalette(state.sourceColors,state.mode,state.accentOverride);
+    Object.assign(state.colors,pal);
+    // Now sync only the color pickers (not the hsl sliders, they already reflect)
+    for(const key in state.colors){
+      const v=state.colors[key];
+      document.querySelectorAll(`input[type=color][data-k="${key}"]`).forEach(i=>i.value=v);
+      document.querySelectorAll(`input.hex[data-k="${key}"]`).forEach(i=>i.value=v);
+    }
+    applyPreview();
+  });
+});
+
+document.getElementById('btnRebuild').addEventListener('click',()=>{
+  const pal=buildPalette(state.sourceColors,state.mode,state.accentOverride);
+  Object.assign(state.colors,pal);
+  syncInputs();applyPreview();
+  toast('تم إعادة بناء اللوحة');
+});
+
+// Sliders
+function bindSlider(id,valId,key,unit='%'){
+  const s=document.getElementById(id);
+  const v=document.getElementById(valId);
+  s.addEventListener('input',()=>{
+    state[key]=+s.value;
+    v.textContent=s.value+unit;
+    applyPreview();
+  });
+}
+bindSlider('imgOpacity','imgOpacityVal','imgOpacity');
+bindSlider('bgDim','bgDimVal','dim');
+bindSlider('bubbleOp','bubbleOpVal','bubbleOp');
+bindSlider('borderOp','borderOpVal','borderOp');
+
+/* =========================================================
+   10) الحفظ والاستيراد والتصدير
+   ========================================================= */
+const LS_KEY='theme-studio-v2';
+
+document.getElementById('btnSave').addEventListener('click',()=>{
+  try{
+    const data={
+      v:2,
+      mode:state.mode,
+      colors:state.colors,
+      imgOpacity:state.imgOpacity,
+      dim:state.dim,
+      bubbleOp:state.bubbleOp,
+      borderOp:state.borderOp,
+      sourceColors:state.sourceColors,
+      accentOverride:state.accentOverride,
+      image:state.image
+    };
+    localStorage.setItem(LS_KEY,JSON.stringify(data));
+    toast('تم الحفظ محليًا');
+  }catch(err){
+    // قد تفشل بسبب حجم الصورة
+    try{
+      const slim={...state, image:null};
+      const data={v:2,mode:state.mode,colors:state.colors,
+        imgOpacity:state.imgOpacity,dim:state.dim,
+        bubbleOp:state.bubbleOp,borderOp:state.borderOp,
+        sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:null};
+      localStorage.setItem(LS_KEY,JSON.stringify(data));
+      toast('حُفظ بدون الصورة (حجم كبير)');
+    }catch(e2){toast('فشل الحفظ')}
+  }
+});
+
+document.getElementById('btnLoad').addEventListener('click',()=>{
+  const raw=localStorage.getItem(LS_KEY);
+  if(!raw){toast('لا يوجد حفظ سابق');return}
+  try{
+    const d=JSON.parse(raw);
+    Object.assign(state,{
+      mode:d.mode||'dark',
+      colors:{...DEFAULTS,...(d.colors||{})},
+      imgOpacity:d.imgOpacity??100,
+      dim:d.dim??40,
+      bubbleOp:d.bubbleOp??100,
+      borderOp:d.borderOp??100,
+      sourceColors:d.sourceColors||[],
+      accentOverride:d.accentOverride||null,
+      image:d.image||null
+    });
+    document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
+    document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
+    ['imgOpacity','bgDim','bubbleOp','borderOp'].forEach((id,i)=>{
+      const k=['imgOpacity','dim','bubbleOp','borderOp'][i];
+      const v=['imgOpacityVal','bgDimVal','bubbleOpVal','borderOpVal'][i];
+      document.getElementById(id).value=state[k];
+      document.getElementById(v).textContent=state[k]+'%';
+    });
+    if(state.sourceColors.length) renderPalettes(state.sourceColors);
+    syncInputs();applyPreview();
+    toast('تم الاسترجاع');
+  }catch(e){toast('ملف تالف')}
+});
+
+document.getElementById('btnExport').addEventListener('click',()=>{
+  const data={
+    v:2, exportedAt:new Date().toISOString(),
+    mode:state.mode, colors:state.colors,
+    imgOpacity:state.imgOpacity, dim:state.dim,
+    bubbleOp:state.bubbleOp, borderOp:state.borderOp,
+    sourceColors:state.sourceColors,
+    accentOverride:state.accentOverride,
+    image:state.image
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='theme-studio-'+Date.now()+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('تم التصدير');
+});
+
+document.getElementById('btnImport').addEventListener('click',()=>{
+  document.getElementById('importInput').click();
+});
+document.getElementById('importInput').addEventListener('change',e=>{
+  const f=e.target.files&&e.target.files[0];
+  if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result);
+      localStorage.setItem(LS_KEY,JSON.stringify(d));
+      document.getElementById('btnLoad').click();
+    }catch(err){toast('JSON غير صالح')}
+  };
+  r.readAsText(f);
+  e.target.value='';
+});
+
+document.getElementById('btnResetAll').addEventListener('click',()=>{
+  if(!confirm('إعادة ضبط كل الإعدادات؟')) return;
+  state.colors={...DEFAULTS};
+  state.image=null;state.sourceColors=[];state.accentOverride=null;
+  state.imgOpacity=100;state.dim=40;state.bubbleOp=100;state.borderOp=100;
+  document.getElementById('imgOpacity').value=100;
+  document.getElementById('bgDim').value=40;
+  document.getElementById('bubbleOp').value=100;
+  document.getElementById('borderOp').value=100;
+  ['imgOpacityVal','bgDimVal','bubbleOpVal','borderOpVal'].forEach(id=>{
+    document.getElementById(id).textContent='100%';
+  });
+  document.getElementById('paletteCard').style.display='none';
+  syncInputs();applyPreview();
+  toast('تمت إعادة الضبط');
+});
+
+/* =========================================================
+   11) التهيئة
+   ========================================================= */
+renderColorGroup('ctrlBackground',COLOR_GROUPS.background);
+renderColorGroup('ctrlHeader',COLOR_GROUPS.header);
+renderColorGroup('ctrlBubbles',COLOR_GROUPS.bubbles);
+renderColorGroup('ctrlInput',COLOR_GROUPS.input);
+renderColorGroup('ctrlMisc',COLOR_GROUPS.misc);
+
+// محاولة استرجاع الحفظ تلقائيًا عند الفتح
+(function init(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(raw){
+      const d=JSON.parse(raw);
+      Object.assign(state,{
+        mode:d.mode||'dark',
+        colors:{...DEFAULTS,...(d.colors||{})},
+        imgOpacity:d.imgOpacity??100,
+        dim:d.dim??40,
+        bubbleOp:d.bubbleOp??100,
+        borderOp:d.borderOp??100,
+        sourceColors:d.sourceColors||[],
+        accentOverride:d.accentOverride||null,
+        image:d.image||null
+      });
+      document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
+      document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
+      document.getElementById('imgOpacity').value=state.imgOpacity;
+      document.getElementById('bgDim').value=state.dim;
+      document.getElementById('bubbleOp').value=state.bubbleOp;
+      document.getElementById('borderOp').value=state.borderOp;
+      document.getElementById('imgOpacityVal').textContent=state.imgOpacity+'%';
+      document.getElementById('bgDimVal').textContent=state.dim+'%';
+      document.getElementById('bubbleOpVal').textContent=state.bubbleOp+'%';
+      document.getElementById('borderOpVal').textContent=state.borderOp+'%';
+      if(state.sourceColors.length) renderPalettes(state.sourceColors);
+    }
+  }catch(_){}
+  syncInputs();
+  applyPreview();
+})();
+
+// Telegram
+try{
+  if(window.Telegram && Telegram.WebApp){
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+    if(Telegram.WebApp.colorScheme){
+      // لا نفرض، فقط نحترمه إن لم يكن هناك حفظ
+      if(!localStorage.getItem(LS_KEY)){
+        setMode(Telegram.WebApp.colorScheme==='light'?'light':'dark');
+      }
+    }
+  }
+}catch(_){}
+
+console.log('[Theme Studio] v2 loaded');
 </script>
-</body></html>
+</body>
+  </html>
