@@ -2,238 +2,104 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Theme Studio — محرر ثيمات تيليجرام</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Theme Studio v3</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  :root{
-    --bg:#0e1116; --bg2:#161b22; --bg3:#1f2630;
-    --line:#2a3240; --txt:#e6edf3; --muted:#8b98a9;
-    --accent:#5b8def; --accent2:#7aa2f7;
-    --danger:#f7768e; --ok:#9ece6a;
-    --r:12px; --r2:8px;
-    --shadow:0 8px 24px rgba(0,0,0,.35);
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);
-    font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;
-    font-size:14px;line-height:1.5}
-  button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
-  button{cursor:pointer;border:none;background:none}
-
-  /* ---------- Layout ---------- */
-  .app{max-width:1200px;margin:0 auto;padding:12px}
-  header.top{
-    display:flex;align-items:center;gap:10px;
-    padding:12px 14px;background:var(--bg2);border:1px solid var(--line);
-    border-radius:var(--r);margin-bottom:12px;position:sticky;top:8px;z-index:50;
-    backdrop-filter:blur(8px);
-  }
-  .logo{
-    width:34px;height:34px;border-radius:9px;
-    background:linear-gradient(135deg,var(--accent),#bb9af7);
-    display:grid;place-items:center;font-weight:800;color:#fff;font-size:16px;
-  }
-  .title{font-weight:700;font-size:15px}
-  .title small{display:block;color:var(--muted);font-weight:400;font-size:11px}
-  .spacer{flex:1}
-
-  .layout{display:grid;grid-template-columns:1fr;gap:12px}
-  @media(min-width:960px){
-    .layout{grid-template-columns:minmax(0,1fr) 380px;align-items:start}
-    .preview-col{position:sticky;top:78px}
-  }
-
-  .card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);
-    padding:14px;margin-bottom:12px}
-  .card h3{margin:0 0 10px;font-size:13px;color:var(--muted);font-weight:600;
-    text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
-  .card h3 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
-
-  /* ---------- Buttons ---------- */
-  .btn{
-    display:inline-flex;align-items:center;gap:6px;
-    padding:8px 12px;border-radius:var(--r2);
-    background:var(--bg3);border:1px solid var(--line);
-    font-size:12px;font-weight:600;transition:.15s;
-  }
-  .btn:hover{background:#252c37;border-color:#3a4353}
-  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-  .btn.primary:hover{background:var(--accent2)}
-  .btn.ghost{background:transparent}
-  .btn.danger{color:var(--danger)}
-  .btn.small{padding:5px 9px;font-size:11px}
-  .row{display:flex;gap:8px;flex-wrap:wrap}
-
-  /* ---------- Mode switch ---------- */
-  .modes{display:flex;background:var(--bg3);padding:3px;border-radius:10px;border:1px solid var(--line)}
-  .modes button{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted)}
-  .modes button.on{background:var(--accent);color:#fff}
-
-  /* ---------- Upload ---------- */
-  .upload{
-    border:2px dashed var(--line);border-radius:var(--r);
-    padding:20px;text-align:center;cursor:pointer;transition:.15s;
-    background:var(--bg3);
-  }
-  .upload:hover{border-color:var(--accent);background:#1a2130}
-  .upload input{display:none}
-  .upload .ico{font-size:24px;margin-bottom:6px}
-  .upload .hint{color:var(--muted);font-size:11px;margin-top:4px}
-
-  /* ---------- Palettes strip ---------- */
-  .palettes{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
-  .palette{
-    flex:0 0 auto;border-radius:10px;overflow:hidden;cursor:pointer;
-    border:1px solid var(--line);transition:.15s;
-  }
-  .palette:hover{transform:translateY(-2px);border-color:var(--accent)}
-  .palette .strip{display:flex;height:36px}
-  .palette .strip span{width:26px}
-  .palette .lbl{font-size:10px;padding:4px 6px;background:var(--bg3);text-align:center;color:var(--muted)}
-
-  /* ---------- Color control rows ---------- */
-  .ctrl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;
-    padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
-  .ctrl:last-child{border-bottom:none}
-  .ctrl .lbl{font-size:12px;color:var(--txt)}
-  .ctrl .tools{display:flex;align-items:center;gap:6px}
-  .ctrl input[type=color]{
-    width:32px;height:32px;padding:0;border:1px solid var(--line);
-    border-radius:8px;background:transparent;cursor:pointer
-  }
-  .ctrl input[type=color]::-webkit-color-swatch-wrapper{padding:2px}
-  .ctrl input[type=color]::-webkit-color-swatch{border:none;border-radius:5px}
-  .ctrl input.hex{
-    width:80px;padding:6px 8px;background:var(--bg);border:1px solid var(--line);
-    border-radius:6px;font-size:11px;font-family:ui-monospace,Menlo,monospace;
-    text-transform:lowercase;
-  }
-  .ctrl .reset{color:var(--muted);font-size:11px;padding:4px;border-radius:5px}
-  .ctrl .reset:hover{color:var(--danger);background:rgba(247,118,142,.1)}
-
-  /* ---------- Sliders ---------- */
-  .slider{display:grid;grid-template-columns:1fr 46px;gap:8px;align-items:center;
-    padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
-  .slider:last-child{border-bottom:none}
-  .slider label{font-size:12px;display:block;margin-bottom:4px}
-  .slider input[type=range]{
-    -webkit-appearance:none;width:100%;height:6px;border-radius:3px;
-    background:var(--bg3);outline:none
-  }
-  .slider input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
-    background:var(--accent);cursor:pointer;border:2px solid var(--bg2)
-  }
-  .slider .val{text-align:center;font-size:11px;color:var(--muted);
-    font-family:ui-monospace,monospace}
-
-  /* ---------- Phone preview ---------- */
-  .phone-wrap{display:flex;justify-content:center}
-  .phone{
-    width:100%;max-width:340px;height:600px;
-    background:var(--pv-chat-bg,#111);
-    border-radius:28px;overflow:hidden;
-    display:flex;flex-direction:column;position:relative;
-    box-shadow:0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.05) inset;
-  }
-  .pv-header{
-    padding:10px 12px;display:flex;align-items:center;gap:10px;
-    background:var(--pv-header-bg);
-    color:var(--pv-header-txt);
-    border-bottom:1px solid rgba(0,0,0,.15);
-    z-index:3;
-  }
-  .pv-back{font-size:18px;opacity:.85;width:20px}
-  .pv-avatar{
-    width:32px;height:32px;border-radius:50%;
-    background:linear-gradient(135deg,var(--pv-accent),#bb9af7);
-  }
-  .pv-name{font-size:14px;font-weight:600}
-  .pv-status{font-size:11px;opacity:.7;color:var(--pv-link)}
-  .pv-chat{flex:1;position:relative;overflow:hidden;background:var(--pv-chat-bg)}
-  .pv-bg-img{
-    position:absolute;inset:0;background-size:cover;background-position:center;
-    opacity:var(--pv-img-op,1);pointer-events:none;
-  }
-  .pv-bg-dim{
-    position:absolute;inset:0;background:var(--pv-chat-bg);
-    opacity:var(--pv-dim,0);pointer-events:none;
-  }
-  .pv-messages{
-    position:relative;padding:12px;display:flex;flex-direction:column;gap:8px;
-    height:100%;overflow-y:auto;scrollbar-width:none;
-  }
-  .pv-messages::-webkit-scrollbar{display:none}
-  .pv-msg{
-    max-width:78%;padding:7px 11px;border-radius:14px;
-    font-size:12.5px;line-height:1.45;position:relative;
-    word-wrap:break-word;
-  }
-  .pv-msg.in{
-    align-self:flex-start;
-    background:rgba(var(--pv-in-bg-rgb),var(--pv-bubble-op,1));
-    color:var(--pv-in-txt);
-    border:1px solid rgba(var(--pv-in-bd-rgb),var(--pv-border-op,1));
-    border-end-start-radius:5px;
-  }
-  .pv-msg.out{
-    align-self:flex-end;
-    background:rgba(var(--pv-out-bg-rgb),var(--pv-bubble-op,1));
-    color:var(--pv-out-txt);
-    border:1px solid rgba(var(--pv-out-bd-rgb),var(--pv-border-op,1));
-    border-end-end-radius:5px;
-  }
-  .pv-msg .time{font-size:9px;opacity:.6;margin-inline-start:6px;float:left}
-  .pv-msg a{color:var(--pv-link);text-decoration:underline}
-  .pv-sep{height:1px;background:var(--pv-sep);margin:4px 0;opacity:.5}
-  .pv-input{
-    padding:8px 10px;display:flex;gap:8px;align-items:center;
-    background:var(--pv-header-bg);
-    border-top:1px solid var(--pv-sep);
-    z-index:3;
-  }
-  .pv-field{
-    flex:1;padding:8px 12px;border-radius:18px;
-    background:var(--pv-input-bg);color:var(--pv-input-txt);
-    font-size:12.5px;
-  }
-  .pv-send{
-    width:34px;height:34px;border-radius:50%;
-    background:var(--pv-send-bg);color:var(--pv-send-txt);
-    display:grid;place-items:center;font-size:13px;flex-shrink:0;
-  }
-
-  /* ---------- Footer / toast ---------- */
-  .toast{
-    position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);
-    background:var(--bg3);border:1px solid var(--line);color:var(--txt);
-    padding:10px 16px;border-radius:10px;font-size:12px;z-index:999;
-    transition:transform .3s;box-shadow:var(--shadow);
-  }
-  .toast.show{transform:translateX(-50%) translateY(0)}
-
-  /* Accordion */
-  details.acc{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);
-    margin-bottom:10px;overflow:hidden}
-  details.acc summary{
-    cursor:pointer;list-style:none;padding:12px 14px;display:flex;align-items:center;
-    gap:8px;font-weight:600;font-size:13px;
-  }
-  details.acc summary::-webkit-details-marker{display:none}
-  details.acc summary::after{
-    content:"▾";margin-inline-start:auto;color:var(--muted);transition:.2s
-  }
-  details.acc[open] summary::after{transform:rotate(180deg)}
-  details.acc .body{padding:0 14px 14px}
+:root{--bg:#0e1116;--bg2:#161b22;--bg3:#1f2630;--line:#2a3240;--txt:#e6edf3;--muted:#8b98a9;--accent:#5b8def;--accent2:#7aa2f7;--danger:#f7768e;--r:12px;--r2:8px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--txt);font-family:'Segoe UI',Tahoma,system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.5}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+.app{max-width:1200px;margin:0 auto;padding:12px}
+header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);margin-bottom:12px;position:sticky;top:8px;z-index:50}
+.logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),#bb9af7);display:grid;place-items:center;font-weight:800;color:#fff}
+.title{font-weight:700;font-size:15px}
+.title small{display:block;color:var(--muted);font-weight:400;font-size:11px}
+.spacer{flex:1}
+.layout{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:960px){.layout{grid-template-columns:minmax(0,1fr) 380px;align-items:start}.preview-col{position:sticky;top:78px}}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card h3{margin:0 0 10px;font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+.card h3 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--r2);background:var(--bg3);border:1px solid var(--line);font-size:12px;font-weight:600;transition:.15s}
+.btn:hover{background:#252c37}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:var(--accent2)}
+.btn.danger{color:var(--danger)}
+.btn.ok{color:#9ece6a}
+.btn.small{padding:5px 9px;font-size:11px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.modes{display:flex;background:var(--bg3);padding:3px;border-radius:10px;border:1px solid var(--line)}
+.modes button{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted)}
+.modes button.on{background:var(--accent);color:#fff}
+.upload{border:2px dashed var(--line);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:.15s;background:var(--bg3);display:block}
+.upload:hover{border-color:var(--accent)}
+.upload input{display:none}
+.upload .ico{font-size:24px;margin-bottom:6px}
+.upload .hint{color:var(--muted);font-size:11px;margin-top:4px}
+.palettes{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.palette{border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(--line);transition:.15s}
+.palette:hover{transform:translateY(-2px);border-color:var(--accent)}
+.palette .strip{display:flex;height:34px}
+.palette .strip span{flex:1}
+.palette .lbl{font-size:10px;padding:4px;background:var(--bg3);text-align:center;color:var(--muted)}
+.ctrl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
+.ctrl:last-child{border-bottom:none}
+.ctrl .lbl{font-size:12px}
+.ctrl .tools{display:flex;align-items:center;gap:6px}
+.ctrl input[type=color]{width:32px;height:32px;padding:0;border:1px solid var(--line);border-radius:8px;background:transparent;cursor:pointer}
+.ctrl input[type=color]::-webkit-color-swatch-wrapper{padding:2px}
+.ctrl input[type=color]::-webkit-color-swatch{border:none;border-radius:5px}
+.ctrl input.hex{width:78px;padding:6px 8px;background:var(--bg);border:1px solid var(--line);border-radius:6px;font-size:11px;font-family:ui-monospace,monospace;text-transform:lowercase}
+.ctrl .reset{color:var(--muted);font-size:13px;padding:4px 6px;border-radius:5px}
+.ctrl .reset:hover{color:var(--danger);background:rgba(247,118,142,.1)}
+.slider{display:grid;grid-template-columns:1fr 46px;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
+.slider:last-child{border-bottom:none}
+.slider label{font-size:12px;display:block;margin-bottom:4px}
+.slider input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:var(--bg3);outline:none}
+.slider input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg2)}
+.slider .val{text-align:center;font-size:11px;color:var(--muted);font-family:ui-monospace,monospace}
+.phone-wrap{display:flex;justify-content:center}
+.phone{width:100%;max-width:340px;height:600px;background:var(--pv-chat-bg,#111);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05) inset}
+.pv-header{padding:10px 12px;display:flex;align-items:center;gap:10px;background:var(--pv-header-bg);color:var(--pv-header-txt);z-index:3}
+.pv-back{font-size:18px;opacity:.85;width:20px}
+.pv-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pv-accent),#bb9af7)}
+.pv-name{font-size:14px;font-weight:600}
+.pv-status{font-size:11px;opacity:.7;color:var(--pv-link)}
+.pv-chat{flex:1;position:relative;overflow:hidden;background:var(--pv-chat-bg)}
+.pv-bg-img{position:absolute;inset:0;background-size:cover;background-position:center;opacity:var(--pv-img-op,1);pointer-events:none;transition:opacity .2s}
+.pv-bg-dim{position:absolute;inset:0;background:var(--pv-chat-bg);opacity:var(--pv-dim,0);pointer-events:none}
+.pv-messages{position:relative;padding:12px;display:flex;flex-direction:column;gap:8px;height:100%;overflow-y:auto;scrollbar-width:none}
+.pv-messages::-webkit-scrollbar{display:none}
+.pv-msg{max-width:78%;padding:7px 11px;border-radius:14px;font-size:12.5px;line-height:1.45;word-wrap:break-word}
+.pv-msg.in{align-self:flex-start;background:rgba(var(--pv-in-bg-rgb),var(--pv-bubble-op,1));color:var(--pv-in-txt);border:1px solid rgba(var(--pv-in-bd-rgb),var(--pv-border-op,1));border-end-start-radius:5px}
+.pv-msg.out{align-self:flex-end;background:rgba(var(--pv-out-bg-rgb),var(--pv-bubble-op,1));color:var(--pv-out-txt);border:1px solid rgba(var(--pv-out-bd-rgb),var(--pv-border-op,1));border-end-end-radius:5px}
+.pv-msg .time{font-size:9px;opacity:.6;margin-inline-start:6px;float:left}
+.pv-msg a{color:var(--pv-link);text-decoration:underline}
+.pv-sep{height:1px;background:var(--pv-sep);margin:4px 0;opacity:.5}
+.pv-input{padding:8px 10px;display:flex;gap:8px;align-items:center;background:var(--pv-header-bg);z-index:3}
+.pv-field{flex:1;padding:8px 12px;border-radius:18px;background:var(--pv-input-bg);color:var(--pv-input-txt);font-size:12.5px}
+.pv-send{width:34px;height:34px;border-radius:50%;background:var(--pv-send-bg);color:var(--pv-send-txt);display:grid;place-items:center;font-size:13px;flex-shrink:0}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--line);color:var(--txt);padding:10px 16px;border-radius:10px;font-size:12px;z-index:999;transition:transform .3s;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+details.acc{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+details.acc summary{cursor:pointer;list-style:none;padding:12px 14px;display:flex;align-items:center;gap:8px;font-weight:600;font-size:13px}
+details.acc summary::-webkit-details-marker{display:none}
+details.acc summary::after{content:"▾";margin-inline-start:auto;color:var(--muted);transition:.2s}
+details.acc[open] summary::after{transform:rotate(180deg)}
+details.acc .body{padding:0 14px 14px}
+.note{background:rgba(91,141,239,.08);border:1px solid rgba(91,141,239,.3);border-radius:8px;padding:10px;font-size:11px;color:#a9c1ea;margin-top:10px;line-height:1.6}
+.badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:5px;background:var(--bg3);color:var(--muted);margin-inline-start:6px;vertical-align:middle}
+.badge.ok{background:rgba(158,206,106,.15);color:#9ece6a}
+.badge.warn{background:rgba(240,180,80,.15);color:#f0b450}
 </style>
 </head>
 <body>
 <div class="app">
-
   <header class="top">
     <div class="logo">T</div>
-    <div class="title">Theme Studio<small>محرر ثيمات تيليجرام</small></div>
+    <div class="title">Theme Studio v3<small>محرر ثيمات تيليجرام</small></div>
     <div class="spacer"></div>
     <div class="modes">
       <button id="modeDark" class="on">داكن</button>
@@ -242,127 +108,75 @@
   </header>
 
   <div class="layout">
-    <!-- ================= CONTROLS ================= -->
     <div class="col">
-
-      <!-- Image -->
       <div class="card">
         <h3><span class="dot"></span> الصورة المصدر</h3>
         <label class="upload" for="imgInput">
           <div class="ico">🖼️</div>
           <div>اضغط لاختيار صورة</div>
-          <div class="hint">سيتم اقتراح لوحة ألوان متناسقة منها</div>
+          <div class="hint">تُستخرج منها لوحة ألوان متناسقة</div>
           <input type="file" id="imgInput" accept="image/*">
         </label>
         <div class="row" style="margin-top:10px">
-          <button class="btn small primary" id="btnExtract">🎨 استخراج لوحة جديدة</button>
+          <button class="btn small primary" id="btnExtract">🎨 استخراج جديد</button>
           <button class="btn small" id="btnRandom">🎲 عشوائي</button>
-          <button class="btn small danger" id="btnRemoveImg">🗑️ إزالة الصورة</button>
+          <button class="btn small" id="btnToggleImg">👁️ إخفاء الصورة</button>
+          <button class="btn small danger" id="btnRemoveImg">🗑️ إزالة</button>
         </div>
       </div>
 
-      <!-- Suggested palettes -->
       <div class="card" id="paletteCard" style="display:none">
-        <h3><span class="dot"></span> لوحات مقترحة</h3>
+        <h3><span class="dot"></span> لوحات مقترحة <span class="badge">6 خيارات</span></h3>
         <div class="palettes" id="palettesList"></div>
       </div>
 
-      <!-- Accent HSL -->
       <div class="card">
         <h3><span class="dot"></span> اللون الأساسي</h3>
-        <div class="slider">
-          <div><label>درجة اللون (Hue)</label>
-            <input type="range" id="hRange" min="0" max="360" value="220"></div>
-          <div class="val" id="hVal">220</div>
-        </div>
-        <div class="slider">
-          <div><label>التشبع (Saturation)</label>
-            <input type="range" id="sRange" min="0" max="100" value="60"></div>
-          <div class="val" id="sVal">60%</div>
-        </div>
-        <div class="slider">
-          <div><label>الإضاءة (Lightness)</label>
-            <input type="range" id="lRange" min="0" max="100" value="55"></div>
-          <div class="val" id="lVal">55%</div>
-        </div>
-        <div class="row" style="margin-top:8px">
-          <button class="btn small primary" id="btnRebuild">♻️ إعادة بناء اللوحة</button>
-        </div>
+        <div class="slider"><div><label>درجة اللون (Hue)</label><input type="range" id="hRange" min="0" max="360" value="215"></div><div class="val" id="hVal">215</div></div>
+        <div class="slider"><div><label>التشبع</label><input type="range" id="sRange" min="0" max="100" value="65"></div><div class="val" id="sVal">65%</div></div>
+        <div class="slider"><div><label>الإضاءة</label><input type="range" id="lRange" min="0" max="100" value="55"></div><div class="val" id="lVal">55%</div></div>
+        <div class="row" style="margin-top:8px"><button class="btn small primary" id="btnRebuild">♻️ إعادة بناء</button></div>
       </div>
 
-      <!-- Background -->
       <details class="acc" open>
         <summary><span class="dot"></span> الخلفية</summary>
         <div class="body">
           <div id="ctrlBackground"></div>
-          <div class="slider">
-            <div><label>شفافية صورة الخلفية</label>
-              <input type="range" id="imgOpacity" min="0" max="100" value="100"></div>
-            <div class="val" id="imgOpacityVal">100%</div>
-          </div>
-          <div class="slider">
-            <div><label>تعتيم فوق الصورة</label>
-              <input type="range" id="bgDim" min="0" max="100" value="40"></div>
-            <div class="val" id="bgDimVal">40%</div>
-          </div>
+          <div class="slider"><div><label>شفافية صورة الخلفية</label><input type="range" id="imgOpacity" min="0" max="100" value="100"></div><div class="val" id="imgOpacityVal">100%</div></div>
+          <div class="slider"><div><label>تعتيم فوق الصورة</label><input type="range" id="bgDim" min="0" max="100" value="40"></div><div class="val" id="bgDimVal">40%</div></div>
         </div>
       </details>
 
-      <!-- Header -->
-      <details class="acc">
-        <summary><span class="dot"></span> شريط العنوان</summary>
-        <div class="body"><div id="ctrlHeader"></div></div>
-      </details>
-
-      <!-- Bubbles -->
+      <details class="acc"><summary><span class="dot"></span> شريط العنوان</summary><div class="body"><div id="ctrlHeader"></div></div></details>
       <details class="acc" open>
         <summary><span class="dot"></span> الفقاعات</summary>
         <div class="body">
           <div id="ctrlBubbles"></div>
-          <div class="slider">
-            <div><label>شفافية الفقاعات</label>
-              <input type="range" id="bubbleOp" min="0" max="100" value="100"></div>
-            <div class="val" id="bubbleOpVal">100%</div>
-          </div>
-          <div class="slider">
-            <div><label>شفافية الحدود</label>
-              <input type="range" id="borderOp" min="0" max="100" value="100"></div>
-            <div class="val" id="borderOpVal">100%</div>
-          </div>
+          <div class="slider"><div><label>شفافية الفقاعات</label><input type="range" id="bubbleOp" min="0" max="100" value="100"></div><div class="val" id="bubbleOpVal">100%</div></div>
+          <div class="slider"><div><label>شفافية الحدود</label><input type="range" id="borderOp" min="0" max="100" value="100"></div><div class="val" id="borderOpVal">100%</div></div>
         </div>
       </details>
+      <details class="acc"><summary><span class="dot"></span> حقل الإرسال</summary><div class="body"><div id="ctrlInput"></div></div></details>
+      <details class="acc"><summary><span class="dot"></span> عناصر أخرى</summary><div class="body"><div id="ctrlMisc"></div></div></details>
 
-      <!-- Inputs -->
-      <details class="acc">
-        <summary><span class="dot"></span> حقل الإرسال</summary>
-        <div class="body"><div id="ctrlInput"></div></div>
-      </details>
-
-      <!-- Misc -->
-      <details class="acc">
-        <summary><span class="dot"></span> عناصر أخرى</summary>
-        <div class="body"><div id="ctrlMisc"></div></div>
-      </details>
-
-      <!-- Storage -->
       <div class="card">
-        <h3><span class="dot"></span> الحفظ والتصدير</h3>
+        <h3><span class="dot"></span> التصدير</h3>
         <div class="row">
-          <button class="btn small primary" id="btnSave">💾 حفظ محلي</button>
-          <button class="btn small" id="btnLoad">📂 استرجاع</button>
-          <button class="btn small" id="btnExport">⬇️ تصدير JSON</button>
+          <button class="btn small primary" id="btnExportAtTheme">⬇️ تصدير ثيم تيليجرام (.attheme)</button>
+          <button class="btn small" id="btnExport">⬇️ تصدير إعدادات (JSON)</button>
           <button class="btn small" id="btnImport">⬆️ استيراد JSON</button>
-          <button class="btn small danger" id="btnResetAll">🔄 إعادة ضبط الكل</button>
+          <button class="btn small" id="btnSave">💾 حفظ محلي</button>
+          <button class="btn small" id="btnLoad">📂 استرجاع</button>
+          <button class="btn small danger" id="btnResetAll">🔄 ضبط الكل</button>
         </div>
         <input type="file" id="importInput" accept=".json" style="display:none">
-        <p style="color:var(--muted);font-size:11px;margin:10px 0 0">
-          تصدير JSON هو حفظ لإعدادات Theme Studio فقط، وليس ملف ثيم تيليجرام بعد.
-        </p>
+        <div class="note">
+          <b>ℹ️ صيغة .attheme</b> خاصة بتطبيق <b>Telegram Android</b>. بعد التصدير، افتح الملف من مدير الملفات → سيُطلب منك تطبيقه في تيليجرام مباشرة.<br>
+          <b>iOS وDesktop</b> يستخدمان صيغًا مختلفة — ستدعم في نسخة لاحقة.
+        </div>
       </div>
-
     </div>
 
-    <!-- ================= PREVIEW ================= -->
     <div class="col preview-col">
       <div class="card">
         <h3><span class="dot"></span> المعاينة الحيّة</h3>
@@ -403,171 +217,82 @@
 
 <script>
 'use strict';
-
-/* =========================================================
-   1) أدوات الألوان
-   ========================================================= */
+/* ============ 1) أدوات الألوان ============ */
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const round=(v,n=2)=>Math.round(v*10**n)/10**n;
+function hexToRgb(hex){hex=hex.replace('#','').trim();if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(x=>clamp(Math.round(x),0,255).toString(16).padStart(2,'0')).join('')}
+function rgbToHsl(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b);let h=0,s=0;const l=(mx+mn)/2,d=mx-mn;if(d!==0){s=l>0.5?d/(2-mx-mn):d/(mx+mn);switch(mx){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break}h*=60}return{h,s,l}}
+function hslToRgb(h,s,l){h=((h%360)+360)%360;const c=(1-Math.abs(2*l-1))*s,x=c*(1-Math.abs((h/60)%2-1)),m=l-c/2;let r=0,g=0,b=0;if(h<60){r=c;g=x}else if(h<120){r=x;g=c}else if(h<180){g=c;b=x}else if(h<240){g=x;b=c}else if(h<300){r=x;b=c}else{r=c;b=x}return{r:(r+m)*255,g:(g+m)*255,b:(b+m)*255}}
+const hslToHex=(h,s,l)=>{const c=hslToRgb(h,s,l);return rgbToHex(c.r,c.g,c.b)};
+const hexToHsl=hex=>{const{r,g,b}=hexToRgb(hex);return rgbToHsl(r,g,b)};
+function relLum({r,g,b}){const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b)}
+function contrastText(bg){const c=hslToRgb(bg.h,bg.s,bg.l);const lum=relLum(c);return lum>0.5?{h:bg.h,s:Math.min(bg.s,0.15),l:0.13}:{h:bg.h,s:Math.min(bg.s,0.10),l:0.97}}
+const rgbStr=hex=>{const{r,g,b}=hexToRgb(hex);return`${r}, ${g}, ${b}`};
 
-function hexToRgb(hex){
-  hex=hex.replace('#','').trim();
-  if(hex.length===3) hex=hex.split('').map(c=>c+c).join('');
-  const n=parseInt(hex,16);
-  return {r:(n>>16)&255,g:(n>>8)&255,b:n&255};
-}
-function rgbToHex(r,g,b){
-  return '#'+[r,g,b].map(x=>clamp(Math.round(x),0,255).toString(16).padStart(2,'0')).join('');
-}
-function rgbToHsl(r,g,b){
-  r/=255;g/=255;b/=255;
-  const max=Math.max(r,g,b),min=Math.min(r,g,b);
-  let h=0,s=0;const l=(max+min)/2;
-  const d=max-min;
-  if(d!==0){
-    s=l>0.5?d/(2-max-min):d/(max+min);
-    switch(max){
-      case r:h=((g-b)/d+(g<b?6:0));break;
-      case g:h=((b-r)/d+2);break;
-      case b:h=((r-g)/d+4);break;
-    }
-    h*=60;
-  }
-  return {h,s,l};
-}
-function hslToRgb(h,s,l){
-  h=((h%360)+360)%360;
-  const c=(1-Math.abs(2*l-1))*s;
-  const x=c*(1-Math.abs((h/60)%2-1));
-  const m=l-c/2;
-  let r=0,g=0,b=0;
-  if(h<60){r=c;g=x}
-  else if(h<120){r=x;g=c}
-  else if(h<180){g=c;b=x}
-  else if(h<240){g=x;b=c}
-  else if(h<300){r=x;b=c}
-  else{r=c;b=x}
-  return {r:(r+m)*255,g:(g+m)*255,b:(b+m)*255};
-}
-const hslToHex=(h,s,l)=>rgbToHex(...Object.values(hslToRgb(h,s,l)));
-const hexToHsl=(hex)=>{const {r,g,b}=hexToRgb(hex);return rgbToHsl(r,g,b)};
-
-function relLuminance({r,g,b}){
-  const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};
-  return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b);
-}
-function contrastText(bgHsl){
-  const bg=hslToRgb(bgHsl.h,bgHsl.s,bgHsl.l);
-  const lum=relLuminance(bg);
-  return lum>0.5
-    ? {h:bgHsl.h,s:Math.min(bgHsl.s,0.15),l:0.14}
-    : {h:bgHsl.h,s:Math.min(bgHsl.s,0.10),l:0.96};
-}
-const rgbStr = hex=>{const {r,g,b}=hexToRgb(hex);return `${r}, ${g}, ${b}`};
-
-/* =========================================================
-   2) استخراج الألوان من الصورة
-   ========================================================= */
-function loadImage(src){
-  return new Promise((res,rej)=>{
-    const im=new Image();
-    im.crossOrigin='anonymous';
-    im.onload=()=>res(im);
-    im.onerror=rej;
-    im.src=src;
-  });
-}
+/* ============ 2) استخراج الألوان ============ */
+function loadImage(src){return new Promise((res,rej)=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=rej;i.src=src})}
 
 async function extractColors(src){
   const img=await loadImage(src);
-  const S=128;
-  const c=document.createElement('canvas');
-  c.width=c.height=S;
+  const S=128,c=document.createElement('canvas');c.width=c.height=S;
   const ctx=c.getContext('2d');
-  const k=Math.max(S/img.width,S/img.height);
-  const w=img.width*k,h=img.height*k;
+  const k=Math.max(S/img.width,S/img.height),w=img.width*k,h=img.height*k;
   ctx.drawImage(img,(S-w)/2,(S-h)/2,w,h);
   const data=ctx.getImageData(0,0,S,S).data;
-
   const buckets=new Map();
   for(let i=0;i<data.length;i+=4){
     const r=data[i],g=data[i+1],b=data[i+2],a=data[i+3];
     if(a<128) continue;
     const {h,s,l}=rgbToHsl(r,g,b);
-    if(l<0.07||l>0.93) continue;
-    if(s<0.08) continue;
-    const qh=Math.round(h/15)*15%360;
-    const qs=Math.round(s*10)/10;
-    const ql=Math.round(l*10)/10;
+    if(l<0.08||l>0.92||s<0.10) continue;
+    const qh=Math.round(h/15)*15%360,qs=Math.round(s*10)/10,ql=Math.round(l*10)/10;
     const key=`${qh}|${qs}|${ql}`;
-    let e=buckets.get(key);
-    if(!e){e={h:qh,s:qs,l:ql,count:0,rs:0,gs:0,bs:0};buckets.set(key,e)}
+    let e=buckets.get(key);if(!e){e={h:qh,s:qs,l:ql,count:0,rs:0,gs:0,bs:0};buckets.set(key,e)}
     e.count++;e.rs+=r;e.gs+=g;e.bs+=b;
   }
   const sorted=[...buckets.values()].sort((a,b)=>b.count-a.count);
   const picked=[];
-  for(const c of sorted){
-    if(picked.length>=7) break;
-    const tooClose=picked.some(p=>{
-      let dh=Math.abs(p.h-c.h); dh=Math.min(dh,360-dh);
-      return dh<25 && Math.abs(p.l-c.l)<0.15;
-    });
+  for(const c2 of sorted){
+    if(picked.length>=8) break;
+    const tooClose=picked.some(p=>{let dh=Math.abs(p.h-c2.h);dh=Math.min(dh,360-dh);return dh<22&&Math.abs(p.l-c2.l)<0.12});
     if(tooClose) continue;
-    picked.push({
-      h:c.h, s:c.s, l:c.l,
-      hex:rgbToHex(c.rs/c.count,c.gs/c.count,c.bs/c.count),
-      count:c.count
-    });
+    picked.push({h:c2.h,s:c2.s,l:c2.l,hex:rgbToHex(c2.rs/c2.count,c2.gs/c2.count,c2.bs/c2.count),count:c2.count});
   }
   return picked;
 }
 
-/* =========================================================
-   3) بناء اللوحة الكاملة
-   ========================================================= */
+/* ============ 3) بناء اللوحة ============ */
 function pickAccent(colors,mode){
   if(!colors.length) return {h:215,s:0.65,l:0.55};
-  const ranked=[...colors].sort((a,b)=>{
-    const va=a.s*Math.log(a.count+2);
-    const vb=b.s*Math.log(b.count+2);
-    return vb-va;
-  });
+  const ranked=[...colors].sort((a,b)=>(b.s*Math.log(b.count+2))-(a.s*Math.log(a.count+2)));
   const top=ranked[0];
-  return {
-    h:top.h,
-    s:clamp(top.s,0.45,0.82),
-    l:mode==='dark'?clamp(top.l,0.55,0.68):clamp(top.l,0.38,0.50)
-  };
+  return {h:top.h,s:clamp(top.s,0.50,0.85),l:mode==='dark'?clamp(top.l,0.55,0.70):clamp(top.l,0.40,0.52)};
 }
 
-function buildPalette(colors,mode,accentOverride){
+function buildPalette(colors,mode,accent){
   const dark=mode==='dark';
-  const A=accentOverride || pickAccent(colors,mode);
+  const A=accent||pickAccent(colors,mode);
   const bgHue=A.h;
+  const bgSat=dark?0.18:0.22;
 
-  const bgSat = dark?0.16:0.22;
-  const chatBg  = {h:bgHue,s:bgSat,l:dark?0.10:0.95};
-  const headerBg= {h:bgHue,s:bgSat+0.04,l:dark?0.13:0.90};
+  const chatBg   ={h:bgHue,s:bgSat,l:dark?0.10:0.95};
+  const headerBg ={h:bgHue,s:bgSat+0.05,l:dark?0.13:0.90};
+  const inBubble ={h:bgHue,s:bgSat*0.55,l:dark?0.19:0.99};
+  // الفقاعة الصادرة تتبع اللون الأساسي مباشرة — فرق واضح بين اللوحات
+  const outBubble={h:A.h,s:clamp(A.s*0.95,0.45,0.85),l:dark?clamp(A.l*0.55,0.28,0.42):clamp(A.l*1.30,0.55,0.75)};
 
-  const inBubble  = {h:bgHue,s:bgSat*0.7,l:dark?0.20:0.99};
-  const outBubble = {h:A.h,s:dark?0.55:0.50,l:dark?0.32:0.72};
+  const chatText=contrastText(chatBg),headerText=contrastText(headerBg);
+  const inText=contrastText(inBubble),outText=contrastText(outBubble);
 
-  const chatText   = contrastText(chatBg);
-  const headerText = contrastText(headerBg);
-  const inText     = contrastText(inBubble);
-  const outText    = contrastText(outBubble);
+  const inBorder ={h:A.h,s:0.35,l:dark?0.32:0.75};
+  const outBorder={h:A.h,s:clamp(A.s*1.1,0.55,0.95),l:dark?clamp(A.l*0.95,0.48,0.62):clamp(A.l*1.05,0.50,0.65)};
 
-  const inBorder  = {h:A.h,s:0.40,l:dark?0.34:0.70};
-  const outBorder = {h:A.h,s:0.45,l:dark?0.50:0.55};
-
-  const inputBg   = {h:bgHue,s:bgSat,l:dark?0.18:0.90};
-  const inputText = contrastText(inputBg);
-
-  const sendBg    = {h:A.h,s:A.s,l:A.l};
-  const sendIcon  = contrastText(sendBg);
-
-  const linkColor = {h:A.h,s:0.70,l:dark?0.68:0.42};
-  const separator = {h:bgHue,s:bgSat*0.5,l:dark?0.24:0.82};
+  const inputBg  ={h:bgHue,s:bgSat,l:dark?0.18:0.90};
+  const inputText=contrastText(inputBg);
+  const sendBg   ={h:A.h,s:A.s,l:A.l};
+  const sendIcon =contrastText(sendBg);
+  const linkCol  ={h:A.h,s:0.72,l:dark?0.68:0.42};
+  const sepCol   ={h:bgHue,s:bgSat*0.5,l:dark?0.24:0.82};
 
   return {
     accentColor:    hslToHex(A.h,A.s,A.l),
@@ -585,120 +310,49 @@ function buildPalette(colors,mode,accentOverride){
     inputText:      hslToHex(inputText.h,inputText.s,inputText.l),
     sendBtnBg:      hslToHex(sendBg.h,sendBg.s,sendBg.l),
     sendBtnIcon:    hslToHex(sendIcon.h,sendIcon.s,sendIcon.l),
-    linkColor:      hslToHex(linkColor.h,linkColor.s,linkColor.l),
-    separatorColor: hslToHex(separator.h,separator.s,separator.l)
+    linkColor:      hslToHex(linkCol.h,linkCol.s,linkCol.l),
+    separatorColor: hslToHex(sepCol.h,sepCol.s,sepCol.l)
   };
 }
 
-/* =========================================================
-   4) الحالة
-   ========================================================= */
+/* ============ 4) الحالة ============ */
 const DEFAULTS={
-  accentColor:'#4a86e8',
-  chatBg:'#0f1218',
-  chatText:'#e6edf3',
-  headerBg:'#151a22',
-  headerText:'#e6edf3',
-  inBubbleBg:'#1a1f2a',
-  inBubbleText:'#e6edf3',
-  inBubbleBorder:'#2b3342',
-  outBubbleBg:'#3a6cb5',
-  outBubbleText:'#ffffff',
-  outBubbleBorder:'#5b8def',
-  inputBg:'#1a1f2a',
-  inputText:'#e6edf3',
-  sendBtnBg:'#4a86e8',
-  sendBtnIcon:'#ffffff',
-  linkColor:'#7aa2f7',
-  separatorColor:'#20262f'
+  accentColor:'#4a86e8',chatBg:'#0f1218',chatText:'#e6edf3',
+  headerBg:'#151a22',headerText:'#e6edf3',
+  inBubbleBg:'#1a1f2a',inBubbleText:'#e6edf3',inBubbleBorder:'#2b3342',
+  outBubbleBg:'#3a6cb5',outBubbleText:'#ffffff',outBubbleBorder:'#5b8def',
+  inputBg:'#1a1f2a',inputText:'#e6edf3',
+  sendBtnBg:'#4a86e8',sendBtnIcon:'#ffffff',
+  linkColor:'#7aa2f7',separatorColor:'#20262f'
 };
+const state={mode:'dark',colors:{...DEFAULTS},image:null,imgOpacity:100,dim:40,bubbleOp:100,borderOp:100,sourceColors:[],accentOverride:null,imgHidden:false};
 
-const state={
-  mode:'dark',
-  colors:{...DEFAULTS},
-  image:null,
-  imgOpacity:100,
-  dim:40,
-  bubbleOp:100,
-  borderOp:100,
-  sourceColors:[],
-  accentOverride:null
-};
-
-/* =========================================================
-   5) تعريف عناصر التحكم
-   ========================================================= */
+/* ============ 5) عناصر التحكم ============ */
 const COLOR_GROUPS={
-  background:[
-    ['chatBg','خلفية المحادثة'],
-    ['chatText','نص المحادثة']
-  ],
-  header:[
-    ['headerBg','خلفية الشريط'],
-    ['headerText','نص الشريط']
-  ],
-  bubbles:[
-    ['inBubbleBg','فقاعة واردة'],
-    ['inBubbleText','نص الواردة'],
-    ['inBubbleBorder','حدود الواردة'],
-    ['outBubbleBg','فقاعة صادرة'],
-    ['outBubbleText','نص الصادرة'],
-    ['outBubbleBorder','حدود الصادرة']
-  ],
-  input:[
-    ['inputBg','خلفية الحقل'],
-    ['inputText','نص الحقل'],
-    ['sendBtnBg','زر الإرسال'],
-    ['sendBtnIcon','أيقونة الإرسال']
-  ],
-  misc:[
-    ['accentColor','اللون الأساسي'],
-    ['linkColor','الروابط'],
-    ['separatorColor','الفواصل']
-  ]
+  background:[['chatBg','خلفية المحادثة'],['chatText','نص المحادثة']],
+  header:[['headerBg','خلفية الشريط'],['headerText','نص الشريط']],
+  bubbles:[['inBubbleBg','فقاعة واردة'],['inBubbleText','نص الواردة'],['inBubbleBorder','حدود الواردة'],['outBubbleBg','فقاعة صادرة'],['outBubbleText','نص الصادرة'],['outBubbleBorder','حدود الصادرة']],
+  input:[['inputBg','خلفية الحقل'],['inputText','نص الحقل'],['sendBtnBg','زر الإرسال'],['sendBtnIcon','أيقونة الإرسال']],
+  misc:[['accentColor','اللون الأساسي'],['linkColor','الروابط'],['separatorColor','الفواصل']]
 };
 
 function renderColorGroup(containerId,keys){
-  const el=document.getElementById(containerId);
-  el.innerHTML='';
+  const el=document.getElementById(containerId);el.innerHTML='';
   for(const [key,label] of keys){
     const row=document.createElement('div');
     row.className='ctrl';
-    row.innerHTML=`
-      <div class="lbl">${label}</div>
-      <div class="tools">
-        <input type="color" data-k="${key}" value="${state.colors[key]}">
-        <input class="hex" data-k="${key}" value="${state.colors[key]}">
-        <button class="reset" data-reset="${key}" title="إعادة ضبط">↺</button>
-      </div>`;
+    row.innerHTML=`<div class="lbl">${label}</div><div class="tools"><input type="color" data-k="${key}" value="${state.colors[key]}"><input class="hex" data-k="${key}" value="${state.colors[key]}"><button class="reset" data-reset="${key}">↺</button></div>`;
     el.appendChild(row);
   }
-  el.querySelectorAll('input[type=color]').forEach(inp=>{
-    inp.addEventListener('input',e=>{
-      state.colors[e.target.dataset.k]=e.target.value;
-      syncInputs();applyPreview();
-    });
-  });
-  el.querySelectorAll('input.hex').forEach(inp=>{
-    inp.addEventListener('change',e=>{
-      let v=e.target.value.trim();
-      if(!v.startsWith('#')) v='#'+v;
-      if(/^#[0-9a-fA-F]{6}$/.test(v)){
-        state.colors[e.target.dataset.k]=v.toLowerCase();
-        syncInputs();applyPreview();
-      }else{
-        e.target.value=state.colors[e.target.dataset.k];
-      }
-    });
-  });
-  el.querySelectorAll('[data-reset]').forEach(b=>{
-    b.addEventListener('click',e=>{
-      const k=e.target.dataset.reset;
-      state.colors[k]=DEFAULTS[k];
-      syncInputs();applyPreview();
-      toast('تم ضبط '+k);
-    });
-  });
+  el.querySelectorAll('input[type=color]').forEach(i=>i.addEventListener('input',e=>{state.colors[e.target.dataset.k]=e.target.value;syncInputs();applyPreview()}));
+  el.querySelectorAll('input.hex').forEach(i=>i.addEventListener('change',e=>{
+    let v=e.target.value.trim();if(!v.startsWith('#'))v='#'+v;
+    if(/^#[0-9a-fA-F]{6}$/.test(v)){state.colors[e.target.dataset.k]=v.toLowerCase();syncInputs();applyPreview()}
+    else e.target.value=state.colors[e.target.dataset.k];
+  }));
+  el.querySelectorAll('[data-reset]').forEach(b=>b.addEventListener('click',e=>{
+    state.colors[e.target.dataset.reset]=DEFAULTS[e.target.dataset.reset];syncInputs();applyPreview();toast('تم');
+  }));
 }
 
 function syncInputs(){
@@ -707,7 +361,6 @@ function syncInputs(){
     document.querySelectorAll(`input[type=color][data-k="${k}"]`).forEach(i=>i.value=v);
     document.querySelectorAll(`input.hex[data-k="${k}"]`).forEach(i=>i.value=v);
   }
-  // sync accent HSL sliders from accentColor
   const h=hexToHsl(state.colors.accentColor);
   document.getElementById('hRange').value=Math.round(h.h);
   document.getElementById('sRange').value=Math.round(h.s*100);
@@ -717,12 +370,9 @@ function syncInputs(){
   document.getElementById('lVal').textContent=Math.round(h.l*100)+'%';
 }
 
-/* =========================================================
-   6) المعاينة
-   ========================================================= */
+/* ============ 6) المعاينة ============ */
 function applyPreview(){
-  const p=document.getElementById('phone');
-  const c=state.colors;
+  const p=document.getElementById('phone'),c=state.colors;
   p.style.setProperty('--pv-chat-bg',c.chatBg);
   p.style.setProperty('--pv-header-bg',c.headerBg);
   p.style.setProperty('--pv-header-txt',c.headerText);
@@ -741,152 +391,99 @@ function applyPreview(){
   p.style.setProperty('--pv-sep',c.separatorColor);
   p.style.setProperty('--pv-bubble-op',state.bubbleOp/100);
   p.style.setProperty('--pv-border-op',state.borderOp/100);
-  p.style.setProperty('--pv-img-op',state.imgOpacity/100);
-  p.style.setProperty('--pv-dim',state.dim/100);
-
-  const bgImg=document.getElementById('pvBgImg');
-  if(state.image){
-    bgImg.style.backgroundImage=`url("${state.image}")`;
-  }else{
-    bgImg.style.backgroundImage='none';
-  }
-  const pc=document.querySelector('.pv-chat');
-  if(pc) pc.style.color=c.chatText;
-
-  // تحديث لون الهيدر في تيليجرام لو متاح
-  try{
-    if(window.Telegram && Telegram.WebApp && Telegram.WebApp.setHeaderColor){
-      Telegram.WebApp.setHeaderColor(c.headerBg);
-    }
-  }catch(_){}
+  p.style.setProperty('--pv-img-op',state.imgHidden?0:state.imgOpacity/100);
+  p.style.setProperty('--pv-dim',state.imgHidden?0:state.dim/100);
+  const bg=document.getElementById('pvBgImg');
+  bg.style.backgroundImage=state.image?`url("${state.image}")`:'none';
+  const pc=document.querySelector('.pv-chat');if(pc)pc.style.color=c.chatText;
+  try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.setHeaderColor)Telegram.WebApp.setHeaderColor(c.headerBg)}catch(_){}
 }
 
-/* =========================================================
-   7) اللوحات المقترحة
-   ========================================================= */
+/* ============ 7) اللوحات المقترحة — 6 نسخ ============ */
 function renderPalettes(colors){
-  const card=document.getElementById('paletteCard');
-  const list=document.getElementById('palettesList');
+  const card=document.getElementById('paletteCard'),list=document.getElementById('palettesList');
   if(!colors.length){card.style.display='none';return}
-  card.style.display='block';
-  list.innerHTML='';
+  card.style.display='block';list.innerHTML='';
+  const base=pickAccent(colors,state.mode);
   const variants=[
-    {name:'متوازن', sat:1, l:1},
-    {name:'هادئ',   sat:0.65, l:0.9},
-    {name:'زاهي',   sat:1.15, l:1.05}
+    {name:'متوازن',    sat:1.00,lt:1.00,hs:0},
+    {name:'هادئ',      sat:0.55,lt:1.00,hs:0},
+    {name:'زاهي',      sat:1.35,lt:1.05,hs:0},
+    {name:'داكن عميق', sat:1.10,lt:0.82,hs:0},
+    {name:'دافئ',      sat:0.95,lt:1.00,hs:35},
+    {name:'بارد',      sat:0.95,lt:1.00,hs:-35}
   ];
   for(const v of variants){
-    const acc=pickAccent(colors,state.mode);
-    const tuned={
-      h:acc.h,
-      s:clamp(acc.s*v.sat,0.2,0.95),
-      l:clamp(acc.l*v.l,0.25,0.75)
-    };
+    const tuned={h:(base.h+v.hs+360)%360,s:clamp(base.s*v.sat,0.20,0.95),l:clamp(base.l*v.lt,0.25,0.75)};
     const pal=buildPalette(colors,state.mode,tuned);
     const el=document.createElement('div');
     el.className='palette';
-    el.innerHTML=`
-      <div class="strip">
-        <span style="background:${pal.chatBg}"></span>
-        <span style="background:${pal.inBubbleBg}"></span>
-        <span style="background:${pal.outBubbleBg}"></span>
-        <span style="background:${pal.accentColor}"></span>
-        <span style="background:${pal.headerBg}"></span>
-      </div>
-      <div class="lbl">${v.name}</div>`;
+    el.innerHTML=`<div class="strip"><span style="background:${pal.chatBg}"></span><span style="background:${pal.inBubbleBg}"></span><span style="background:${pal.outBubbleBg}"></span><span style="background:${pal.accentColor}"></span><span style="background:${pal.headerBg}"></span></div><div class="lbl">${v.name}</div>`;
     el.addEventListener('click',()=>{
-      Object.assign(state.colors,pal);
+      Object.assign(state.colors,pal);   // كل الألوان تُستبدل
       state.accentOverride=tuned;
       syncInputs();applyPreview();
-      toast('تم تطبيق اللوحة: '+v.name);
+      toast('تم تطبيق: '+v.name);
     });
     list.appendChild(el);
   }
 }
 
-/* =========================================================
-   8) Toast
-   ========================================================= */
-let toastTimer;
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
-}
+/* ============ 8) Toast ============ */
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
 
-/* =========================================================
-   9) الأحداث
-   ========================================================= */
-// Mode
+/* ============ 9) أحداث ============ */
 document.getElementById('modeDark').addEventListener('click',()=>setMode('dark'));
 document.getElementById('modeLight').addEventListener('click',()=>setMode('light'));
 function setMode(m){
   state.mode=m;
   document.getElementById('modeDark').classList.toggle('on',m==='dark');
   document.getElementById('modeLight').classList.toggle('on',m==='light');
-  if(state.sourceColors.length){
-    const pal=buildPalette(state.sourceColors,m,state.accentOverride);
-    Object.assign(state.colors,pal);
-  }
+  if(state.sourceColors.length){Object.assign(state.colors,buildPalette(state.sourceColors,m,state.accentOverride))}
   syncInputs();applyPreview();
 }
 
-// Upload
-document.getElementById('imgInput').addEventListener('change',async e=>{
-  const f=e.target.files&&e.target.files[0];
-  if(!f) return;
-  if(f.size>4*1024*1024){toast('الصورة كبيرة (>4MB)، اختر أصغر');return}
-  const reader=new FileReader();
-  reader.onload=async ()=>{
-    state.image=reader.result;
-    await runExtraction();
-  };
-  reader.readAsDataURL(f);
-  e.target.value='';
+document.getElementById('imgInput').addEventListener('change',e=>{
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  if(f.size>4*1024*1024){toast('الصورة كبيرة (>4MB)');return}
+  const r=new FileReader();
+  r.onload=async()=>{state.image=r.result;state.imgHidden=false;await runExtraction()};
+  r.readAsDataURL(f);e.target.value='';
 });
 
 async function runExtraction(){
   if(!state.image){toast('ارفع صورة أولاً');return}
   try{
-    toast('جاري تحليل الصورة…');
+    toast('جاري التحليل…');
     const colors=await extractColors(state.image);
-    if(!colors.length){toast('لم أستطع استخراج ألوان مناسبة');return}
-    state.sourceColors=colors;
-    state.accentOverride=null;
-    const pal=buildPalette(colors,state.mode);
-    Object.assign(state.colors,pal);
-    renderPalettes(colors);
-    syncInputs();applyPreview();
+    if(!colors.length){toast('لا ألوان مناسبة');return}
+    state.sourceColors=colors;state.accentOverride=null;
+    Object.assign(state.colors,buildPalette(colors,state.mode));
+    renderPalettes(colors);syncInputs();applyPreview();
     toast('تم استخراج '+colors.length+' ألوان');
-  }catch(err){
-    console.error(err);
-    toast('فشل تحليل الصورة');
-  }
+  }catch(err){console.error(err);toast('فشل التحليل')}
 }
-
 document.getElementById('btnExtract').addEventListener('click',runExtraction);
-
 document.getElementById('btnRemoveImg').addEventListener('click',()=>{
   state.image=null;state.sourceColors=[];
   document.getElementById('paletteCard').style.display='none';
-  applyPreview();toast('تمت إزالة الصورة');
+  applyPreview();toast('أُزيلت الصورة');
+});
+document.getElementById('btnToggleImg').addEventListener('click',e=>{
+  state.imgHidden=!state.imgHidden;
+  e.target.textContent=state.imgHidden?'👁️ إظهار الصورة':'👁️ إخفاء الصورة';
+  applyPreview();
 });
 
-// Random
 document.getElementById('btnRandom').addEventListener('click',()=>{
   const h=Math.floor(Math.random()*360);
-  const s=0.45+Math.random()*0.35;
-  const l=state.mode==='dark'?0.55+Math.random()*0.10:0.40+Math.random()*0.10;
+  const s=0.50+Math.random()*0.35;
+  const l=state.mode==='dark'?0.55+Math.random()*0.12:0.40+Math.random()*0.12;
   const acc={h,s,l};
-  const pal=buildPalette(state.sourceColors,state.mode,acc);
-  Object.assign(state.colors,pal);
-  state.accentOverride=acc;
-  syncInputs();applyPreview();
+  Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,acc));
+  state.accentOverride=acc;syncInputs();applyPreview();
 });
 
-// Accent HSL
 ['h','s','l'].forEach(k=>{
   document.getElementById(k+'Range').addEventListener('input',()=>{
     const h=+document.getElementById('hRange').value;
@@ -896,10 +493,7 @@ document.getElementById('btnRandom').addEventListener('click',()=>{
     document.getElementById('sVal').textContent=Math.round(s*100)+'%';
     document.getElementById('lVal').textContent=Math.round(l*100)+'%';
     state.accentOverride={h,s,l};
-    // Regenerate everything from this accent
-    const pal=buildPalette(state.sourceColors,state.mode,state.accentOverride);
-    Object.assign(state.colors,pal);
-    // Now sync only the color pickers (not the hsl sliders, they already reflect)
+    Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,state.accentOverride));
     for(const key in state.colors){
       const v=state.colors[key];
       document.querySelectorAll(`input[type=color][data-k="${key}"]`).forEach(i=>i.value=v);
@@ -910,204 +504,146 @@ document.getElementById('btnRandom').addEventListener('click',()=>{
 });
 
 document.getElementById('btnRebuild').addEventListener('click',()=>{
-  const pal=buildPalette(state.sourceColors,state.mode,state.accentOverride);
-  Object.assign(state.colors,pal);
-  syncInputs();applyPreview();
-  toast('تم إعادة بناء اللوحة');
+  Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,state.accentOverride));
+  syncInputs();applyPreview();toast('تم');
 });
 
-// Sliders
 function bindSlider(id,valId,key,unit='%'){
-  const s=document.getElementById(id);
-  const v=document.getElementById(valId);
-  s.addEventListener('input',()=>{
-    state[key]=+s.value;
-    v.textContent=s.value+unit;
-    applyPreview();
-  });
+  const s=document.getElementById(id),v=document.getElementById(valId);
+  s.addEventListener('input',()=>{state[key]=+s.value;v.textContent=s.value+unit;applyPreview()});
 }
 bindSlider('imgOpacity','imgOpacityVal','imgOpacity');
 bindSlider('bgDim','bgDimVal','dim');
 bindSlider('bubbleOp','bubbleOpVal','bubbleOp');
 bindSlider('borderOp','borderOpVal','borderOp');
 
-/* =========================================================
-   10) الحفظ والاستيراد والتصدير
-   ========================================================= */
-const LS_KEY='theme-studio-v2';
-
-document.getElementById('btnSave').addEventListener('click',()=>{
-  try{
-    const data={
-      v:2,
-      mode:state.mode,
-      colors:state.colors,
-      imgOpacity:state.imgOpacity,
-      dim:state.dim,
-      bubbleOp:state.bubbleOp,
-      borderOp:state.borderOp,
-      sourceColors:state.sourceColors,
-      accentOverride:state.accentOverride,
-      image:state.image
-    };
-    localStorage.setItem(LS_KEY,JSON.stringify(data));
-    toast('تم الحفظ محليًا');
-  }catch(err){
-    // قد تفشل بسبب حجم الصورة
-    try{
-      const slim={...state, image:null};
-      const data={v:2,mode:state.mode,colors:state.colors,
-        imgOpacity:state.imgOpacity,dim:state.dim,
-        bubbleOp:state.bubbleOp,borderOp:state.borderOp,
-        sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:null};
-      localStorage.setItem(LS_KEY,JSON.stringify(data));
-      toast('حُفظ بدون الصورة (حجم كبير)');
-    }catch(e2){toast('فشل الحفظ')}
-  }
-});
-
-document.getElementById('btnLoad').addEventListener('click',()=>{
-  const raw=localStorage.getItem(LS_KEY);
-  if(!raw){toast('لا يوجد حفظ سابق');return}
-  try{
-    const d=JSON.parse(raw);
-    Object.assign(state,{
-      mode:d.mode||'dark',
-      colors:{...DEFAULTS,...(d.colors||{})},
-      imgOpacity:d.imgOpacity??100,
-      dim:d.dim??40,
-      bubbleOp:d.bubbleOp??100,
-      borderOp:d.borderOp??100,
-      sourceColors:d.sourceColors||[],
-      accentOverride:d.accentOverride||null,
-      image:d.image||null
-    });
-    document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
-    document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
-    ['imgOpacity','bgDim','bubbleOp','borderOp'].forEach((id,i)=>{
-      const k=['imgOpacity','dim','bubbleOp','borderOp'][i];
-      const v=['imgOpacityVal','bgDimVal','bubbleOpVal','borderOpVal'][i];
-      document.getElementById(id).value=state[k];
-      document.getElementById(v).textContent=state[k]+'%';
-    });
-    if(state.sourceColors.length) renderPalettes(state.sourceColors);
-    syncInputs();applyPreview();
-    toast('تم الاسترجاع');
-  }catch(e){toast('ملف تالف')}
-});
-
-document.getElementById('btnExport').addEventListener('click',()=>{
-  const data={
-    v:2, exportedAt:new Date().toISOString(),
-    mode:state.mode, colors:state.colors,
-    imgOpacity:state.imgOpacity, dim:state.dim,
-    bubbleOp:state.bubbleOp, borderOp:state.borderOp,
-    sourceColors:state.sourceColors,
-    accentOverride:state.accentOverride,
-    image:state.image
-  };
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+/* ============ 10) تصدير .attheme الحقيقي ============ */
+function hexToArgb(hex,alpha=1){
+  const{r,g,b}=hexToRgb(hex);
+  const a=Math.round(clamp(alpha,0,1)*255).toString(16).padStart(2,'0');
+  return '#'+a+r.toString(16).padStart(2,'0')+g.toString(16).padStart(2,'0')+b.toString(16).padStart(2,'0');
+}
+function buildAtTheme(){
+  const c=state.colors;
+  const bA=state.bubbleOp/100;
+  const bdA=state.borderOp/100;
+  return [
+    '// Theme Studio export',
+    '// Telegram Android .attheme',
+    '// '+new Date().toISOString(),
+    '',
+    'chat_wallpaper='+hexToArgb(c.chatBg),
+    'chat_wallpaper_gradient_to='+hexToArgb(c.chatBg),
+    'chat_inBubble='+hexToArgb(c.inBubbleBg,bA),
+    'chat_outBubble='+hexToArgb(c.outBubbleBg,bA),
+    'chat_inBubbleSelected='+hexToArgb(c.inBubbleBg,bA),
+    'chat_outBubbleSelected='+hexToArgb(c.outBubbleBg,bA),
+    'chat_inBubbleShadow='+hexToArgb(c.inBubbleBorder,bdA),
+    'chat_outBubbleShadow='+hexToArgb(c.outBubbleBorder,bdA),
+    'chat_messageTextIn='+hexToArgb(c.inBubbleText),
+    'chat_messageTextOut='+hexToArgb(c.outBubbleText),
+    'chat_messageLinkIn='+hexToArgb(c.linkColor),
+    'chat_messageLinkOut='+hexToArgb(c.linkColor),
+    'chat_messagePanelBackground='+hexToArgb(c.inputBg),
+    'chat_messagePanelText='+hexToArgb(c.inputText),
+    'chat_messagePanelHint='+hexToArgb(c.inputText),
+    'chat_messagePanelSend='+hexToArgb(c.sendBtnBg),
+    'chat_messagePanelIcons='+hexToArgb(c.sendBtnIcon),
+    'chat_serviceBackground='+hexToArgb(c.separatorColor),
+    'actionBarDefault='+hexToArgb(c.headerBg),
+    'actionBarDefaultIcon='+hexToArgb(c.headerText),
+    'actionBarDefaultTitle='+hexToArgb(c.headerText),
+    'actionBarDefaultSubtitle='+hexToArgb(c.headerText)
+  ].join('\n');
+}
+document.getElementById('btnExportAtTheme').addEventListener('click',()=>{
+  const txt=buildAtTheme();
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='theme-studio-'+Date.now()+'.json';
+  a.download='theme-studio.attheme';
   a.click();
   URL.revokeObjectURL(a.href);
-  toast('تم التصدير');
+  toast('نُزّل ملف .attheme — افتحه لتطبيقه');
 });
 
-document.getElementById('btnImport').addEventListener('click',()=>{
-  document.getElementById('importInput').click();
-});
-document.getElementById('importInput').addEventListener('change',e=>{
-  const f=e.target.files&&e.target.files[0];
-  if(!f) return;
-  const r=new FileReader();
-  r.onload=()=>{
+/* ============ 11) JSON + حفظ ============ */
+const LS_KEY='theme-studio-v3';
+document.getElementById('btnSave').addEventListener('click',()=>{
+  try{
+    const d={v:3,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:state.image};
+    localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ محليًا');
+  }catch(_){
     try{
-      const d=JSON.parse(r.result);
-      localStorage.setItem(LS_KEY,JSON.stringify(d));
-      document.getElementById('btnLoad').click();
-    }catch(err){toast('JSON غير صالح')}
-  };
-  r.readAsText(f);
-  e.target.value='';
+      const d={v:3,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:null};
+      localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ بدون الصورة');
+    }catch(e){toast('فشل الحفظ')}
+  }
 });
-
-document.getElementById('btnResetAll').addEventListener('click',()=>{
-  if(!confirm('إعادة ضبط كل الإعدادات؟')) return;
-  state.colors={...DEFAULTS};
-  state.image=null;state.sourceColors=[];state.accentOverride=null;
-  state.imgOpacity=100;state.dim=40;state.bubbleOp=100;state.borderOp=100;
-  document.getElementById('imgOpacity').value=100;
-  document.getElementById('bgDim').value=40;
-  document.getElementById('bubbleOp').value=100;
-  document.getElementById('borderOp').value=100;
-  ['imgOpacityVal','bgDimVal','bubbleOpVal','borderOpVal'].forEach(id=>{
-    document.getElementById(id).textContent='100%';
+function loadFromData(d){
+  Object.assign(state,{mode:d.mode||'dark',colors:{...DEFAULTS,...(d.colors||{})},imgOpacity:d.imgOpacity??100,dim:d.dim??40,bubbleOp:d.bubbleOp??100,borderOp:d.borderOp??100,sourceColors:d.sourceColors||[],accentOverride:d.accentOverride||null,image:d.image||null,imgHidden:false});
+  document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
+  document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
+  ['imgOpacity','bgDim','bubbleOp','borderOp'].forEach((id,i)=>{
+    const k=['imgOpacity','dim','bubbleOp','borderOp'][i],v=['imgOpacityVal','bgDimVal','bubbleOpVal','borderOpVal'][i];
+    document.getElementById(id).value=state[k];document.getElementById(v).textContent=state[k]+'%';
   });
-  document.getElementById('paletteCard').style.display='none';
+  if(state.sourceColors.length)renderPalettes(state.sourceColors);
   syncInputs();applyPreview();
-  toast('تمت إعادة الضبط');
+}
+document.getElementById('btnLoad').addEventListener('click',()=>{
+  const raw=localStorage.getItem(LS_KEY);if(!raw){toast('لا يوجد حفظ');return}
+  try{loadFromData(JSON.parse(raw));toast('تم الاسترجاع')}catch(e){toast('ملف تالف')}
+});
+document.getElementById('btnExport').addEventListener('click',()=>{
+  const d={v:3,exportedAt:new Date().toISOString(),...state};
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='theme-studio-'+Date.now()+'.json';a.click();URL.revokeObjectURL(a.href);toast('نُزّل JSON');
+});
+document.getElementById('btnImport').addEventListener('click',()=>document.getElementById('importInput').click());
+document.getElementById('importInput').addEventListener('change',e=>{
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{loadFromData(JSON.parse(r.result));localStorage.setItem(LS_KEY,r.result);toast('تم الاستيراد')}catch(_){toast('JSON غير صالح')}};
+  r.readAsText(f);e.target.value='';
+});
+document.getElementById('btnResetAll').addEventListener('click',()=>{
+  if(!confirm('إعادة ضبط كل الإعدادات؟'))return;
+  state.colors={...DEFAULTS};state.image=null;state.sourceColors=[];state.accentOverride=null;state.imgHidden=false;
+  state.imgOpacity=100;state.dim=40;state.bubbleOp=100;state.borderOp=100;
+  ['imgOpacity','bgDim','bubbleOp','borderOp'].forEach((id,i)=>{document.getElementById(id).value=[100,40,100,100][i]});
+  document.getElementById('imgOpacityVal').textContent='100%';
+  document.getElementById('bgDimVal').textContent='40%';
+  document.getElementById('bubbleOpVal').textContent='100%';
+  document.getElementById('borderOpVal').textContent='100%';
+  document.getElementById('paletteCard').style.display='none';
+  syncInputs();applyPreview();toast('تمت إعادة الضبط');
 });
 
-/* =========================================================
-   11) التهيئة
-   ========================================================= */
+/* ============ 12) تهيئة ============ */
 renderColorGroup('ctrlBackground',COLOR_GROUPS.background);
 renderColorGroup('ctrlHeader',COLOR_GROUPS.header);
 renderColorGroup('ctrlBubbles',COLOR_GROUPS.bubbles);
 renderColorGroup('ctrlInput',COLOR_GROUPS.input);
 renderColorGroup('ctrlMisc',COLOR_GROUPS.misc);
 
-// محاولة استرجاع الحفظ تلقائيًا عند الفتح
 (function init(){
   try{
     const raw=localStorage.getItem(LS_KEY);
-    if(raw){
-      const d=JSON.parse(raw);
-      Object.assign(state,{
-        mode:d.mode||'dark',
-        colors:{...DEFAULTS,...(d.colors||{})},
-        imgOpacity:d.imgOpacity??100,
-        dim:d.dim??40,
-        bubbleOp:d.bubbleOp??100,
-        borderOp:d.borderOp??100,
-        sourceColors:d.sourceColors||[],
-        accentOverride:d.accentOverride||null,
-        image:d.image||null
-      });
-      document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
-      document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
-      document.getElementById('imgOpacity').value=state.imgOpacity;
-      document.getElementById('bgDim').value=state.dim;
-      document.getElementById('bubbleOp').value=state.bubbleOp;
-      document.getElementById('borderOp').value=state.borderOp;
-      document.getElementById('imgOpacityVal').textContent=state.imgOpacity+'%';
-      document.getElementById('bgDimVal').textContent=state.dim+'%';
-      document.getElementById('bubbleOpVal').textContent=state.bubbleOp+'%';
-      document.getElementById('borderOpVal').textContent=state.borderOp+'%';
-      if(state.sourceColors.length) renderPalettes(state.sourceColors);
-    }
+    if(raw){loadFromData(JSON.parse(raw))}
   }catch(_){}
-  syncInputs();
-  applyPreview();
+  syncInputs();applyPreview();
 })();
 
-// Telegram
 try{
-  if(window.Telegram && Telegram.WebApp){
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
-    if(Telegram.WebApp.colorScheme){
-      // لا نفرض، فقط نحترمه إن لم يكن هناك حفظ
-      if(!localStorage.getItem(LS_KEY)){
-        setMode(Telegram.WebApp.colorScheme==='light'?'light':'dark');
-      }
+  if(window.Telegram&&Telegram.WebApp){
+    Telegram.WebApp.ready();Telegram.WebApp.expand();
+    if(Telegram.WebApp.colorScheme&&!localStorage.getItem(LS_KEY)){
+      setMode(Telegram.WebApp.colorScheme==='light'?'light':'dark');
     }
   }
 }catch(_){}
-
-console.log('[Theme Studio] v2 loaded');
+console.log('[Theme Studio] v3 loaded');
 </script>
 </body>
-  </html>
+</html>
