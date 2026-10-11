@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#11131a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<title>Theme Studio | محرّر ثيمات تيليجرام</title>
+<style>
+:root{color-scheme:dark;--bg:#101219;--panel:#191c26;--panel2:#222634;--text:#f4f5fb;--muted:#a8adbf;--accent:#8c7cff;--border:#303548;--good:#67d9ad}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 20% -10%,#292449 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.app{max-width:1440px;margin:auto;padding:18px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#8b7bff,#48d8bd);display:grid;place-items:center;color:#111;font-size:23px;font-weight:900}.brand h1{font-size:20px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.pill{border:1px solid #3a3c54;background:#211f37;color:#c9c2ff;border-radius:999px;padding:6px 10px;font-size:12px;white-space:nowrap}
+.layout{display:grid;grid-template-columns:minmax(300px,390px) minmax(300px,1fr);gap:18px;align-items:start}.panel{background:linear-gradient(180deg,#1b1e29,#171a23);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 12px 40px #0002}.panel-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}.panel-head h2{font-size:15px;margin:0}.panel-body{padding:16px}.section{border:1px solid var(--border);border-radius:15px;margin-bottom:12px;overflow:hidden}.section summary{padding:13px 14px;cursor:pointer;list-style:none;font-weight:700;display:flex;align-items:center;justify-content:space-between;background:#ffffff03}.section summary::-webkit-details-marker{display:none}.section summary:after{content:"＋";color:var(--muted)}.section[open] summary:after{content:"−"}.section-content{padding:12px;display:grid;gap:12px}.field{display:grid;gap:7px}.field-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}.field-top label{color:#e5e7f2}.field-top output{color:var(--muted);font-variant-numeric:tabular-nums;direction:ltr}.color-line{display:grid;grid-template-columns:42px minmax(0,1fr) 35px;gap:8px;align-items:center}.color-line input[type=color]{width:42px;height:36px;border:1px solid #ffffff24;border-radius:9px;background:transparent;padding:3px}.hex{width:100%;min-width:0;background:#11141c;border:1px solid var(--border);border-radius:9px;padding:8px;color:var(--text);direction:ltr;text-align:left}.reset{border:1px solid var(--border);background:#ffffff06;color:var(--muted);border-radius:9px;height:35px}.range{width:100%;accent-color:var(--accent)}.btn{border:1px solid var(--border);background:#252a3a;color:var(--text);border-radius:11px;padding:10px 12px}.btn.primary{background:linear-gradient(135deg,#8b7bff,#7063e8);border:0;color:white;font-weight:750}.btn.ghost{background:transparent}.btn.small{padding:7px 9px;font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap}.upload{display:flex;align-items:center;justify-content:center;gap:10px;border:1px dashed #5d5c86;background:#201f32;border-radius:14px;padding:15px;text-align:center;cursor:pointer}.upload input{display:none}.upload strong{display:block}.upload small{color:var(--muted)}.palette{display:flex;gap:7px;flex-wrap:wrap}.swatch{width:35px;height:35px;border-radius:10px;border:2px solid #ffffff25;position:relative}.swatch:active{transform:scale(.96)}.hint{font-size:12px;color:var(--muted);margin:0}.workspace{display:grid;gap:18px}.preview-panel .panel-body{padding:18px}.preview-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,300px);gap:18px;align-items:start}.preview-stage{background:linear-gradient(135deg,#24283a,#171923);border-radius:17px;padding:22px;min-height:500px;display:grid;place-items:center;position:relative;overflow:hidden}.preview-stage:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#ffffff0a 1px,transparent 1px);background-size:17px 17px;pointer-events:none}.phone{position:relative;width:min(100%,340px);height:590px;border:7px solid #08090d;border-radius:34px;overflow:hidden;background:#202534;box-shadow:0 20px 55px #0008;display:flex;flex-direction:column}.phone-top{height:28px;background:var(--bar);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0}.chat-header{background:var(--bar);color:var(--headtext);padding:12px;display:flex;align-items:center;gap:10px;z-index:1}.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#9c8aff,#60d7b2);display:grid;place-items:center;color:#fff;font-weight:800}.head-meta{flex:1}.head-meta b{display:block;font-size:14px}.head-meta small{font-size:11px;color:var(--subtext)}.chat-header .more{font-size:22px}.chat-wallpaper{position:absolute;inset:76px 0 62px;background-position:center;background-size:cover;opacity:var(--wall-alpha);pointer-events:none}.chat-wallpaper:after{content:"";position:absolute;inset:0;background:var(--wall-color);opacity:var(--wall-tint)}.messages{position:relative;flex:1;padding:18px 10px 12px;display:flex;flex-direction:column;gap:11px;overflow:hidden;background:transparent}.day{align-self:center;font-size:10px;color:var(--subtext);background:var(--day);padding:4px 10px;border-radius:10px;margin-bottom:2px}.msg{max-width:86%;padding:9px 10px 6px;border-radius:14px;box-shadow:0 1px 2px #0002;position:relative;font-size:12px;line-height:1.55;backdrop-filter:none}.msg.in{align-self:flex-start;background:var(--incoming);color:var(--intext);border:1px solid var(--inborder)}.msg.out{align-self:flex-end;background:var(--outgoing);color:var(--outtext);border:1px solid var(--outborder)}.msg .meta{display:flex;justify-content:flex-end;gap:4px;font-size:9px;opacity:.8;margin-top:2px}.composer{background:var(--bar);padding:9px;display:flex;align-items:center;gap:8px;z-index:1}.composebox{flex:1;background:var(--compose);color:var(--subtext);border-radius:20px;padding:9px 12px;font-size:11px}.send{width:35px;height:35px;border-radius:50%;background:var(--send);display:grid;place-items:center;color:white}.preview-side{display:grid;gap:12px}.mini-card{background:#141720;border:1px solid var(--border);border-radius:14px;padding:13px}.mini-card h3{font-size:13px;margin:0 0 10px}.mini-card .field{margin-bottom:11px}.mini-card .field:last-child{margin-bottom:0}.status{font-size:12px;color:var(--good);display:flex;align-items:center;gap:6px}.footer-note{color:var(--muted);font-size:11px;text-align:center;padding:12px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#252a3a;border:1px solid #484e65;padding:11px 16px;border-radius:12px;box-shadow:0 8px 30px #0007;display:none;z-index:20}.toast.show{display:block}.mobile-tabs{display:none}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.workspace{order:-1}.preview-wrap{grid-template-columns:1fr}.preview-side{grid-template-columns:repeat(2,minmax(0,1fr))}.preview-stage{min-height:0;padding:15px}.phone{height:560px}.app{padding:12px}.topbar{align-items:flex-start}.pill{max-width:120px;white-space:normal;text-align:center}}
+@media(max-width:480px){.preview-side{grid-template-columns:1fr}.brand h1{font-size:17px}.phone{height:540px}.panel-body{padding:12px}.preview-panel .panel-body{padding:10px}.actions .btn{flex:1}.topbar{margin-bottom:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="logo">T</div><div><h1>Theme Studio</h1><p>محرّر ثيمات تيليجرام · الإصدار التجريبي</p></div></div>
+  <div class="pill" id="platformStatus">جاهز للفتح داخل تيليجرام</div>
+</header>
+<div class="layout">
+  <aside class="panel">
+    <div class="panel-head"><h2>أدوات التصميم</h2><button class="btn small ghost" id="resetAll">إعادة ضبط</button></div>
+    <div class="panel-body">
+      <label class="upload" for="imageInput"><span style="font-size:25px">▧</span><span><strong>ارفع صورة الخلفية</strong><small>PNG أو JPG أو WebP · تبقى على جهازك</small></span><input id="imageInput" type="file" accept="image/*"></label>
+      <div style="margin-top:13px">
+        <div class="field-top" style="margin-bottom:8px"><label>ألوان مقترحة من الصورة</label><button class="btn small" id="generatePalette">تحليل الصورة</button></div>
+        <div class="palette" id="palette"><button class="swatch" style="background:#8c7cff" data-palette="#8c7cff" title="استخدم اللون"></button><button class="swatch" style="background:#48d8bd" data-palette="#48d8bd" title="استخدم اللون"></button><button class="swatch" style="background:#f0a6ca" data-palette="#f0a6ca" title="استخدم اللون"></button><button class="swatch" style="background:#232638" data-palette="#232638" title="استخدم اللون"></button></div>
+        <p class="hint" style="margin-top:7px">اضغط على أي لون لتطبيقه على الخلفية. التحليل يعمل داخل المتصفح.</p>
+      </div>
+      <details class="section" open style="margin-top:15px">
+        <summary>ألوان المحادثة</summary><div class="section-content" id="chatColors"></div>
+      </details>
+      <details class="section" open>
+        <summary>الشفافية</summary><div class="section-content" id="opacityControls"></div>
+      </details>
+      <details class="section">
+        <summary>عناصر الواجهة</summary><div class="section-content" id="uiColors"></div>
+      </details>
+      <details class="section">
+        <summary>الخلفية والمؤثرات</summary><div class="section-content" id="wallControls"></div>
+      </details>
+      <details class="section">
+        <summary>أدوات متقدمة</summary><div class="section-content">
+          <div class="field"><div class="field-top"><label for="themeName">اسم الثيم</label></div><input id="themeName" class="hex" style="direction:rtl;text-align:right" value="Midnight Dream"></div>
+          <div class="field"><div class="field-top"><label for="mode">نمط المعاينة</label></div><select id="mode" class="hex"><option value="dark">داكن</option><option value="light">فاتح</option></select></div>
+          <div class="actions"><button class="btn" id="savePreset">حفظ إعدادات</button><button class="btn" id="loadPreset">استرجاع</button><button class="btn primary" id="exportJson">تصدير الإعدادات</button><button class="btn ghost" id="closeMiniApp">إغلاق التطبيق</button></div>
+          <p class="hint">التصدير الحالي يحفظ إعدادات المشروع بصيغة JSON. تصدير ملف ثيم تيليجرام فعلي سيُضاف بعد بناء محرك الصيغة واختباره.</p>
+        </div>
+      </details>
+    </div>
+    <div class="footer-note">Theme Studio · نموذج Mini App أولي</div>
+  </aside>
+  <main class="workspace">
+    <section class="panel preview-panel">
+      <div class="panel-head"><h2>معاينة مباشرة</h2><span class="status">● تتحدث تلقائيًا</span></div>
+      <div class="panel-body">
+        <div class="preview-wrap">
+          <div class="preview-stage">
+            <div class="phone" id="phone">
+              <div class="phone-top">9:41 ◉ ▰ ▴</div>
+              <div class="chat-header"><div style="font-size:18px">‹</div><div class="avatar">س</div><div class="head-meta"><b>سراج ✨</b><small>متصل الآن</small></div><div class="more">⋮</div></div>
+              <div class="chat-wallpaper" id="wallpaper"></div>
+              <div class="messages">
+                <div class="day">اليوم</div>
+                <div class="msg in" id="msgIn">شفت الثيم الجديد؟ الألوان طالعة متناسقة جدًا!<div class="meta"><span>10:41</span></div></div>
+                <div class="msg out" id="msgOut">لسه أعدّل التفاصيل، أهم شيء أتحكم بكل عنصر لحاله 😎<div class="meta"><span>10:42</span><span>✓✓</span></div></div>
+                <div class="msg in" id="msgIn2">والشفافية؟ خصوصًا مع الخلفيات الفنية 👀<div class="meta"><span>10:42</span></div></div>
+                <div class="msg out" id="msgOut2">موجودة، ونقدر نغيّرها بشكل مستقل.<div class="meta"><span>10:43</span><span>✓✓</span></div></div>
+              </div>
+              <div class="composer"><span style="font-size:18px">☺</span><div class="composebox">اكتب رسالة...</div><span style="font-size:18px">⌁</span><div class="send">➤</div></div>
+            </div>
+          </div>
+          <div class="preview-side">
+            <div class="mini-card"><h3>لوحة الألوان الحالية</h3><div class="palette" id="currentPalette"></div><p class="hint" style="margin-top:8px">اضغط على اللون لنسخ كوده.</p></div>
+            <div class="mini-card"><h3>ملخص التصميم</h3><div class="field"><div class="field-top"><label>العناصر المعدّلة</label><output id="editedCount">0</output></div></div><div class="field"><div class="field-top"><label>شفافية الرسائل</label><output id="opacitySummary">100%</output></div></div><div class="field"><div class="field-top"><label>الخلفية</label><output id="wallSummary">بدون صورة</output></div></div></div>
+            <div class="mini-card"><h3>إجراءات سريعة</h3><div class="actions"><button class="btn small" id="randomize">اقترح ألوانًا</button><button class="btn small" id="copyColors">نسخ لوحة الألوان</button><button class="btn small" id="clearImage">إزالة الصورة</button></div></div>
+            <div class="mini-card"><h3>ملاحظة تقنية</h3><p class="hint">المعاينة هنا تحاكي عناصر المحادثة. بعض التفاصيل قد تختلف عن تطبيق تيليجرام الحقيقي. لا يتم رفع صورك إلى أي خادم.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+// Telegram Mini App lifecycle integration
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg) {
+  try { tg.ready(); tg.expand(); } catch (e) {}
+  const status = document.getElementById("platformStatus");
+  if (status) status.textContent = "داخل تيليجرام · Mini App";
+}
+const defaults = {
+  incoming:"#303849", outgoing:"#51448b", inText:"#f4f5fb", outText:"#ffffff",
+  inBorder:"#424a5d", outBorder:"#6d5cba", wallColor:"#11131a", bar:"#191c26",
+  headText:"#f4f5fb", subText:"#a8adbf", compose:"#242938", send:"#8c7cff",
+  day:"#34394b", accent:"#8c7cff", link:"#b7aaff", divider:"#34394b",
+  incomingOpacity:100, outgoingOpacity:94, wallOpacity:100, wallTint:0,
+  inBorderOpacity:100, outBorderOpacity:100, motion:0
+};
+let state={...defaults}, imageUrl=null, originalImage=null;
+const colorGroups=[
+ {target:"chatColors",items:[["incoming","فقاعة الرسائل الواردة"],["outgoing","فقاعة الرسائل الصادرة"],["inText","نص الرسائل الواردة"],["outText","نص الرسائل الصادرة"],["inBorder","حدود الرسائل الواردة"],["outBorder","حدود الرسائل الصادرة"]]},
+ {target:"uiColors",items:[["bar","شريط العنوان والكتابة"],["headText","نص العنوان"],["subText","النص الثانوي"],["compose","حقل كتابة الرسالة"],["send","زر الإرسال"],["day","شارة التاريخ"],["accent","اللون الأساسي"],["link","لون الروابط"],["divider","الفواصل"]]}
+];
+const opacityDefs=[
+ ["incomingOpacity","شفافية الرسائل الواردة"],["outgoingOpacity","شفافية الرسائل الصادرة"],
+ ["inBorderOpacity","شفافية حدود الرسائل الواردة"],["outBorderOpacity","شفافية حدود الرسائل الصادرة"],
+ ["wallOpacity","شفافية صورة الخلفية"],["wallTint","تعتيم طبقة الخلفية"]
+];
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function addColorControl(container,key,label){
+ const wrap=document.createElement("div");wrap.className="field";
+ wrap.innerHTML=`<div class="field-top"><label>${label}</label><output id="out-${key}">${state[key]}</output></div><div class="color-line"><input type="color" id="color-${key}" value="${state[key]}" aria-label="${label}"><input class="hex" id="hex-${key}" value="${state[key]}" maxlength="7" aria-label="HEX ${label}"><button class="reset" data-reset="${key}" title="إعادة ضبط">↺</button></div>`;
+ container.appendChild(wrap);
+ const picker=wrap.querySelector(`#color-${key}`),hex=wrap.querySelector(`#hex-${key}`);
+ picker.addEventListener("input",()=>{state[key]=picker.value;hex.value=picker.value;document.getElementById(`out-${key}`).textContent=picker.value;render();});
+ hex.addEventListener("change",()=>{let v=hex.value.trim();if(/^#[0-9a-fA-F]{6}$/.test(v)){state[key]=v.toLowerCase();picker.value=state[key];document.getElementById(`out-${key}`).textContent=state[key];render()}else{hex.value=state[key];toast("أدخل لون HEX صحيحًا مثل #8C7CFF")}});
+ wrap.querySelector("[data-reset]").addEventListener("click",()=>{state[key]=defaults[key];picker.value=state[key];hex.value=state[key];document.getElementById(`out-${key}`).textContent=state[key];render()});
+}
+function addRange(container,key,label,max=100){
+ const wrap=document.createElement("div");wrap.className="field";
+ wrap.innerHTML=`<div class="field-top"><label for="range-${key}">${label}</label><output id="range-out-${key}">${state[key]}%</output></div><input class="range" type="range" id="range-${key}" min="0" max="${max}" step="1" value="${state[key]}"><div style="display:flex;gap:8px;align-items:center"><input class="hex" id="num-${key}" type="number" min="0" max="${max}" value="${state[key]}" style="max-width:92px"><span class="hint">من 0 إلى ${max}%</span><button class="reset" data-reset="${key}" style="margin-inline-start:auto;width:35px">↺</button></div>`;
+ container.appendChild(wrap);
+ const range=wrap.querySelector(`#range-${key}`),num=wrap.querySelector(`#num-${key}`),out=wrap.querySelector(`#range-out-${key}`);
+ function set(v){v=Math.max(0,Math.min(max,Number(v)||0));state[key]=v;range.value=v;num.value=v;out.textContent=v+"%";render()}
+ range.addEventListener("input",()=>set(range.value));num.addEventListener("change",()=>set(num.value));
+ wrap.querySelector("[data-reset]").addEventListener("click",()=>set(defaults[key]));
+}
+colorGroups.forEach(g=>g.items.forEach(([k,l])=>addColorControl(document.getElementById(g.target),k,l)));
+opacityDefs.forEach(([k,l])=>addRange(document.getElementById("opacityControls"),k,l));
+addColorControl(document.getElementById("wallControls"),"wallColor","لون خلفية أساسي");
+addRange(document.getElementById("wallControls"),"wallTint","تعتيم اللون فوق الصورة");
+addRange(document.getElementById("wallControls"),"motion","قوة حركة المعاينة",100);
+function hexToRgb(hex){let n=parseInt(hex.slice(1),16);return {r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
+function rgba(hex,a){let c=hexToRgb(hex);return `rgba(${c.r},${c.g},${c.b},${Math.max(0,Math.min(1,a))})`}
+function render(){
+ const root=document.documentElement;
+ root.style.setProperty("--incoming",rgba(state.incoming,state.incomingOpacity/100));
+ root.style.setProperty("--outgoing",rgba(state.outgoing,state.outgoingOpacity/100));
+ root.style.setProperty("--intext",state.inText);root.style.setProperty("--outtext",state.outText);
+ root.style.setProperty("--inborder",rgba(state.inBorder,state.inBorderOpacity/100));
+ root.style.setProperty("--outborder",rgba(state.outBorder,state.outBorderOpacity/100));
+ root.style.setProperty("--wall-color",state.wallColor);
+ root.style.setProperty("--wall-alpha",state.wallOpacity/100);
+ root.style.setProperty("--wall-tint",state.wallTint/100);
+ root.style.setProperty("--bar",state.bar);root.style.setProperty("--headtext",state.headText);
+ root.style.setProperty("--subtext",state.subText);root.style.setProperty("--compose",state.compose);
+ root.style.setProperty("--send",state.send);root.style.setProperty("--day",state.day);
+ root.style.setProperty("--accent",state.accent);
+ const wall=document.getElementById("wallpaper");wall.style.backgroundImage=imageUrl?`url("${imageUrl}")`:"none";
+ wall.style.transform=state.motion>0?`scale(${1+state.motion/1000})`:"none";
+ document.getElementById("opacitySummary").textContent=`${state.incomingOpacity}% / ${state.outgoingOpacity}%`;
+ document.getElementById("wallSummary").textContent=imageUrl?"صورة مرفوعة":"بدون صورة";
+ const edited=Object.keys(state).filter(k=>state[k]!==defaults[k]).length;
+ document.getElementById("editedCount").textContent=edited;
+ const keys=["incoming","outgoing","wallColor","bar","accent","link","send","day"];
+ document.getElementById("currentPalette").innerHTML=keys.map(k=>`<button class="swatch" data-copy="${state[k]}" style="background:${state[k]}" title="${k} ${state[k]}"></button>`).join("");
+ document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{navigator.clipboard?.writeText(b.dataset.copy);toast("لون "+b.dataset.copy+" جاهز للنسخ")});
+}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),2200)}
+function colorDistance(a,b){let A=hexToRgb(a),B=hexToRgb(b);return (A.r-B.r)**2+(A.g-B.g)**2+(A.b-B.b)**2}
+function extractPalette(img){
+ const c=document.createElement("canvas"),ctx=c.getContext("2d",{willReadFrequently:true});const w=80,h=Math.max(1,Math.round(img.height/img.width*80));c.width=w;c.height=h;ctx.drawImage(img,0,0,w,h);
+ let d=ctx.getImageData(0,0,w,h).data, bins={};
+ for(let i=0;i<d.length;i+=4*3){if(d[i+3]<200)continue;let r=Math.round(d[i]/32)*32,g=Math.round(d[i+1]/32)*32,b=Math.round(d[i+2]/32)*32;let key=[Math.min(255,r),Math.min(255,g),Math.min(255,b)].map(x=>x.toString(16).padStart(2,"0")).join("");bins[key]=(bins[key]||0)+1}
+ return Object.entries(bins).sort((a,b)=>b[1]-a[1]).map(([k])=>"#"+k).filter((v,i,a)=>a.slice(0,i).every(x=>colorDistance(v,x)>4200)).slice(0,8);
+}
+function showPalette(colors){
+ const p=document.getElementById("palette");p.innerHTML=colors.map(c=>`<button class="swatch" style="background:${c}" data-palette="${c}" title="${c}"></button>`).join("");
+ p.querySelectorAll("[data-palette]").forEach(b=>b.onclick=()=>{state.wallColor=b.dataset.palette;const input=document.getElementById("color-wallColor"),hex=document.getElementById("hex-wallColor");if(input)input.value=state.wallColor;if(hex)hex.value=state.wallColor;const out=document.getElementById("out-wallColor");if(out)out.textContent=state.wallColor;render();toast("تم تطبيق اللون على الخلفية")});
+}
+function analyze(){if(!originalImage){toast("ارفع صورة أولًا لتحليل ألوانها");return}try{const colors=extractPalette(originalImage);showPalette(colors);if(colors.length){state.wallColor=colors[0];state.outgoing=colors[1]||state.outgoing;state.accent=colors[2]||state.accent;syncColorInputs();render();toast("تم استخراج لوحة ألوان من الصورة")}}catch(e){toast("تعذّر تحليل الصورة؛ جرّب صورة أخرى")}}
+function syncColorInputs(){Object.keys(state).forEach(k=>{let c=document.getElementById("color-"+k),h=document.getElementById("hex-"+k),o=document.getElementById("out-"+k);if(c&&h){c.value=state[k];h.value=state[k];o.textContent=state[k]}})}
+document.getElementById("imageInput").addEventListener("change",e=>{const file=e.target.files?.[0];if(!file)return;if(!file.type.startsWith("image/")){toast("اختر ملف صورة");return}if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=URL.createObjectURL(file);const img=new Image();img.onload=()=>{originalImage=img;render();analyze()};img.onerror=()=>toast("تعذّر فتح الصورة");img.src=imageUrl;});
+document.getElementById("generatePalette").onclick=analyze;
+document.getElementById("clearImage").onclick=()=>{if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=null;originalImage=null;document.getElementById("imageInput").value="";render();toast("تمت إزالة الخلفية")};
+document.getElementById("randomize").onclick=()=>{const schemes=[["#2b3143","#6c5ce7","#9c8aff","#e9e8ff"],["#252a30","#286b63","#51b7a6","#effaf7"],["#32232e","#a74472","#d778a3","#fff0f7"],["#1f283c","#2c76a8","#61bce6","#edf8ff"],["#2b2925","#9b7048","#d3a878","#fff6e8"]];const s=schemes[Math.floor(Math.random()*schemes.length)];state.incoming=s[0];state.outgoing=s[1];state.accent=s[2];state.outText=s[3];syncColorInputs();render();toast("تم اقتراح نظام ألوان جديد")};
+document.getElementById("resetAll").onclick=()=>{state={...defaults};syncColorInputs();document.querySelectorAll('input[type=range]').forEach(el=>{const k=el.id.replace("range-","");el.value=state[k];const num=document.getElementById("num-"+k),out=document.getElementById("range-out-"+k);if(num)num.value=state[k];if(out)out.textContent=state[k]+"%"});render();toast("أعيدت الإعدادات الافتراضية")};
+document.getElementById("mode").onchange=e=>{if(e.target.value==="light"){state.bar="#f2f3f8";state.headText="#202333";state.subText="#626779";state.incoming="#ffffff";state.outgoing="#d9fdd3";state.inText="#202333";state.outText="#1b2922";state.compose="#ffffff";state.day="#e2e5ee"}else{state.bar=defaults.bar;state.headText=defaults.headText;state.subText=defaults.subText;state.incoming=defaults.incoming;state.outgoing=defaults.outgoing;state.inText=defaults.inText;state.outText=defaults.outText;state.compose=defaults.compose;state.day=defaults.day}syncColorInputs();render()};
+document.getElementById("closeMiniApp").onclick=()=>{if(tg){try{tg.close()}catch(e){toast("يمكنك إغلاق النافذة من تيليجرام")}}else{toast("زر الإغلاق يعمل عند فتح المحرّر داخل تيليجرام")}};
+document.getElementById("savePreset").onclick=()=>{localStorage.setItem("themeStudioPreset",JSON.stringify(state));toast("تم حفظ الإعدادات على هذا الجهاز")};
+document.getElementById("loadPreset").onclick=()=>{let v=localStorage.getItem("themeStudioPreset");if(!v){toast("لا توجد إعدادات محفوظة");return}try{state={...defaults,...JSON.parse(v)};syncColorInputs();document.querySelectorAll('input[type=range]').forEach(el=>{let k=el.id.replace("range-","");el.value=state[k];let n=document.getElementById("num-"+k),o=document.getElementById("range-out-"+k);if(n)n.value=state[k];if(o)o.textContent=state[k]+"%"});render();toast("تم استرجاع الإعدادات")}catch(e){toast("ملف الإعدادات غير صالح")}};
+document.getElementById("exportJson").onclick=()=>{const data={app:"Theme Studio",version:1,name:document.getElementById("themeName").value,settings:state,wallpaperIncluded:false,note:"Settings export only; not a Telegram theme file."};const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="theme-studio-settings.json";a.click();URL.revokeObjectURL(a.href);toast("تم تنزيل إعدادات المشروع بصيغة JSON")};
+document.getElementById("copyColors").onclick=()=>{const txt=Object.entries(state).filter(([k,v])=>/^#[0-9a-f]{6}$/i.test(String(v))).map(([k,v])=>`${k}: ${v}`).join("\n");navigator.clipboard?.writeText(txt).then(()=>toast("تم نسخ لوحة الألوان")).catch(()=>toast("تعذّر النسخ؛ يمكنك تصدير الإعدادات"))};
+document.getElementById("palette").querySelectorAll("[data-palette]").forEach(b=>b.onclick=()=>{state.wallColor=b.dataset.palette;syncColorInputs();render()});
+render();
+</script>
+</body></html>
