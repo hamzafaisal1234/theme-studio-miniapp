@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Theme Studio v8 — Bot-Mimic</title>
+<title>Theme Studio v9</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0e1116;--bg2:#161b22;--bg3:#1f2630;--line:#2a3240;--txt:#e6edf3;--muted:#8b98a9;--accent:#5b8def;--accent2:#7aa2f7;--danger:#f7768e;--r:12px;--r2:8px}
@@ -37,17 +37,22 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .upload .hint{color:var(--muted);font-size:11px;margin-top:4px}
 .diagnostic{background:rgba(91,141,239,.08);border:1px solid rgba(91,141,239,.3);border-radius:8px;padding:10px;font-size:11px;color:#a9c1ea;margin-top:10px;line-height:1.7;font-family:ui-monospace,monospace}
 .diagnostic b{color:#e6edf3}
+
+/* بطاقات الاقتراحات - تُظهر السطح والتمييز جنبًا إلى جنب */
 .palettes{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
 .palette{border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(--line);transition:.15s;background:#000}
 .palette:hover{transform:translateY(-2px);border-color:var(--accent)}
 .palette.bot{border-color:#9ece6a;box-shadow:0 0 0 1px #9ece6a}
-.palette .mini{height:78px;padding:6px;display:flex;flex-direction:column;gap:4px;position:relative}
-.palette .mini-bar{height:7px;border-radius:2px;opacity:.9}
-.palette .mini-bubble{font-size:8px;padding:3px 6px;border-radius:7px;max-width:70%;line-height:1.2;white-space:nowrap;overflow:hidden}
+.palette .mini{height:98px;padding:5px;display:flex;flex-direction:column;gap:3px}
+.palette .mini-bar{height:8px;border-radius:3px}
+.palette .mini-split{flex:1;display:flex;gap:3px;border-radius:5px;overflow:hidden;min-height:38px}
+.palette .mini-half{flex:1;display:flex;align-items:center;justify-content:center;font-size:8px;color:rgba(255,255,255,.85);letter-spacing:.4px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.palette .mini-bubble{font-size:8px;padding:3px 7px;border-radius:8px;max-width:80%;line-height:1.2;white-space:nowrap;overflow:hidden;font-weight:500}
 .palette .mini-bubble.in{align-self:flex-start;border-end-start-radius:2px}
 .palette .mini-bubble.out{align-self:flex-end;border-end-end-radius:2px}
 .palette .lbl{font-size:10px;padding:5px;background:var(--bg3);text-align:center;color:var(--txt);font-weight:600}
 .palette .lbl small{display:block;color:var(--muted);font-size:8px;font-weight:400;margin-top:1px}
+
 .ctrl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
 .ctrl:last-child{border-bottom:none}
 .ctrl .lbl{font-size:12px}
@@ -101,7 +106,7 @@ details.acc .body{padding:0 14px 14px}
 <div class="app">
   <header class="top">
     <div class="logo">T</div>
-    <div class="title">Theme Studio v8<small>محرّك @my_themes_bot</small></div>
+    <div class="title">Theme Studio v9<small>محرّك @my_themes_bot</small></div>
     <div class="spacer"></div>
     <div class="modes">
       <button id="modeDark" class="on">داكن</button>
@@ -216,7 +221,7 @@ details.acc .body{padding:0 14px 14px}
 'use strict';
 
 /* ============================================================
-   PART 1 — أدوات الألوان الأساسية
+   PART 1 — أدوات الألوان
    ============================================================ */
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function hexToRgb(hex){hex=hex.replace('#','').trim();if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
@@ -234,7 +239,7 @@ function contrastText(bgRgb){
 const rgbStr=hex=>{const{r,g,b}=hexToRgb(hex);return`${r}, ${g}, ${b}`};
 
 /* ============================================================
-   PART 2 — التحويل إلى Lab (فضاء إدراكي)
+   PART 2 — Lab
    ============================================================ */
 function rgbToLab(r,g,b){
   let R=r/255,G=g/255,B=b/255;
@@ -251,7 +256,7 @@ function rgbToLab(r,g,b){
 function labDist(p1,p2){const dL=p1.L-p2.L,da=p1.a-p2.a,db=p1.b-p2.b;return Math.sqrt(dL*dL+da*da+db*db)}
 
 /* ============================================================
-   PART 3 — K-means في Lab (K-means++)
+   PART 3 — K-means Lab
    ============================================================ */
 function kmeansLab(pixels,k,maxIter){
   if(pixels.length===0) return [];
@@ -292,14 +297,14 @@ function kmeansLab(pixels,k,maxIter){
 }
 
 /* ============================================================
-   PART 4 — محرّك البوت: من صورة → سطح + تمييز
+   PART 4 — محرّك البوت
    ============================================================ */
 function loadImage(src){return new Promise((res,rej)=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=rej;i.src=src})}
 
 async function analyzeImage(src){
   const img=await loadImage(src);
 
-  /* --- Step 1: تصغير إلى ≤300px --- */
+  /* Step 1: تصغير */
   const LONG=300;
   const k0=Math.min(1, LONG/Math.max(img.width,img.height));
   const W=Math.max(1,Math.round(img.width*k0));
@@ -309,7 +314,7 @@ async function analyzeImage(src){
   ctx.drawImage(img,0,0,W,H);
   const data=ctx.getImageData(0,0,W,H).data;
 
-  /* --- Step 2: بناء البكسلات + حساب L̄ --- */
+  /* Step 2: بناء البكسلات */
   const pixels=[];
   let sumL=0,total=0;
   for(let i=0;i<data.length;i+=4){
@@ -317,33 +322,32 @@ async function analyzeImage(src){
     if(a<128) continue;
     const {h,s,l}=rgbToHsl(r,g,b);
     sumL+=l; total++;
-    if(l<0.05||l>0.95) continue;   // استبعاد الأسود/الأبيض
-    if(s<0.05) continue;            // استبعاد الرمادي
+    if(l<0.05||l>0.95) continue;
+    if(s<0.05) continue;
     const lab=rgbToLab(r,g,b);
     const chroma=Math.sqrt(lab.a*lab.a+lab.b*lab.b);
     pixels.push({L:lab.L,a:lab.a,b:lab.b,r,g,blue:b,h,s,l,w:Math.max(0.1,chroma)});
   }
   const avgL = total? sumL/total : 0.5;
 
-  /* --- Step 3: K-means (k=6) --- */
+  /* Step 3: K-means */
   const K=6;
   let clusters=kmeansLab(pixels,K,15);
 
-  /* --- حساب coverage --- */
   const totalW=clusters.reduce((s,c)=>s+c.w,0)||1;
   clusters=clusters.map(c=>{
     const {h,s,l}=rgbToHsl(c.r,c.g,c.blue);
     return {...c,coverage:c.w/totalW,h,s,l};
   });
 
-  /* --- Step 4: فلترة (coverage ≥ 3%) --- */
+  /* Step 4: فلترة */
   let filtered=clusters.filter(c=>c.coverage>=0.03);
   if(filtered.length<2) filtered=clusters.slice().sort((a,b)=>b.coverage-a.coverage).slice(0,Math.max(2,clusters.length));
 
-  /* --- Step 5: اختيار الوضع حسب L̄ --- */
+  /* Step 5: الوضع */
   const mode = avgL < 0.40 ? 'dark' : 'light';
 
-  /* --- Step 6: اختيار السطح --- */
+  /* Step 6: السطح */
   let surface;
   if(mode==='dark'){
     surface = filtered.slice().sort((a,b)=>a.l-b.l)[0];
@@ -353,82 +357,67 @@ async function analyzeImage(src){
     surface = pool.slice().sort((a,b)=>b.coverage-a.coverage)[0];
   }
 
-  /* --- Step 7: اختيار التمييز --- */
+  /* Step 7: التمييز */
   const sKey = c=>`${Math.round(c.r)}|${Math.round(c.g)}|${Math.round(c.blue)}`;
   const surfaceKey = sKey(surface);
   let candidates = filtered.filter(c=>sKey(c)!==surfaceKey && c.l<=0.55);
+  if(!candidates.length) candidates = filtered.filter(c=>sKey(c)!==surfaceKey);
   if(!candidates.length){
-    candidates = filtered.filter(c=>sKey(c)!==surfaceKey);
-  }
-  if(!candidates.length){
-    candidates = [{h:(surface.h+180)%360,s:Math.max(0.5,surface.s),l:0.30,r:0,g:0,blue:0,coverage:1}];
+    candidates=[{h:(surface.h+180)%360,s:Math.max(0.5,surface.s),l:0.30,r:0,g:0,blue:0,coverage:1}];
   }
   let accent = candidates.slice().sort((a,b)=>(b.s*Math.sqrt(b.coverage))-(a.s*Math.sqrt(a.coverage)))[0];
 
-  /* --- Step 8: تصحيح L للتمييز إلى ≈ 0.30 --- */
+  /* Step 8: تصحيح L للتمييز */
   let accentL = accent.l;
   if(accentL>0.35) accentL=0.30;
   else if(accentL<0.20) accentL=0.30;
 
-  /* --- Step 9: تنقية السطح --- */
-  // تأكد أن السطح داكن بما يكفي في الوضع الداكن، وفاتح في الفاتح
+  /* Step 9: تنقية السطح */
   let surfaceL=surface.l;
   if(mode==='dark') surfaceL=clamp(surfaceL,0.05,0.18);
   else surfaceL=clamp(surfaceL,0.55,0.92);
 
   return {
     mode, avgL,
-    surface: {h:surface.h, s:surface.s, l:surfaceL, rgb:{r:surface.r,g:surface.g,b:surface.blue}, coverage:surface.coverage},
-    accent:  {h:accent.h,  s:clamp(accent.s,0.35,0.95), l:accentL, coverage:accent.coverage},
+    surface: {h:surface.h, s:surface.s, l:surfaceL, r:surface.r, g:surface.g, blue:surface.blue, coverage:surface.coverage},
+    accent:  {h:accent.h,  s:clamp(accent.s,0.35,0.95), l:accentL, r:accent.r, g:accent.g, blue:accent.blue, coverage:accent.coverage},
     clusters: filtered
   };
 }
 
 /* ============================================================
-   PART 5 — بناء الثيم من سطح + تمييز (نفس قواعد البوت)
+   PART 5 — بناء الثيم
    ============================================================ */
 function buildThemeFromBot(mode, surface, accent){
   const sHex = hslToHex(surface.h,surface.s,surface.l);
   const aHex = hslToHex(accent.h, accent.s, accent.l);
-  const sRgb = hslToRgb(surface.h,surface.s,surface.l);
   const aRgb = hslToRgb(accent.h, accent.s, accent.l);
   const iconRgb = contrastText(aRgb);
   const iconHex = rgbToHex(iconRgb.r, iconRgb.g, iconRgb.b);
 
   return {
-    // اللون الأساسي للواجهة
     accentColor: aHex,
-
-    // الخلفية
     chatBg: sHex,
     chatText: aHex,
-
-    // شريط العنوان
     headerBg: sHex,
     headerText: aHex,
-
-    // الفقاعات (نفس اللون للوارد والصادر — قاعدة البوت)
     inBubbleBg: sHex,
     inBubbleText: aHex,
     inBubbleBorder: aHex,
     outBubbleBg: sHex,
     outBubbleText: aHex,
     outBubbleBorder: aHex,
-
-    // حقل الإرسال
     inputBg: sHex,
     inputText: aHex,
     sendBtnBg: aHex,
     sendBtnIcon: iconHex,
-
-    // عناصر أخرى
     linkColor: aHex,
     separatorColor: sHex
   };
 }
 
 /* ============================================================
-   PART 6 — الحالة والتخزين
+   PART 6 — الحالة
    ============================================================ */
 const DEFAULTS={
   accentColor:'#4a86e8',chatBg:'#0f1218',chatText:'#e6edf3',
@@ -526,23 +515,56 @@ function applyPreview(){
 }
 
 /* ============================================================
-   PART 9 — اقتراحات من نتيجة البوت
+   PART 9 — توليد الاقتراحات (v9 — مُقيّدة بقواعد البوت)
    ============================================================ */
 function buildVariants(bot){
-  const A={...bot.accent};
-  const dark=bot.mode==='dark';
-  const L=dark?0.30:0.45;
-  return [
-    {name:'البوت',    desc:'مطابق تمامًا',  accent:{h:A.h,          s:A.s,                    l:dark?A.l:0.32}, isBot:true},
-    {name:'مضاد',     desc:'+180°',         accent:{h:(A.h+180)%360,s:clamp(A.s,0.5,0.9),   l:L}},
-    {name:'دافئ',     desc:'+30°',          accent:{h:(A.h+30)%360, s:clamp(A.s,0.5,0.9),   l:L}},
-    {name:'بارد',     desc:'-30°',          accent:{h:(A.h-30+360)%360,s:clamp(A.s,0.5,0.9),l:L}},
-    {name:'بنفسجي',   desc:'+90°',          accent:{h:(A.h+90)%360, s:clamp(A.s,0.5,0.9),   l:L}},
-    {name:'أخضر',     desc:'+150°',         accent:{h:(A.h+150)%360,s:clamp(A.s,0.5,0.9),   l:L}},
-    {name:'هادئ',     desc:'تشبع منخفض',    accent:{h:A.h,          s:clamp(A.s*0.5,0.2,0.5), l:L}},
-    {name:'زاهي',     desc:'تشبع مرتفع',    accent:{h:A.h,          s:clamp(A.s*1.4,0.7,0.98),l:L}}
-  ];
+  const A = bot.accent;
+  const clusters = bot.clusters || [];
+  const cKey = c => `${Math.round(c.r||0)}|${Math.round(c.g||0)}|${Math.round(c.blue||0)}`;
+  const surfaceKey = cKey(bot.surface);
+
+  // مرشحو تمييز بديلون من نفس الصورة — باحترام L ≤ 0.55
+  const alts = clusters
+    .filter(c => cKey(c) !== surfaceKey && c.l <= 0.55)
+    .sort((a,b) => (b.s*Math.sqrt(b.coverage)) - (a.s*Math.sqrt(a.coverage)));
+
+  const variants = [];
+
+  // 1) البوت — مطابق تمامًا
+  variants.push({ name:'البوت', desc:'مطابق تمامًا',
+    accent:{ h:A.h, s:A.s, l:A.l }, isBot:true });
+
+  // 2..4) تمييز بديل من ألوان حقيقية في الصورة (بلا إزاحة Hue)
+  for(let i=0; i<Math.min(3, alts.length); i++){
+    const c = alts[i];
+    const hsl = rgbToHsl(c.r, c.g, c.blue);
+    if(Math.abs(hsl.h - A.h) < 15 && Math.abs(hsl.l - A.l) < 0.10) continue;
+    variants.push({
+      name:'من الصورة '+(i+1),
+      desc:'عنقود أصلي',
+      accent:{ h:hsl.h, s:clamp(hsl.s,0.35,0.90), l:Math.min(hsl.l,0.35) }
+    });
+  }
+
+  // 5) أغمق
+  variants.push({ name:'أغمق', desc:'L أعمق',
+    accent:{ h:A.h, s:A.s, l:clamp(A.l-0.08, 0.22, 0.35) } });
+
+  // 6) أفتح
+  variants.push({ name:'أفتح', desc:'L أعلى',
+    accent:{ h:A.h, s:A.s, l:clamp(A.l+0.08, 0.28, 0.40) } });
+
+  // 7) زاهي
+  variants.push({ name:'زاهي', desc:'تشبع أعلى',
+    accent:{ h:A.h, s:clamp(A.s*1.30, 0.55, 0.95), l:A.l } });
+
+  // 8) هادئ
+  variants.push({ name:'هادئ', desc:'تشبع أقل',
+    accent:{ h:A.h, s:clamp(A.s*0.60, 0.30, 0.70), l:A.l } });
+
+  return variants.slice(0, 8);
 }
+
 function renderPalettes(bot){
   const card=document.getElementById('paletteCard'),list=document.getElementById('palettesList');
   card.style.display='block';list.innerHTML='';
@@ -552,20 +574,22 @@ function renderPalettes(bot){
     const el=document.createElement('div');
     el.className='palette'+(v.isBot?' bot':'');
     el.innerHTML=`
-      <div class="mini" style="background:${pal.chatBg}">
+      <div class="mini">
         <div class="mini-bar" style="background:${pal.headerBg}"></div>
-        <div class="mini-bubble in" style="background:${pal.inBubbleBg};color:${pal.inBubbleText}">واردة</div>
-        <div class="mini-bubble out" style="background:${pal.outBubbleBg};color:${pal.outBubbleText}">صادرة</div>
+        <div class="mini-split">
+          <div class="mini-half" style="background:${pal.inBubbleBg}">سطح</div>
+          <div class="mini-half" style="background:${pal.accentColor}">تمييز</div>
+        </div>
+        <div class="mini-bubble in" style="background:${pal.inBubbleBg};color:${pal.inBubbleText};align-self:flex-start">واردة</div>
+        <div class="mini-bubble out" style="background:${pal.outBubbleBg};color:${pal.outBubbleText};align-self:flex-end">صادرة</div>
       </div>
       <div class="lbl">${v.name}<small>${v.desc}</small></div>`;
     el.addEventListener('click',()=>{
-      // نبني من جديد في اللحظة نفسها بالوضع الحالي
       const palNow=buildThemeFromBot(state.mode, bot.surface, v.accent);
       Object.assign(state.colors,palNow);
       state.mode=bot.mode;
       document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
       document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
-      // شفافية البوت
       state.bubbleOp=85; state.borderOp=0;
       document.getElementById('bubbleOp').value=85; document.getElementById('bubbleOpVal').textContent='85%';
       document.getElementById('borderOp').value=0;  document.getElementById('borderOpVal').textContent='0%';
@@ -591,7 +615,6 @@ function setMode(m){
   document.getElementById('modeDark').classList.toggle('on',m==='dark');
   document.getElementById('modeLight').classList.toggle('on',m==='light');
   if(state.botData){
-    // أعد بناء الثيم من نفس السطح والتمييز لكن بالوضع الجديد
     const surface={...state.botData.surface};
     if(m==='dark') surface.l=clamp(surface.l,0.05,0.18);
     else surface.l=clamp(surface.l,0.55,0.92);
@@ -605,7 +628,7 @@ function setMode(m){
 }
 
 /* ============================================================
-   PART 12 — رفع الصورة + التحليل
+   PART 12 — رفع الصورة والتحليل
    ============================================================ */
 document.getElementById('imgInput').addEventListener('change',e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
@@ -622,26 +645,21 @@ async function runAnalysis(){
     const bot=await analyzeImage(state.image);
     state.botData=bot;
 
-    // اضبط الوضع تلقائيًا كما يفعل البوت
     state.mode=bot.mode;
     document.getElementById('modeDark').classList.toggle('on',bot.mode==='dark');
     document.getElementById('modeLight').classList.toggle('on',bot.mode==='light');
 
-    // تعتيم تلقائي من L̄
     state.dim=Math.round(clamp(30+(bot.avgL-0.5)*70,15,75));
     document.getElementById('bgDim').value=state.dim;
     document.getElementById('bgDimVal').textContent=state.dim+'%';
 
-    // شفافية الفقاعات كما يفعل البوت
     state.bubbleOp=85; state.borderOp=0;
     document.getElementById('bubbleOp').value=85; document.getElementById('bubbleOpVal').textContent='85%';
     document.getElementById('borderOp').value=0;  document.getElementById('borderOpVal').textContent='0%';
 
-    // ابنِ الثيم
     Object.assign(state.colors, buildThemeFromBot(bot.mode, bot.surface, bot.accent));
     renderPalettes(bot);
 
-    // عرض التشخيص
     const diag=document.getElementById('diag');
     diag.style.display='block';
     diag.innerHTML=`<b>الوضع:</b> ${bot.mode==='dark'?'داكن':'فاتح'} (L̄=${bot.avgL.toFixed(2)})<br>
@@ -667,7 +685,7 @@ document.getElementById('btnToggleImg').addEventListener('click',e=>{
 });
 
 /* ============================================================
-   PART 13 — HSL Sliders (تعديل يدوي للتمييز)
+   PART 13 — HSL Sliders
    ============================================================ */
 ['h','s','l'].forEach(k=>{
   document.getElementById(k+'Range').addEventListener('input',()=>{
@@ -697,7 +715,7 @@ bindSlider('bubbleOp','bubbleOpVal','bubbleOp');
 bindSlider('borderOp','borderOpVal','borderOp');
 
 /* ============================================================
-   PART 15 — تصدير .attheme
+   PART 15 — .attheme
    ============================================================ */
 function hexToArgb(hex,alpha=1){
   const{r,g,b}=hexToRgb(hex);
@@ -708,8 +726,8 @@ function buildAtTheme(){
   const c=state.colors;
   const bA=state.bubbleOp/100;
   const bdA=state.borderOp/100;
-  const lines=[
-    '// Theme Studio v8 — Bot-Mimic export',
+  return [
+    '// Theme Studio v9 — Bot-Mimic export',
     '// Telegram Android .attheme',
     '// '+new Date().toISOString(),
     '',
@@ -739,8 +757,7 @@ function buildAtTheme(){
     'windowBackgroundGray='+hexToArgb(c.chatBg),
     'dialogBackground='+hexToArgb(c.chatBg),
     'divider='+hexToArgb(c.linkColor,0)
-  ];
-  return lines.join('\n');
+  ].join('\n');
 }
 document.getElementById('btnExportAtTheme').addEventListener('click',()=>{
   const blob=new Blob([buildAtTheme()],{type:'text/plain;charset=utf-8'});
@@ -752,14 +769,14 @@ document.getElementById('btnExportAtTheme').addEventListener('click',()=>{
 /* ============================================================
    PART 16 — JSON / حفظ
    ============================================================ */
-const LS_KEY='theme-studio-v8';
+const LS_KEY='theme-studio-v9';
 document.getElementById('btnSave').addEventListener('click',()=>{
   try{
-    const d={v:8,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:state.image};
+    const d={v:9,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:state.image};
     localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ');
   }catch(_){
     try{
-      const d={v:8,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:null};
+      const d={v:9,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:null};
       localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ بدون الصورة');
     }catch(e){toast('فشل الحفظ')}
   }
@@ -787,7 +804,7 @@ document.getElementById('btnLoad').addEventListener('click',()=>{
   try{loadFromData(JSON.parse(raw));toast('تم الاسترجاع')}catch(e){toast('ملف تالف')}
 });
 document.getElementById('btnExport').addEventListener('click',()=>{
-  const d={v:8,exportedAt:new Date().toISOString(),...state};
+  const d={v:9,exportedAt:new Date().toISOString(),...state};
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='theme-studio-'+Date.now()+'.json';a.click();URL.revokeObjectURL(a.href);toast('نُزّل JSON');
 });
@@ -835,7 +852,7 @@ renderColorGroup('ctrlMisc',COLOR_GROUPS.misc);
 try{
   if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
 }catch(_){}
-console.log('[Theme Studio] v8 loaded — bot-mimic engine');
+console.log('[Theme Studio] v9 loaded — bot-mimic engine (strict)');
 </script>
 </body>
-</html>
+                                                                                                                                               </html>
