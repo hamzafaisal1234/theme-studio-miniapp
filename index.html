@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Theme Studio v4</title>
+<title>Theme Studio v5</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0e1116;--bg2:#161b22;--bg3:#1f2630;--line:#2a3240;--txt:#e6edf3;--muted:#8b98a9;--accent:#5b8def;--accent2:#7aa2f7;--danger:#f7768e;--r:12px;--r2:8px}
@@ -25,7 +25,6 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:var(--r2);background:var(--bg3);border:1px solid var(--line);font-size:12px;font-weight:600;transition:.15s}
 .btn:hover{background:#252c37}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.primary:hover{background:var(--accent2)}
 .btn.danger{color:var(--danger)}
 .btn.small{padding:5px 9px;font-size:11px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -33,7 +32,6 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .modes button{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted)}
 .modes button.on{background:var(--accent);color:#fff}
 .upload{border:2px dashed var(--line);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:.15s;background:var(--bg3);display:block}
-.upload:hover{border-color:var(--accent)}
 .upload input{display:none}
 .upload .ico{font-size:24px;margin-bottom:6px}
 .upload .hint{color:var(--muted);font-size:11px;margin-top:4px}
@@ -96,7 +94,7 @@ details.acc .body{padding:0 14px 14px}
 <div class="app">
   <header class="top">
     <div class="logo">T</div>
-    <div class="title">Theme Studio v4<small>محرر ثيمات تيليجرام</small></div>
+    <div class="title">Theme Studio v5<small>محرر ثيمات تيليجرام</small></div>
     <div class="spacer"></div>
     <div class="modes">
       <button id="modeDark" class="on">داكن</button>
@@ -111,7 +109,7 @@ details.acc .body{padding:0 14px 14px}
         <label class="upload" for="imgInput">
           <div class="ico">🖼️</div>
           <div>اضغط لاختيار صورة</div>
-          <div class="hint">تُستخرج منها لوحة ألوان متناسقة</div>
+          <div class="hint">تُستخرج منها لوحة ألوان متناسقة مع الخلفية</div>
           <input type="file" id="imgInput" accept="image/*">
         </label>
         <div class="row" style="margin-top:10px">
@@ -131,7 +129,7 @@ details.acc .body{padding:0 14px 14px}
         <h3><span class="dot"></span> اللون الأساسي</h3>
         <div class="slider"><div><label>درجة اللون (Hue)</label><input type="range" id="hRange" min="0" max="360" value="215"></div><div class="val" id="hVal">215</div></div>
         <div class="slider"><div><label>التشبع</label><input type="range" id="sRange" min="0" max="100" value="65"></div><div class="val" id="sVal">65%</div></div>
-        <div class="slider"><div><label>الإضاءة</label><input type="range" id="lRange" min="0" max="100" value="55"></div><div class="val" id="lVal">55%</div></div>
+        <div class="slider"><div><label>الإضاءة</label><input type="range" id="lRange" min="0" max="100" value="45"></div><div class="val" id="lVal">45%</div></div>
         <div class="row" style="margin-top:8px"><button class="btn small primary" id="btnRebuild">♻️ إعادة بناء</button></div>
       </div>
 
@@ -140,7 +138,7 @@ details.acc .body{padding:0 14px 14px}
         <div class="body">
           <div id="ctrlBackground"></div>
           <div class="slider"><div><label>شفافية صورة الخلفية</label><input type="range" id="imgOpacity" min="0" max="100" value="100"></div><div class="val" id="imgOpacityVal">100%</div></div>
-          <div class="slider"><div><label>تعتيم فوق الصورة</label><input type="range" id="bgDim" min="0" max="100" value="40"></div><div class="val" id="bgDimVal">40%</div></div>
+          <div class="slider"><div><label>تعتيم فوق الصورة <small style="color:var(--muted)">(تلقائي حسب سطوع الصورة)</small></label><input type="range" id="bgDim" min="0" max="100" value="45"></div><div class="val" id="bgDimVal">45%</div></div>
         </div>
       </details>
 
@@ -159,18 +157,14 @@ details.acc .body{padding:0 14px 14px}
       <div class="card">
         <h3><span class="dot"></span> التصدير</h3>
         <div class="row">
-          <button class="btn small primary" id="btnExportAtTheme">⬇️ تصدير ثيم تيليجرام (.attheme)</button>
-          <button class="btn small" id="btnExport">⬇️ تصدير إعدادات (JSON)</button>
-          <button class="btn small" id="btnImport">⬆️ استيراد JSON</button>
-          <button class="btn small" id="btnSave">💾 حفظ محلي</button>
+          <button class="btn small primary" id="btnExportAtTheme">⬇️ تصدير .attheme</button>
+          <button class="btn small" id="btnExport">⬇️ JSON</button>
+          <button class="btn small" id="btnImport">⬆️ استيراد</button>
+          <button class="btn small" id="btnSave">💾 حفظ</button>
           <button class="btn small" id="btnLoad">📂 استرجاع</button>
-          <button class="btn small danger" id="btnResetAll">🔄 ضبط الكل</button>
+          <button class="btn small danger" id="btnResetAll">🔄 ضبط</button>
         </div>
         <input type="file" id="importInput" accept=".json" style="display:none">
-        <div class="note">
-          <b>ℹ️ صيغة .attheme</b> خاصة بتطبيق <b>Telegram Android</b>. بعد التصدير، افتح الملف من مدير الملفات → سيُطلب منك تطبيقه في تيليجرام مباشرة.<br>
-          <b>iOS وDesktop</b> يستخدمان صيغًا مختلفة — ستدعم في نسخة لاحقة.
-        </div>
       </div>
     </div>
 
@@ -214,7 +208,7 @@ details.acc .body{padding:0 14px 14px}
 
 <script>
 'use strict';
-/* ============ 1) أدوات الألوان ============ */
+/* ============ 1) أدوات ============ */
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function hexToRgb(hex){hex=hex.replace('#','').trim();if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
 function rgbToHex(r,g,b){return '#'+[r,g,b].map(x=>clamp(Math.round(x),0,255).toString(16).padStart(2,'0')).join('')}
@@ -226,82 +220,109 @@ function relLum({r,g,b}){const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((
 function contrastText(bg){const c=hslToRgb(bg.h,bg.s,bg.l);const lum=relLum(c);return lum>0.5?{h:bg.h,s:Math.min(bg.s,0.15),l:0.13}:{h:bg.h,s:Math.min(bg.s,0.10),l:0.97}}
 const rgbStr=hex=>{const{r,g,b}=hexToRgb(hex);return`${r}, ${g}, ${b}`};
 
-/* ============ 2) استخراج الألوان ============ */
+/* ============ 2) استخراج الألوان الذكي ============ */
 function loadImage(src){return new Promise((res,rej)=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=rej;i.src=src})}
 
 async function extractColors(src){
   const img=await loadImage(src);
-  const S=128,c=document.createElement('canvas');c.width=c.height=S;
+  const S=160,c=document.createElement('canvas');c.width=c.height=S;
   const ctx=c.getContext('2d');
   const k=Math.max(S/img.width,S/img.height),w=img.width*k,h=img.height*k;
   ctx.drawImage(img,(S-w)/2,(S-h)/2,w,h);
   const data=ctx.getImageData(0,0,S,S).data;
+
   const buckets=new Map();
+  let avgL=0,total=0;
+
   for(let i=0;i<data.length;i+=4){
     const r=data[i],g=data[i+1],b=data[i+2],a=data[i+3];
     if(a<128) continue;
     const {h,s,l}=rgbToHsl(r,g,b);
-    if(l<0.08||l>0.92||s<0.10) continue;
-    const qh=Math.round(h/15)*15%360,qs=Math.round(s*10)/10,ql=Math.round(l*10)/10;
+    avgL+=l; total++;
+    // فلترة أولية: لا لأسود ولا لأبيض ولا رمادي فقير
+    if(l<0.10||l>0.90||s<0.15) continue;
+    const qh=Math.round(h/12)*12%360;
+    const qs=Math.round(s*8)/8;
+    const ql=Math.round(l*8)/8;
     const key=`${qh}|${qs}|${ql}`;
-    let e=buckets.get(key);if(!e){e={h:qh,s:qs,l:ql,count:0,rs:0,gs:0,bs:0};buckets.set(key,e)}
+    let e=buckets.get(key);
+    if(!e){e={h:qh,s:qs,l:ql,count:0,rs:0,gs:0,bs:0};buckets.set(key,e)}
     e.count++;e.rs+=r;e.gs+=g;e.bs+=b;
   }
-  const sorted=[...buckets.values()].sort((a,b)=>b.count-a.count);
+  avgL = total?avgL/total:0.5;
+
+  // ترقيم: شائعة + مشبعة + متوسطة الإضاءة
+  const ranked=[...buckets.values()].map(b=>{
+    const mid = 1 - Math.abs(b.l - 0.5) * 1.2;
+    const score = b.count * (0.6 + b.s) * mid;
+    return {...b, score};
+  }).sort((a,b)=>b.score-a.score);
+
+  // اختيار متباعد
   const picked=[];
-  for(const c2 of sorted){
+  for(const c2 of ranked){
     if(picked.length>=8) break;
-    const tooClose=picked.some(p=>{let dh=Math.abs(p.h-c2.h);dh=Math.min(dh,360-dh);return dh<22&&Math.abs(p.l-c2.l)<0.12});
+    const tooClose=picked.some(p=>{
+      let dh=Math.abs(p.h-c2.h);dh=Math.min(dh,360-dh);
+      return dh<25 && Math.abs(p.l-c2.l)<0.15;
+    });
     if(tooClose) continue;
-    picked.push({h:c2.h,s:c2.s,l:c2.l,hex:rgbToHex(c2.rs/c2.count,c2.gs/c2.count,c2.bs/c2.count),count:c2.count});
+    picked.push({
+      h:c2.h, s:c2.s, l:c2.l,
+      hex:rgbToHex(c2.rs/c2.count,c2.gs/c2.count,c2.bs/c2.count),
+      count:c2.count, score:c2.score
+    });
   }
-  return picked;
+  return { colors: picked, avgL };
 }
 
-/* ============ 3) بناء اللوحة (v4 - كل القيم مشتقة من اللون الأساسي) ============ */
-function pickAccent(colors,mode){
+/* ============ 3) اختيار اللون الأساسي ============ */
+function pickAccent(colors, mode){
   if(!colors.length) return {h:215,s:0.70,l:0.45};
-  const ranked=[...colors].sort((a,b)=>(b.s*Math.log(b.count+2))-(a.s*Math.log(a.count+2)));
-  const top=ranked[0];
-  const dark=mode==='dark';
+  const dark = mode==='dark';
+  // أعلى ترقيم = أكثر لون يمثل الصورة
+  const top = [...colors].sort((a,b)=>(b.score||b.count)-(a.score||a.count))[0];
   return {
-    h:top.h,
-    s:clamp(top.s,0.55,0.90),
-    l:dark?clamp(top.l,0.38,0.55):clamp(top.l,0.42,0.58)
+    h: top.h,
+    s: clamp(top.s, 0.55, 0.90),
+    l: dark ? 0.45 : 0.55
   };
 }
 
-function buildPalette(colors,mode,accent){
-  const dark=mode==='dark';
-  const A=accent||pickAccent(colors,mode);
+/* ============ 4) بناء اللوحة — كل قيم مشتقة من A ============ */
+function buildPalette(colors, mode, accent){
+  const dark = mode==='dark';
+  const A = accent || pickAccent(colors, mode);
 
-  // ← كل قيمة مشتقة من A.s و A.l — لا ثوابت
-  const bgSat     = clamp(A.s * 0.20, 0, 0.34);   // خلفية المحادثة
-  const headerSat = clamp(A.s * 0.30, 0, 0.42);   // شريط العنوان
-  const inSat     = clamp(A.s * 0.40, 0.05, 0.55); // الفقاعة الواردة
+  const bgSat     = clamp(A.s * 0.18, 0, 0.30);
+  const headerSat = clamp(A.s * 0.28, 0, 0.40);
+  const inSat     = clamp(A.s * 0.35, 0.05, 0.50);
 
-  const chatBg   ={h:A.h, s:bgSat,     l: dark?0.09:0.96};
-  const headerBg ={h:A.h, s:headerSat, l: dark?0.12:0.91};
-  const inBubble ={h:A.h, s:inSat,     l: dark?0.17:0.99};
-  const outBubble={h:A.h, s:A.s,       l: dark?A.l:Math.min(A.l+0.15,0.72)};
+  // الخلفيات: قيم ثابتة للإضاءة (لأن الداكن داكن دائمًا)
+  const chatBg   = { h:A.h, s:bgSat,     l: dark ? 0.07 : 0.96 };
+  const headerBg = { h:A.h, s:headerSat, l: dark ? 0.10 : 0.92 };
+  const inBubble = { h:A.h, s:inSat,     l: dark ? 0.16 : 0.98 };
 
-  const inBorder ={h:A.h, s:clamp(A.s*0.65,0.10,0.75),
-    l: dark?Math.min(inBubble.l+0.12,0.40):Math.max(inBubble.l-0.10,0.55)};
-  const outBorder={h:A.h, s:clamp(A.s*0.90,0.30,0.95),
-    l: dark?Math.min(outBubble.l+0.18,0.72):Math.max(outBubble.l-0.15,0.35)};
+  // الفقاعة الصادرة تتبع اللون الأساسي لكن مضبوطة
+  const outL = dark ? clamp(A.l, 0.30, 0.55) : clamp(A.l + 0.18, 0.50, 0.75);
+  const outBubble = { h:A.h, s:clamp(A.s, 0.40, 0.90), l: outL };
 
-  const inputBg={h:A.h, s:clamp(A.s*0.22,0,0.32), l: dark?0.16:0.90};
-  const sendBg ={h:A.h, s:A.s, l:A.l};
+  // الحدود
+  const inBorder  = { h:A.h, s:clamp(A.s*0.55,0.10,0.65), l: dark ? Math.min(inBubble.l+0.10, 0.38) : Math.max(inBubble.l-0.10, 0.55) };
+  const outBorder = { h:A.h, s:clamp(A.s*0.85,0.30,0.95), l: dark ? Math.min(outBubble.l+0.15, 0.70) : Math.max(outBubble.l-0.15, 0.35) };
 
-  const chatText  =contrastText(chatBg);
-  const headerText=contrastText(headerBg);
-  const inText    =contrastText(inBubble);
-  const outText   =contrastText(outBubble);
-  const inputText =contrastText(inputBg);
-  const sendIcon  =contrastText(sendBg);
+  const inputBg = { h:A.h, s:clamp(A.s*0.20,0,0.30), l: dark ? 0.14 : 0.90 };
+  const sendBg  = { h:A.h, s:clamp(A.s,0.50,0.90),  l: dark ? clamp(A.l,0.45,0.58) : clamp(A.l,0.45,0.58) };
 
-  const linkCol={h:A.h, s:clamp(A.s*1.10,0.40,0.92), l: dark?0.72:0.42};
-  const sepCol ={h:A.h, s:clamp(A.s*0.28,0,0.35),    l: dark?0.22:0.85};
+  const chatText   = contrastText(chatBg);
+  const headerText = contrastText(headerBg);
+  const inText     = contrastText(inBubble);
+  const outText    = contrastText(outBubble);
+  const inputText  = contrastText(inputBg);
+  const sendIcon   = contrastText(sendBg);
+
+  const linkCol = { h:A.h, s:clamp(A.s*1.05,0.40,0.90), l: dark ? 0.70 : 0.42 };
+  const sepCol  = { h:A.h, s:clamp(A.s*0.25,0,0.32),    l: dark ? 0.20 : 0.86 };
 
   return {
     accentColor:    hslToHex(A.h,A.s,A.l),
@@ -324,7 +345,7 @@ function buildPalette(colors,mode,accent){
   };
 }
 
-/* ============ 4) الحالة ============ */
+/* ============ 5) الحالة ============ */
 const DEFAULTS={
   accentColor:'#4a86e8',chatBg:'#0f1218',chatText:'#e6edf3',
   headerBg:'#151a22',headerText:'#e6edf3',
@@ -334,9 +355,9 @@ const DEFAULTS={
   sendBtnBg:'#4a86e8',sendBtnIcon:'#ffffff',
   linkColor:'#7aa2f7',separatorColor:'#20262f'
 };
-const state={mode:'dark',colors:{...DEFAULTS},image:null,imgOpacity:100,dim:40,bubbleOp:100,borderOp:100,sourceColors:[],accentOverride:null,imgHidden:false};
+const state={mode:'dark',colors:{...DEFAULTS},image:null,imgOpacity:100,dim:45,bubbleOp:100,borderOp:100,sourceColors:[],accentOverride:null,imgHidden:false};
 
-/* ============ 5) عناصر التحكم ============ */
+/* ============ 6) عناصر التحكم ============ */
 const COLOR_GROUPS={
   background:[['chatBg','خلفية المحادثة'],['chatText','نص المحادثة']],
   header:[['headerBg','خلفية الشريط'],['headerText','نص الشريط']],
@@ -379,7 +400,7 @@ function syncInputs(){
   document.getElementById('lVal').textContent=Math.round(h.l*100)+'%';
 }
 
-/* ============ 6) المعاينة ============ */
+/* ============ 7) المعاينة ============ */
 function applyPreview(){
   const p=document.getElementById('phone'),c=state.colors;
   p.style.setProperty('--pv-chat-bg',c.chatBg);
@@ -408,24 +429,33 @@ function applyPreview(){
   try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.setHeaderColor)Telegram.WebApp.setHeaderColor(c.headerBg)}catch(_){}
 }
 
-/* ============ 7) اللوحات المقترحة — 8 نسخ (v4) ============ */
+/* ============ 8) اللوحات — تُبنى دائمًا من الوضع الحالي ============ */
 function renderPalettes(colors){
   const card=document.getElementById('paletteCard'),list=document.getElementById('palettesList');
   if(!colors.length){card.style.display='none';return}
   card.style.display='block';list.innerHTML='';
   const base=pickAccent(colors,state.mode);
-  const d=state.mode==='dark';
+  const dark=state.mode==='dark';
 
-  // ← تشبع وإضاءة مختلفان بوضوح في كل نسخة (وليس فقط Hue)
-  const variants=[
-    {name:'متوازن',    h:base.h,               s:base.s,                          l:d?0.42:0.62},
-    {name:'هادئ',      h:base.h,               s:clamp(base.s*0.40,0.15,0.90),    l:d?0.40:0.60},
-    {name:'زاهي',      h:base.h,               s:clamp(base.s*1.40,0.40,0.95),    l:d?0.52:0.68},
-    {name:'عميق',      h:base.h,               s:clamp(base.s*1.15,0.30,0.95),    l:d?0.28:0.45},
-    {name:'فاتح ناعم', h:base.h,               s:clamp(base.s*0.80,0.20,0.90),    l:d?0.58:0.74},
-    {name:'دافئ',      h:(base.h+45)%360,      s:base.s,                          l:d?0.44:0.62},
-    {name:'بارد',      h:(base.h-45+360)%360,  s:base.s,                          l:d?0.44:0.62},
-    {name:'تباين',     h:base.h,               s:clamp(base.s*1.25,0.40,0.95),    l:d?0.34:0.58}
+  // كل نسخة تختلف في H و S و L معًا
+  const variants = dark ? [
+    {name:'أنيق',    h:base.h,                       s:clamp(base.s*0.85,0.40,0.85), l:0.42},
+    {name:'هادئ',    h:base.h,                       s:clamp(base.s*0.45,0.20,0.60), l:0.40},
+    {name:'زاهي',    h:base.h,                       s:clamp(base.s*1.30,0.60,0.95), l:0.50},
+    {name:'عميق',    h:base.h,                       s:clamp(base.s*1.10,0.50,0.90), l:0.34},
+    {name:'رمادي',   h:base.h,                       s:0.15,                         l:0.42},
+    {name:'دافئ',    h:(base.h+30)%360,              s:base.s,                       l:0.44},
+    {name:'بارد',    h:(base.h-30+360)%360,          s:base.s,                       l:0.44},
+    {name:'بنفسجي',  h:(base.h+60)%360,              s:base.s,                       l:0.46}
+  ] : [
+    {name:'أنيق',    h:base.h,                       s:clamp(base.s*0.85,0.40,0.85), l:0.55},
+    {name:'هادئ',    h:base.h,                       s:clamp(base.s*0.45,0.20,0.60), l:0.58},
+    {name:'زاهي',    h:base.h,                       s:clamp(base.s*1.30,0.60,0.95), l:0.50},
+    {name:'فاتح',    h:base.h,                       s:clamp(base.s*0.85,0.40,0.85), l:0.65},
+    {name:'رمادي',   h:base.h,                       s:0.15,                         l:0.55},
+    {name:'دافئ',    h:(base.h+30)%360,              s:base.s,                       l:0.56},
+    {name:'بارد',    h:(base.h-30+360)%360,          s:base.s,                       l:0.56},
+    {name:'بنفسجي',  h:(base.h+60)%360,              s:base.s,                       l:0.54}
   ];
 
   for(const v of variants){
@@ -441,29 +471,40 @@ function renderPalettes(colors){
       <span style="background:${pal.headerBg}"></span>
     </div><div class="lbl">${v.name}</div>`;
     el.addEventListener('click',()=>{
-      Object.assign(state.colors,pal);
-      state.accentOverride=tuned;
-      syncInputs();applyPreview();
+      // ← نعيد البناء في اللحظة نفسها بالوضع الحالي
+      const palNow = buildPalette(state.sourceColors, state.mode, tuned);
+      Object.assign(state.colors, palNow);
+      state.accentOverride = tuned;
+      syncInputs(); applyPreview();
       toast('تم تطبيق: '+v.name);
     });
     list.appendChild(el);
   }
 }
 
-/* ============ 8) Toast ============ */
+/* ============ 9) Toast ============ */
 let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
 
-/* ============ 9) أحداث ============ */
+/* ============ 10) الوضع — يُعيد بناء اللوحات ============ */
 document.getElementById('modeDark').addEventListener('click',()=>setMode('dark'));
 document.getElementById('modeLight').addEventListener('click',()=>setMode('light'));
 function setMode(m){
   state.mode=m;
   document.getElementById('modeDark').classList.toggle('on',m==='dark');
   document.getElementById('modeLight').classList.toggle('on',m==='light');
-  if(state.sourceColors.length){Object.assign(state.colors,buildPalette(state.sourceColors,m,state.accentOverride))}
-  syncInputs();applyPreview();
+  if(state.sourceColors.length){
+    // إن كان هناك تجاوز من المستخدم، احتفظ به؛ وإلا أعد الاختيار
+    const acc = state.accentOverride
+      ? {...state.accentOverride, l: m==='dark' ? clamp(state.accentOverride.l,0.30,0.55) : clamp(state.accentOverride.l,0.45,0.68)}
+      : null;
+    state.accentOverride = acc;
+    Object.assign(state.colors, buildPalette(state.sourceColors, m, acc));
+    renderPalettes(state.sourceColors);  // ← إعادة بناء القائمة
+  }
+  syncInputs(); applyPreview();
 }
 
+/* ============ 11) رفع الصورة + استخراج ============ */
 document.getElementById('imgInput').addEventListener('change',e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
   if(f.size>4*1024*1024){toast('الصورة كبيرة (>4MB)');return}
@@ -475,18 +516,26 @@ document.getElementById('imgInput').addEventListener('change',e=>{
 async function runExtraction(){
   if(!state.image){toast('ارفع صورة أولاً');return}
   try{
-    toast('جاري التحليل…');
-    const colors=await extractColors(state.image);
+    toast('جاري تحليل الصورة…');
+    const {colors, avgL} = await extractColors(state.image);
     if(!colors.length){toast('لا ألوان مناسبة');return}
-    state.sourceColors=colors;state.accentOverride=null;
-    Object.assign(state.colors,buildPalette(colors,state.mode));
-    renderPalettes(colors);syncInputs();applyPreview();
+    state.sourceColors = colors;
+    state.accentOverride = null;
+
+    // تعتيم تلقائي حسب سطوع الصورة
+    state.dim = Math.round(clamp(30 + (avgL - 0.5) * 70, 15, 75));
+    document.getElementById('bgDim').value = state.dim;
+    document.getElementById('bgDimVal').textContent = state.dim + '%';
+
+    Object.assign(state.colors, buildPalette(colors, state.mode));
+    renderPalettes(colors);
+    syncInputs(); applyPreview();
     toast('تم استخراج '+colors.length+' ألوان');
   }catch(err){console.error(err);toast('فشل التحليل')}
 }
 document.getElementById('btnExtract').addEventListener('click',runExtraction);
 document.getElementById('btnRemoveImg').addEventListener('click',()=>{
-  state.image=null;state.sourceColors=[];
+  state.image=null;state.sourceColors=[];state.accentOverride=null;
   document.getElementById('paletteCard').style.display='none';
   applyPreview();toast('أُزيلت الصورة');
 });
@@ -495,16 +544,16 @@ document.getElementById('btnToggleImg').addEventListener('click',e=>{
   e.target.textContent=state.imgHidden?'👁️ إظهار الصورة':'👁️ إخفاء الصورة';
   applyPreview();
 });
-
 document.getElementById('btnRandom').addEventListener('click',()=>{
   const h=Math.floor(Math.random()*360);
   const s=0.55+Math.random()*0.35;
-  const l=state.mode==='dark'?0.35+Math.random()*0.20:0.42+Math.random()*0.16;
+  const l=state.mode==='dark'?0.40+Math.random()*0.12:0.50+Math.random()*0.14;
   const acc={h,s,l};
   Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,acc));
   state.accentOverride=acc;syncInputs();applyPreview();
 });
 
+/* ============ 12) منزلقات HSL ============ */
 ['h','s','l'].forEach(k=>{
   document.getElementById(k+'Range').addEventListener('input',()=>{
     const h=+document.getElementById('hRange').value;
@@ -523,12 +572,10 @@ document.getElementById('btnRandom').addEventListener('click',()=>{
     applyPreview();
   });
 });
-
 document.getElementById('btnRebuild').addEventListener('click',()=>{
   Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,state.accentOverride));
   syncInputs();applyPreview();toast('تم');
 });
-
 function bindSlider(id,valId,key,unit='%'){
   const s=document.getElementById(id),v=document.getElementById(valId);
   s.addEventListener('input',()=>{state[key]=+s.value;v.textContent=s.value+unit;applyPreview()});
@@ -538,20 +585,16 @@ bindSlider('bgDim','bgDimVal','dim');
 bindSlider('bubbleOp','bubbleOpVal','bubbleOp');
 bindSlider('borderOp','borderOpVal','borderOp');
 
-/* ============ 10) تصدير .attheme ============ */
+/* ============ 13) تصدير .attheme ============ */
 function hexToArgb(hex,alpha=1){
   const{r,g,b}=hexToRgb(hex);
   const a=Math.round(clamp(alpha,0,1)*255).toString(16).padStart(2,'0');
   return '#'+a+r.toString(16).padStart(2,'0')+g.toString(16).padStart(2,'0')+b.toString(16).padStart(2,'0');
 }
 function buildAtTheme(){
-  const c=state.colors;
-  const bA=state.bubbleOp/100,bdA=state.borderOp/100;
+  const c=state.colors,bA=state.bubbleOp/100,bdA=state.borderOp/100;
   return [
-    '// Theme Studio v4 export',
-    '// Telegram Android .attheme',
-    '// '+new Date().toISOString(),
-    '',
+    '// Theme Studio v5','// Telegram Android','// '+new Date().toISOString(),'',
     'chat_wallpaper='+hexToArgb(c.chatBg),
     'chat_wallpaper_gradient_to='+hexToArgb(c.chatBg),
     'chat_inBubble='+hexToArgb(c.inBubbleBg,bA),
@@ -577,30 +620,27 @@ function buildAtTheme(){
   ].join('\n');
 }
 document.getElementById('btnExportAtTheme').addEventListener('click',()=>{
-  const txt=buildAtTheme();
-  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='theme-studio.attheme';
-  a.click();URL.revokeObjectURL(a.href);
+  const blob=new Blob([buildAtTheme()],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='theme-studio.attheme';a.click();URL.revokeObjectURL(a.href);
   toast('نُزّل ملف .attheme');
 });
 
-/* ============ 11) JSON + حفظ ============ */
-const LS_KEY='theme-studio-v4';
+/* ============ 14) JSON + حفظ ============ */
+const LS_KEY='theme-studio-v5';
 document.getElementById('btnSave').addEventListener('click',()=>{
   try{
-    const d={v:4,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:state.image};
-    localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ محليًا');
+    const d={v:5,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:state.image};
+    localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ');
   }catch(_){
     try{
-      const d={v:4,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:null};
+      const d={v:5,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:null};
       localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ بدون الصورة');
     }catch(e){toast('فشل الحفظ')}
   }
 });
 function loadFromData(d){
-  Object.assign(state,{mode:d.mode||'dark',colors:{...DEFAULTS,...(d.colors||{})},imgOpacity:d.imgOpacity??100,dim:d.dim??40,bubbleOp:d.bubbleOp??100,borderOp:d.borderOp??100,sourceColors:d.sourceColors||[],accentOverride:d.accentOverride||null,image:d.image||null,imgHidden:false});
+  Object.assign(state,{mode:d.mode||'dark',colors:{...DEFAULTS,...(d.colors||{})},imgOpacity:d.imgOpacity??100,dim:d.dim??45,bubbleOp:d.bubbleOp??100,borderOp:d.borderOp??100,sourceColors:d.sourceColors||[],accentOverride:d.accentOverride||null,image:d.image||null,imgHidden:false});
   document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
   document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
   ['imgOpacity','bgDim','bubbleOp','borderOp'].forEach((id,i)=>{
@@ -615,7 +655,7 @@ document.getElementById('btnLoad').addEventListener('click',()=>{
   try{loadFromData(JSON.parse(raw));toast('تم الاسترجاع')}catch(e){toast('ملف تالف')}
 });
 document.getElementById('btnExport').addEventListener('click',()=>{
-  const d={v:4,exportedAt:new Date().toISOString(),...state};
+  const d={v:5,exportedAt:new Date().toISOString(),...state};
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='theme-studio-'+Date.now()+'.json';a.click();URL.revokeObjectURL(a.href);toast('نُزّل JSON');
 });
@@ -623,23 +663,24 @@ document.getElementById('btnImport').addEventListener('click',()=>document.getEl
 document.getElementById('importInput').addEventListener('change',e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{try{loadFromData(JSON.parse(r.result));localStorage.setItem(LS_KEY,r.result);toast('تم الاستيراد')}catch(_){toast('JSON غير صالح')}};
+  r.onload=()=>{try{loadFromData(JSON.parse(r.result));localStorage.setItem(LS_KEY,r.result);toast('تم')}catch(_){toast('JSON غير صالح')}};
   r.readAsText(f);e.target.value='';
 });
 document.getElementById('btnResetAll').addEventListener('click',()=>{
   if(!confirm('إعادة ضبط كل الإعدادات؟'))return;
   state.colors={...DEFAULTS};state.image=null;state.sourceColors=[];state.accentOverride=null;state.imgHidden=false;
-  state.imgOpacity=100;state.dim=40;state.bubbleOp=100;state.borderOp=100;
-  ['imgOpacity','bgDim','bubbleOp','borderOp'].forEach((id,i)=>{document.getElementById(id).value=[100,40,100,100][i]});
+  state.imgOpacity=100;state.dim=45;state.bubbleOp=100;state.borderOp=100;
+  document.getElementById('imgOpacity').value=100;document.getElementById('bgDim').value=45;
+  document.getElementById('bubbleOp').value=100;document.getElementById('borderOp').value=100;
   document.getElementById('imgOpacityVal').textContent='100%';
-  document.getElementById('bgDimVal').textContent='40%';
+  document.getElementById('bgDimVal').textContent='45%';
   document.getElementById('bubbleOpVal').textContent='100%';
   document.getElementById('borderOpVal').textContent='100%';
   document.getElementById('paletteCard').style.display='none';
   syncInputs();applyPreview();toast('تمت إعادة الضبط');
 });
 
-/* ============ 12) تهيئة ============ */
+/* ============ 15) تهيئة ============ */
 renderColorGroup('ctrlBackground',COLOR_GROUPS.background);
 renderColorGroup('ctrlHeader',COLOR_GROUPS.header);
 renderColorGroup('ctrlBubbles',COLOR_GROUPS.bubbles);
@@ -654,15 +695,11 @@ renderColorGroup('ctrlMisc',COLOR_GROUPS.misc);
   syncInputs();applyPreview();
 })();
 
+// التكامل مع تيليجرام — لا نغير الوضع تلقائيًا بعد الآن
 try{
-  if(window.Telegram&&Telegram.WebApp){
-    Telegram.WebApp.ready();Telegram.WebApp.expand();
-    if(Telegram.WebApp.colorScheme&&!localStorage.getItem(LS_KEY)){
-      setMode(Telegram.WebApp.colorScheme==='light'?'light':'dark');
-    }
-  }
+  if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
 }catch(_){}
-console.log('[Theme Studio] v4 loaded — all values derived from accent');
+console.log('[Theme Studio] v5 loaded — mode-safe palettes');
 </script>
 </body>
 </html>
