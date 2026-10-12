@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Theme Studio v9.1</title>
+<title>Theme Studio v10</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0e1116;--bg2:#161b22;--bg3:#1f2630;--line:#2a3240;--txt:#e6edf3;--muted:#8b98a9;--accent:#5b8def;--accent2:#7aa2f7;--danger:#f7768e;--r:12px;--r2:8px}
@@ -27,6 +27,7 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn.danger{color:var(--danger)}
 .btn.small{padding:5px 9px;font-size:11px}
+.btn.wall{background:linear-gradient(135deg,#9ece6a,#5b8def);border-color:#9ece6a;color:#0e1116}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .modes{display:flex;background:var(--bg3);padding:3px;border-radius:10px;border:1px solid var(--line)}
 .modes button{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:600;color:var(--muted)}
@@ -97,13 +98,14 @@ details.acc[open] summary::after{transform:rotate(180deg)}
 details.acc .body{padding:0 14px 14px}
 .badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:5px;background:var(--bg3);color:var(--muted);margin-inline-start:6px;vertical-align:middle}
 .badge.ok{background:rgba(158,206,106,.15);color:#9ece6a}
+.badge.new{background:rgba(91,141,239,.2);color:#7aa2f7}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
     <div class="logo">T</div>
-    <div class="title">Theme Studio v9.1<small>محرّك @my_themes_bot</small></div>
+    <div class="title">Theme Studio v10<small>محرّك @my_themes_bot + خلفية مدمجة</small></div>
     <div class="spacer"></div>
     <div class="modes">
       <button id="modeDark" class="on">داكن</button>
@@ -118,7 +120,7 @@ details.acc .body{padding:0 14px 14px}
         <label class="upload" for="imgInput">
           <div class="ico">🖼️</div>
           <div>اضغط لاختيار صورة</div>
-          <div class="hint">K-means Lab + كشف تلقائي للوضع + لونان (سطح + تمييز)</div>
+          <div class="hint">K-means Lab + دمج الصورة داخل .attheme</div>
           <input type="file" id="imgInput" accept="image/*">
         </label>
         <div class="row" style="margin-top:10px">
@@ -165,7 +167,8 @@ details.acc .body{padding:0 14px 14px}
       <div class="card">
         <h3><span class="dot"></span> التصدير</h3>
         <div class="row">
-          <button class="btn small primary" id="btnExportAtTheme">⬇️ .attheme</button>
+          <button class="btn small wall" id="btnExportAtThemeWall">📦 .attheme مع الصورة <span class="badge new">جديد</span></button>
+          <button class="btn small primary" id="btnExportAtTheme">⬇️ .attheme (ألوان فقط)</button>
           <button class="btn small" id="btnExport">⬇️ JSON</button>
           <button class="btn small" id="btnImport">⬆️ استيراد</button>
           <button class="btn small" id="btnSave">💾 حفظ</button>
@@ -173,6 +176,10 @@ details.acc .body{padding:0 14px 14px}
           <button class="btn small danger" id="btnResetAll">🔄 ضبط</button>
         </div>
         <input type="file" id="importInput" accept=".json" style="display:none">
+        <div class="hint" style="color:var(--muted);font-size:11px;margin-top:8px">
+          <b>📦 .attheme مع الصورة</b> = ملف واحد يحتوي الألوان + الصورة (Android فقط).<br>
+          <b>⬇️ .attheme (ألوان فقط)</b> = للأجهزة التي لا تدعم تضمين الصورة.
+        </div>
       </div>
     </div>
 
@@ -374,13 +381,11 @@ async function analyzeImage(src){
 }
 
 /* ============================================================
-   PART 5 — بناء الثيم (v9.1: sendBtnIcon مضبوط)
+   PART 5 — بناء الثيم
    ============================================================ */
 function buildThemeFromBot(mode, surface, accent){
   const sHex = hslToHex(surface.h,surface.s,surface.l);
   const aHex = hslToHex(accent.h, accent.s, accent.l);
-
-  // ← حساب أيقونة زر الإرسال بنص متضاد (بدل استخدام نفس لون التمييز)
   const aRgb = hslToRgb(accent.h, accent.s, accent.l);
   const iconRgb = contrastText(aRgb);
   const iconHex = rgbToHex(iconRgb.r, iconRgb.g, iconRgb.b);
@@ -648,7 +653,7 @@ async function runAnalysis(){
     diag.innerHTML=`<b>الوضع:</b> ${bot.mode==='dark'?'داكن':'فاتح'} (L̄=${bot.avgL.toFixed(2)})<br>
 <b>السطح:</b> hsl(${Math.round(bot.surface.h)}, ${Math.round(bot.surface.s*100)}%, ${Math.round(bot.surface.l*100)}%) — تغطية ${Math.round(bot.surface.coverage*100)}%<br>
 <b>التمييز:</b> hsl(${Math.round(bot.accent.h)}, ${Math.round(bot.accent.s*100)}%, ${Math.round(bot.accent.l*100)}%)<br>
-<b>العناقيد:</b> ${bot.clusters.length} بعد الفلترة وإقصاء L>55%`;
+<b>العناقيد:</b> ${bot.clusters.length} بعد الفلترة`;
 
     syncInputs(); applyPreview();
     toast('تم التحليل — '+bot.clusters.length+' عناقيد');
@@ -698,19 +703,19 @@ bindSlider('bubbleOp','bubbleOpVal','bubbleOp');
 bindSlider('borderOp','borderOpVal','borderOp');
 
 /* ============================================================
-   PART 15 — .attheme
+   PART 15 — .attheme (مع دعم دمج الصورة)
    ============================================================ */
 function hexToArgb(hex,alpha=1){
   const{r,g,b}=hexToRgb(hex);
   const a=Math.round(clamp(alpha,0,1)*255).toString(16).padStart(2,'0');
   return '#'+a+r.toString(16).padStart(2,'0')+g.toString(16).padStart(2,'0')+b.toString(16).padStart(2,'0');
 }
-function buildAtTheme(){
+function buildAtThemeText(){
   const c=state.colors;
   const bA=state.bubbleOp/100;
   const bdA=state.borderOp/100;
   return [
-    '// Theme Studio v9.1',
+    '// Theme Studio v10',
     '// Telegram Android .attheme',
     '// '+new Date().toISOString(),
     '',
@@ -742,24 +747,67 @@ function buildAtTheme(){
     'divider='+hexToArgb(c.accentColor,0)
   ].join('\n');
 }
+
+async function imageToJpegBytes(dataUrl, maxSize=1080, quality=0.85){
+  const img=await loadImage(dataUrl);
+  const k=Math.min(1, maxSize/Math.max(img.width,img.height));
+  const w=Math.max(1,Math.round(img.width*k));
+  const h=Math.max(1,Math.round(img.height*k));
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+  const ctx=cv.getContext('2d');
+  ctx.drawImage(img,0,0,w,h);
+  const blob=await new Promise(res=>cv.toBlob(res,'image/jpeg',quality));
+  const buf=await blob.arrayBuffer();
+  return new Uint8Array(buf);
+}
+
+async function buildAtThemeWithWallpaper(){
+  const textPart=buildAtThemeText();
+  const encoder=new TextEncoder();
+  const textBytes=encoder.encode(textPart);
+  // الفاصل بين النص والصورة
+  const sepStart=encoder.encode('\nWPS\n');
+  const sepEnd=encoder.encode('\nWPE');
+  const imgBytes=await imageToJpegBytes(state.image);
+  // ترتيب الأجزاء: النص + WPS + بايتات الصورة + WPE
+  return new Blob([textBytes, sepStart, imgBytes, sepEnd], {type:'application/octet-stream'});
+}
+
+document.getElementById('btnExportAtThemeWall').addEventListener('click',async ()=>{
+  if(!state.image){toast('لا توجد صورة لدمجها');return}
+  try{
+    toast('جاري تجهيز الملف…');
+    const blob=await buildAtThemeWithWallpaper();
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='theme-studio-with-wallpaper.attheme';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('نُزّل .attheme مع الصورة');
+  }catch(e){
+    console.error(e);
+    toast('فشل الدمج');
+  }
+});
+
 document.getElementById('btnExportAtTheme').addEventListener('click',()=>{
-  const blob=new Blob([buildAtTheme()],{type:'text/plain;charset=utf-8'});
+  const blob=new Blob([buildAtThemeText()],{type:'text/plain;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='theme-studio.attheme';a.click();URL.revokeObjectURL(a.href);
-  toast('نُزّل .attheme');
+  toast('نُزّل .attheme (ألوان فقط)');
 });
 
 /* ============================================================
    PART 16 — JSON / حفظ
    ============================================================ */
-const LS_KEY='theme-studio-v91';
+const LS_KEY='theme-studio-v10';
 document.getElementById('btnSave').addEventListener('click',()=>{
   try{
-    const d={v:9.1,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:state.image};
+    const d={v:10,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:state.image};
     localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ');
   }catch(_){
     try{
-      const d={v:9.1,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:null};
+      const d={v:10,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:null};
       localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ بدون الصورة');
     }catch(e){toast('فشل الحفظ')}
   }
@@ -787,7 +835,7 @@ document.getElementById('btnLoad').addEventListener('click',()=>{
   try{loadFromData(JSON.parse(raw));toast('تم الاسترجاع')}catch(e){toast('ملف تالف')}
 });
 document.getElementById('btnExport').addEventListener('click',()=>{
-  const d={v:9.1,exportedAt:new Date().toISOString(),...state};
+  const d={v:10,exportedAt:new Date().toISOString(),...state};
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='theme-studio-'+Date.now()+'.json';a.click();URL.revokeObjectURL(a.href);toast('نُزّل JSON');
 });
@@ -835,7 +883,7 @@ renderColorGroup('ctrlMisc',COLOR_GROUPS.misc);
 try{
   if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
 }catch(_){}
-console.log('[Theme Studio] v9.1 loaded — sendBtnIcon fixed');
+console.log('[Theme Studio] v10 loaded — wallpaper embed supported');
 </script>
 </body>
 </html>
