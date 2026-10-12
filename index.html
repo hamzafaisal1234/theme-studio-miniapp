@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Theme Studio v3</title>
+<title>Theme Studio v4</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0e1116;--bg2:#161b22;--bg3:#1f2630;--line:#2a3240;--txt:#e6edf3;--muted:#8b98a9;--accent:#5b8def;--accent2:#7aa2f7;--danger:#f7768e;--r:12px;--r2:8px}
@@ -27,7 +27,6 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .btn.primary:hover{background:var(--accent2)}
 .btn.danger{color:var(--danger)}
-.btn.ok{color:#9ece6a}
 .btn.small{padding:5px 9px;font-size:11px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .modes{display:flex;background:var(--bg3);padding:3px;border-radius:10px;border:1px solid var(--line)}
@@ -38,7 +37,7 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .upload input{display:none}
 .upload .ico{font-size:24px;margin-bottom:6px}
 .upload .hint{color:var(--muted);font-size:11px;margin-top:4px}
-.palettes{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.palettes{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
 .palette{border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(--line);transition:.15s}
 .palette:hover{transform:translateY(-2px);border-color:var(--accent)}
 .palette .strip{display:flex;height:34px}
@@ -91,15 +90,13 @@ details.acc[open] summary::after{transform:rotate(180deg)}
 details.acc .body{padding:0 14px 14px}
 .note{background:rgba(91,141,239,.08);border:1px solid rgba(91,141,239,.3);border-radius:8px;padding:10px;font-size:11px;color:#a9c1ea;margin-top:10px;line-height:1.6}
 .badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:5px;background:var(--bg3);color:var(--muted);margin-inline-start:6px;vertical-align:middle}
-.badge.ok{background:rgba(158,206,106,.15);color:#9ece6a}
-.badge.warn{background:rgba(240,180,80,.15);color:#f0b450}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
     <div class="logo">T</div>
-    <div class="title">Theme Studio v3<small>محرر ثيمات تيليجرام</small></div>
+    <div class="title">Theme Studio v4<small>محرر ثيمات تيليجرام</small></div>
     <div class="spacer"></div>
     <div class="modes">
       <button id="modeDark" class="on">داكن</button>
@@ -126,7 +123,7 @@ details.acc .body{padding:0 14px 14px}
       </div>
 
       <div class="card" id="paletteCard" style="display:none">
-        <h3><span class="dot"></span> لوحات مقترحة <span class="badge">6 خيارات</span></h3>
+        <h3><span class="dot"></span> لوحات مقترحة <span class="badge">8 خيارات</span></h3>
         <div class="palettes" id="palettesList"></div>
       </div>
 
@@ -261,38 +258,50 @@ async function extractColors(src){
   return picked;
 }
 
-/* ============ 3) بناء اللوحة ============ */
+/* ============ 3) بناء اللوحة (v4 - كل القيم مشتقة من اللون الأساسي) ============ */
 function pickAccent(colors,mode){
-  if(!colors.length) return {h:215,s:0.65,l:0.55};
+  if(!colors.length) return {h:215,s:0.70,l:0.45};
   const ranked=[...colors].sort((a,b)=>(b.s*Math.log(b.count+2))-(a.s*Math.log(a.count+2)));
   const top=ranked[0];
-  return {h:top.h,s:clamp(top.s,0.50,0.85),l:mode==='dark'?clamp(top.l,0.55,0.70):clamp(top.l,0.40,0.52)};
+  const dark=mode==='dark';
+  return {
+    h:top.h,
+    s:clamp(top.s,0.55,0.90),
+    l:dark?clamp(top.l,0.38,0.55):clamp(top.l,0.42,0.58)
+  };
 }
 
 function buildPalette(colors,mode,accent){
   const dark=mode==='dark';
   const A=accent||pickAccent(colors,mode);
-  const bgHue=A.h;
-  const bgSat=dark?0.18:0.22;
 
-  const chatBg   ={h:bgHue,s:bgSat,l:dark?0.10:0.95};
-  const headerBg ={h:bgHue,s:bgSat+0.05,l:dark?0.13:0.90};
-  const inBubble ={h:bgHue,s:bgSat*0.55,l:dark?0.19:0.99};
-  // الفقاعة الصادرة تتبع اللون الأساسي مباشرة — فرق واضح بين اللوحات
-  const outBubble={h:A.h,s:clamp(A.s*0.95,0.45,0.85),l:dark?clamp(A.l*0.55,0.28,0.42):clamp(A.l*1.30,0.55,0.75)};
+  // ← كل قيمة مشتقة من A.s و A.l — لا ثوابت
+  const bgSat     = clamp(A.s * 0.20, 0, 0.34);   // خلفية المحادثة
+  const headerSat = clamp(A.s * 0.30, 0, 0.42);   // شريط العنوان
+  const inSat     = clamp(A.s * 0.40, 0.05, 0.55); // الفقاعة الواردة
 
-  const chatText=contrastText(chatBg),headerText=contrastText(headerBg);
-  const inText=contrastText(inBubble),outText=contrastText(outBubble);
+  const chatBg   ={h:A.h, s:bgSat,     l: dark?0.09:0.96};
+  const headerBg ={h:A.h, s:headerSat, l: dark?0.12:0.91};
+  const inBubble ={h:A.h, s:inSat,     l: dark?0.17:0.99};
+  const outBubble={h:A.h, s:A.s,       l: dark?A.l:Math.min(A.l+0.15,0.72)};
 
-  const inBorder ={h:A.h,s:0.35,l:dark?0.32:0.75};
-  const outBorder={h:A.h,s:clamp(A.s*1.1,0.55,0.95),l:dark?clamp(A.l*0.95,0.48,0.62):clamp(A.l*1.05,0.50,0.65)};
+  const inBorder ={h:A.h, s:clamp(A.s*0.65,0.10,0.75),
+    l: dark?Math.min(inBubble.l+0.12,0.40):Math.max(inBubble.l-0.10,0.55)};
+  const outBorder={h:A.h, s:clamp(A.s*0.90,0.30,0.95),
+    l: dark?Math.min(outBubble.l+0.18,0.72):Math.max(outBubble.l-0.15,0.35)};
 
-  const inputBg  ={h:bgHue,s:bgSat,l:dark?0.18:0.90};
-  const inputText=contrastText(inputBg);
-  const sendBg   ={h:A.h,s:A.s,l:A.l};
-  const sendIcon =contrastText(sendBg);
-  const linkCol  ={h:A.h,s:0.72,l:dark?0.68:0.42};
-  const sepCol   ={h:bgHue,s:bgSat*0.5,l:dark?0.24:0.82};
+  const inputBg={h:A.h, s:clamp(A.s*0.22,0,0.32), l: dark?0.16:0.90};
+  const sendBg ={h:A.h, s:A.s, l:A.l};
+
+  const chatText  =contrastText(chatBg);
+  const headerText=contrastText(headerBg);
+  const inText    =contrastText(inBubble);
+  const outText   =contrastText(outBubble);
+  const inputText =contrastText(inputBg);
+  const sendIcon  =contrastText(sendBg);
+
+  const linkCol={h:A.h, s:clamp(A.s*1.10,0.40,0.92), l: dark?0.72:0.42};
+  const sepCol ={h:A.h, s:clamp(A.s*0.28,0,0.35),    l: dark?0.22:0.85};
 
   return {
     accentColor:    hslToHex(A.h,A.s,A.l),
@@ -399,28 +408,40 @@ function applyPreview(){
   try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.setHeaderColor)Telegram.WebApp.setHeaderColor(c.headerBg)}catch(_){}
 }
 
-/* ============ 7) اللوحات المقترحة — 6 نسخ ============ */
+/* ============ 7) اللوحات المقترحة — 8 نسخ (v4) ============ */
 function renderPalettes(colors){
   const card=document.getElementById('paletteCard'),list=document.getElementById('palettesList');
   if(!colors.length){card.style.display='none';return}
   card.style.display='block';list.innerHTML='';
   const base=pickAccent(colors,state.mode);
+  const d=state.mode==='dark';
+
+  // ← تشبع وإضاءة مختلفان بوضوح في كل نسخة (وليس فقط Hue)
   const variants=[
-    {name:'متوازن',    sat:1.00,lt:1.00,hs:0},
-    {name:'هادئ',      sat:0.55,lt:1.00,hs:0},
-    {name:'زاهي',      sat:1.35,lt:1.05,hs:0},
-    {name:'داكن عميق', sat:1.10,lt:0.82,hs:0},
-    {name:'دافئ',      sat:0.95,lt:1.00,hs:35},
-    {name:'بارد',      sat:0.95,lt:1.00,hs:-35}
+    {name:'متوازن',    h:base.h,               s:base.s,                          l:d?0.42:0.62},
+    {name:'هادئ',      h:base.h,               s:clamp(base.s*0.40,0.15,0.90),    l:d?0.40:0.60},
+    {name:'زاهي',      h:base.h,               s:clamp(base.s*1.40,0.40,0.95),    l:d?0.52:0.68},
+    {name:'عميق',      h:base.h,               s:clamp(base.s*1.15,0.30,0.95),    l:d?0.28:0.45},
+    {name:'فاتح ناعم', h:base.h,               s:clamp(base.s*0.80,0.20,0.90),    l:d?0.58:0.74},
+    {name:'دافئ',      h:(base.h+45)%360,      s:base.s,                          l:d?0.44:0.62},
+    {name:'بارد',      h:(base.h-45+360)%360,  s:base.s,                          l:d?0.44:0.62},
+    {name:'تباين',     h:base.h,               s:clamp(base.s*1.25,0.40,0.95),    l:d?0.34:0.58}
   ];
+
   for(const v of variants){
-    const tuned={h:(base.h+v.hs+360)%360,s:clamp(base.s*v.sat,0.20,0.95),l:clamp(base.l*v.lt,0.25,0.75)};
+    const tuned={h:v.h,s:v.s,l:v.l};
     const pal=buildPalette(colors,state.mode,tuned);
     const el=document.createElement('div');
     el.className='palette';
-    el.innerHTML=`<div class="strip"><span style="background:${pal.chatBg}"></span><span style="background:${pal.inBubbleBg}"></span><span style="background:${pal.outBubbleBg}"></span><span style="background:${pal.accentColor}"></span><span style="background:${pal.headerBg}"></span></div><div class="lbl">${v.name}</div>`;
+    el.innerHTML=`<div class="strip">
+      <span style="background:${pal.chatBg}"></span>
+      <span style="background:${pal.inBubbleBg}"></span>
+      <span style="background:${pal.outBubbleBg}"></span>
+      <span style="background:${pal.accentColor}"></span>
+      <span style="background:${pal.headerBg}"></span>
+    </div><div class="lbl">${v.name}</div>`;
     el.addEventListener('click',()=>{
-      Object.assign(state.colors,pal);   // كل الألوان تُستبدل
+      Object.assign(state.colors,pal);
       state.accentOverride=tuned;
       syncInputs();applyPreview();
       toast('تم تطبيق: '+v.name);
@@ -477,8 +498,8 @@ document.getElementById('btnToggleImg').addEventListener('click',e=>{
 
 document.getElementById('btnRandom').addEventListener('click',()=>{
   const h=Math.floor(Math.random()*360);
-  const s=0.50+Math.random()*0.35;
-  const l=state.mode==='dark'?0.55+Math.random()*0.12:0.40+Math.random()*0.12;
+  const s=0.55+Math.random()*0.35;
+  const l=state.mode==='dark'?0.35+Math.random()*0.20:0.42+Math.random()*0.16;
   const acc={h,s,l};
   Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,acc));
   state.accentOverride=acc;syncInputs();applyPreview();
@@ -517,7 +538,7 @@ bindSlider('bgDim','bgDimVal','dim');
 bindSlider('bubbleOp','bubbleOpVal','bubbleOp');
 bindSlider('borderOp','borderOpVal','borderOp');
 
-/* ============ 10) تصدير .attheme الحقيقي ============ */
+/* ============ 10) تصدير .attheme ============ */
 function hexToArgb(hex,alpha=1){
   const{r,g,b}=hexToRgb(hex);
   const a=Math.round(clamp(alpha,0,1)*255).toString(16).padStart(2,'0');
@@ -525,10 +546,9 @@ function hexToArgb(hex,alpha=1){
 }
 function buildAtTheme(){
   const c=state.colors;
-  const bA=state.bubbleOp/100;
-  const bdA=state.borderOp/100;
+  const bA=state.bubbleOp/100,bdA=state.borderOp/100;
   return [
-    '// Theme Studio export',
+    '// Theme Studio v4 export',
     '// Telegram Android .attheme',
     '// '+new Date().toISOString(),
     '',
@@ -562,20 +582,19 @@ document.getElementById('btnExportAtTheme').addEventListener('click',()=>{
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
   a.download='theme-studio.attheme';
-  a.click();
-  URL.revokeObjectURL(a.href);
-  toast('نُزّل ملف .attheme — افتحه لتطبيقه');
+  a.click();URL.revokeObjectURL(a.href);
+  toast('نُزّل ملف .attheme');
 });
 
 /* ============ 11) JSON + حفظ ============ */
-const LS_KEY='theme-studio-v3';
+const LS_KEY='theme-studio-v4';
 document.getElementById('btnSave').addEventListener('click',()=>{
   try{
-    const d={v:3,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:state.image};
+    const d={v:4,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:state.image};
     localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ محليًا');
   }catch(_){
     try{
-      const d={v:3,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:null};
+      const d={v:4,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:null};
       localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ بدون الصورة');
     }catch(e){toast('فشل الحفظ')}
   }
@@ -596,7 +615,7 @@ document.getElementById('btnLoad').addEventListener('click',()=>{
   try{loadFromData(JSON.parse(raw));toast('تم الاسترجاع')}catch(e){toast('ملف تالف')}
 });
 document.getElementById('btnExport').addEventListener('click',()=>{
-  const d={v:3,exportedAt:new Date().toISOString(),...state};
+  const d={v:4,exportedAt:new Date().toISOString(),...state};
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='theme-studio-'+Date.now()+'.json';a.click();URL.revokeObjectURL(a.href);toast('نُزّل JSON');
 });
@@ -643,7 +662,7 @@ try{
     }
   }
 }catch(_){}
-console.log('[Theme Studio] v3 loaded');
+console.log('[Theme Studio] v4 loaded — all values derived from accent');
 </script>
 </body>
 </html>
