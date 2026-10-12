@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Theme Studio v9 - Forensic Enhanced</title>
+<title>Theme Studio v9.1</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0e1116;--bg2:#161b22;--bg3:#1f2630;--line:#2a3240;--txt:#e6edf3;--muted:#8b98a9;--accent:#5b8def;--accent2:#7aa2f7;--danger:#f7768e;--r:12px;--r2:8px}
@@ -37,8 +37,6 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .upload .hint{color:var(--muted);font-size:11px;margin-top:4px}
 .diagnostic{background:rgba(91,141,239,.08);border:1px solid rgba(91,141,239,.3);border-radius:8px;padding:10px;font-size:11px;color:#a9c1ea;margin-top:10px;line-height:1.7;font-family:ui-monospace,monospace}
 .diagnostic b{color:#e6edf3}
-
-/* بطاقات الاقتراحات */
 .palettes{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
 .palette{border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(--line);transition:.15s;background:#000}
 .palette:hover{transform:translateY(-2px);border-color:var(--accent)}
@@ -52,7 +50,6 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .palette .mini-bubble.out{align-self:flex-end;border-end-end-radius:2px}
 .palette .lbl{font-size:10px;padding:5px;background:var(--bg3);text-align:center;color:var(--txt);font-weight:600}
 .palette .lbl small{display:block;color:var(--muted);font-size:8px;font-weight:400;margin-top:1px}
-
 .ctrl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
 .ctrl:last-child{border-bottom:none}
 .ctrl .lbl{font-size:12px}
@@ -106,7 +103,7 @@ details.acc .body{padding:0 14px 14px}
 <div class="app">
   <header class="top">
     <div class="logo">T</div>
-    <div class="title">Theme Studio v9<small>محرّك @my_themes_bot (Forensic Enhanced)</small></div>
+    <div class="title">Theme Studio v9.1<small>محرّك @my_themes_bot</small></div>
     <div class="spacer"></div>
     <div class="modes">
       <button id="modeDark" class="on">داكن</button>
@@ -121,7 +118,7 @@ details.acc .body{padding:0 14px 14px}
         <label class="upload" for="imgInput">
           <div class="ico">🖼️</div>
           <div>اضغط لاختيار صورة</div>
-          <div class="hint">K-means Lab + إقصاء L>55% للتمييز + تطابق قواعد الجنائي</div>
+          <div class="hint">K-means Lab + كشف تلقائي للوضع + لونان (سطح + تمييز)</div>
           <input type="file" id="imgInput" accept="image/*">
         </label>
         <div class="row" style="margin-top:10px">
@@ -158,7 +155,7 @@ details.acc .body{padding:0 14px 14px}
         <summary><span class="dot"></span> الفقاعات</summary>
         <div class="body">
           <div id="ctrlBubbles"></div>
-          <div class="slider"><div><label>شفافية الفقاعات <small style="color:var(--muted)">(مطابق للبوت: 80-90%)</small></label><input type="range" id="bubbleOp" min="0" max="100" value="85"></div><div class="val" id="bubbleOpVal">85%</div></div>
+          <div class="slider"><div><label>شفافية الفقاعات <small style="color:var(--muted)">(البوت: 85%)</small></label><input type="range" id="bubbleOp" min="0" max="100" value="85"></div><div class="val" id="bubbleOpVal">85%</div></div>
           <div class="slider"><div><label>شفافية الحدود <small style="color:var(--muted)">(البوت: 0%)</small></label><input type="range" id="borderOp" min="0" max="100" value="0"></div><div class="val" id="borderOpVal">0%</div></div>
         </div>
       </details>
@@ -297,7 +294,7 @@ function kmeansLab(pixels,k,maxIter){
 }
 
 /* ============================================================
-   PART 4 — محرّك البوت (المُحدّث بالتحليل الجنائي)
+   PART 4 — محرّك البوت
    ============================================================ */
 function loadImage(src){return new Promise((res,rej)=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=rej;i.src=src})}
 
@@ -351,7 +348,6 @@ async function analyzeImage(src){
     surface = pool.slice().sort((a,b)=>b.coverage-a.coverage)[0];
   }
 
-  // قاعدة التحليل الجنائي: استبعاد الألوان ذات L > 55% من مرشحي التمييز لتجنب البرتقالي/الأصفر
   const sKey = c=>`${Math.round(c.r)}|${Math.round(c.g)}|${Math.round(c.blue)}`;
   const surfaceKey = sKey(surface);
   let candidates = filtered.filter(c=>sKey(c)!==surfaceKey && c.l<=0.55);
@@ -361,7 +357,6 @@ async function analyzeImage(src){
   }
   let accent = candidates.slice().sort((a,b)=>(b.s*Math.sqrt(b.coverage))-(a.s*Math.sqrt(a.coverage)))[0];
 
-  // تثبيت L التمييز عند ~30% (بين 25% و 35%)
   let accentL = accent.l;
   if(accentL>0.35) accentL=0.30;
   else if(accentL<0.20) accentL=0.30;
@@ -379,11 +374,16 @@ async function analyzeImage(src){
 }
 
 /* ============================================================
-   PART 5 — بناء الثيم (مطابق للنتائج الجنائية المؤكدة)
+   PART 5 — بناء الثيم (v9.1: sendBtnIcon مضبوط)
    ============================================================ */
 function buildThemeFromBot(mode, surface, accent){
   const sHex = hslToHex(surface.h,surface.s,surface.l);
   const aHex = hslToHex(accent.h, accent.s, accent.l);
+
+  // ← حساب أيقونة زر الإرسال بنص متضاد (بدل استخدام نفس لون التمييز)
+  const aRgb = hslToRgb(accent.h, accent.s, accent.l);
+  const iconRgb = contrastText(aRgb);
+  const iconHex = rgbToHex(iconRgb.r, iconRgb.g, iconRgb.b);
 
   return {
     accentColor: aHex,
@@ -400,7 +400,7 @@ function buildThemeFromBot(mode, surface, accent){
     inputBg: sHex,
     inputText: aHex,
     sendBtnBg: aHex,
-    sendBtnIcon: aHex, // النص والأيقونة يستخدمان نفس اللون المميّز
+    sendBtnIcon: iconHex,
     linkColor: aHex,
     separatorColor: sHex
   };
@@ -415,7 +415,7 @@ const DEFAULTS={
   inBubbleBg:'#0D1C21',inBubbleText:'#276F6A',inBubbleBorder:'#0D1C21',
   outBubbleBg:'#0D1C21',outBubbleText:'#276F6A',outBubbleBorder:'#0D1C21',
   inputBg:'#0D1C21',inputText:'#276F6A',
-  sendBtnBg:'#276F6A',sendBtnIcon:'#276F6A',
+  sendBtnBg:'#276F6A',sendBtnIcon:'#f5f5f5',
   linkColor:'#276F6A',separatorColor:'#0D1C21'
 };
 const state={
@@ -505,7 +505,7 @@ function applyPreview(){
 }
 
 /* ============================================================
-   PART 9 — توليد الاقتراحات (مُقيّدة بالقواعد الجنائية)
+   PART 9 — توليد الاقتراحات
    ============================================================ */
 function buildVariants(bot){
   const A = bot.accent;
@@ -519,7 +519,7 @@ function buildVariants(bot){
 
   const variants = [];
 
-  variants.push({ name:'البوت', desc:'مطابق تمامًا للتحليل',
+  variants.push({ name:'البوت', desc:'مطابق تمامًا',
     accent:{ h:A.h, s:A.s, l:A.l }, isBot:true });
 
   for(let i=0; i<Math.min(3, alts.length); i++){
@@ -624,7 +624,7 @@ document.getElementById('imgInput').addEventListener('change',e=>{
 async function runAnalysis(){
   if(!state.image){toast('ارفع صورة أولاً');return}
   try{
-    toast('جاري التحليل الجنائي…');
+    toast('جاري التحليل…');
     const bot=await analyzeImage(state.image);
     state.botData=bot;
 
@@ -646,12 +646,12 @@ async function runAnalysis(){
     const diag=document.getElementById('diag');
     diag.style.display='block';
     diag.innerHTML=`<b>الوضع:</b> ${bot.mode==='dark'?'داكن':'فاتح'} (L̄=${bot.avgL.toFixed(2)})<br>
-<b>السطح (Surface):</b> hsl(${Math.round(bot.surface.h)}, ${Math.round(bot.surface.s*100)}%, ${Math.round(bot.surface.l*100)}%) — تغطية ${Math.round(bot.surface.coverage*100)}%<br>
-<b>التمييز (Accent):</b> hsl(${Math.round(bot.accent.h)}, ${Math.round(bot.accent.s*100)}%, ${Math.round(bot.accent.l*100)}%)<br>
-<b>العناقيد المستخرجة:</b> ${bot.clusters.length} بعد الفلترة وإقصاء L>55%`;
+<b>السطح:</b> hsl(${Math.round(bot.surface.h)}, ${Math.round(bot.surface.s*100)}%, ${Math.round(bot.surface.l*100)}%) — تغطية ${Math.round(bot.surface.coverage*100)}%<br>
+<b>التمييز:</b> hsl(${Math.round(bot.accent.h)}, ${Math.round(bot.accent.s*100)}%, ${Math.round(bot.accent.l*100)}%)<br>
+<b>العناقيد:</b> ${bot.clusters.length} بعد الفلترة وإقصاء L>55%`;
 
     syncInputs(); applyPreview();
-    toast('تم التحليل الجنائي بنجاح — '+bot.clusters.length+' عناقيد');
+    toast('تم التحليل — '+bot.clusters.length+' عناقيد');
   }catch(err){console.error(err);toast('فشل التحليل')}
 }
 document.getElementById('btnExtract').addEventListener('click',runAnalysis);
@@ -698,7 +698,7 @@ bindSlider('bubbleOp','bubbleOpVal','bubbleOp');
 bindSlider('borderOp','borderOpVal','borderOp');
 
 /* ============================================================
-   PART 15 — .attheme (وفقاً للقواعد الجنائية: divider شفاف والتوحيد)
+   PART 15 — .attheme
    ============================================================ */
 function hexToArgb(hex,alpha=1){
   const{r,g,b}=hexToRgb(hex);
@@ -710,7 +710,7 @@ function buildAtTheme(){
   const bA=state.bubbleOp/100;
   const bdA=state.borderOp/100;
   return [
-    '// Theme Studio v9 — Forensic Enhanced Export',
+    '// Theme Studio v9.1',
     '// Telegram Android .attheme',
     '// '+new Date().toISOString(),
     '',
@@ -739,27 +739,27 @@ function buildAtTheme(){
     'windowBackgroundWhite='+hexToArgb(c.chatBg),
     'windowBackgroundGray='+hexToArgb(c.chatBg),
     'dialogBackground='+hexToArgb(c.chatBg),
-    'divider='+hexToArgb(c.accentColor,0) // مطابق لكون divider شفافاً تماماً
+    'divider='+hexToArgb(c.accentColor,0)
   ].join('\n');
 }
 document.getElementById('btnExportAtTheme').addEventListener('click',()=>{
   const blob=new Blob([buildAtTheme()],{type:'text/plain;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='theme-studio-forensic.attheme';a.click();URL.revokeObjectURL(a.href);
-  toast('نُزّل ملف .attheme');
+  a.download='theme-studio.attheme';a.click();URL.revokeObjectURL(a.href);
+  toast('نُزّل .attheme');
 });
 
 /* ============================================================
    PART 16 — JSON / حفظ
    ============================================================ */
-const LS_KEY='theme-studio-v9-forensic';
+const LS_KEY='theme-studio-v91';
 document.getElementById('btnSave').addEventListener('click',()=>{
   try{
-    const d={v:9,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:state.image};
-    localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ بنجاح');
+    const d={v:9.1,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:state.image};
+    localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ');
   }catch(_){
     try{
-      const d={v:9,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:null};
+      const d={v:9.1,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:null};
       localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ بدون الصورة');
     }catch(e){toast('فشل الحفظ')}
   }
@@ -783,11 +783,11 @@ function loadFromData(d){
   syncInputs(); applyPreview();
 }
 document.getElementById('btnLoad').addEventListener('click',()=>{
-  const raw=localStorage.getItem(LS_KEY);if(!raw){toast('لا يوجد حفظ سابق');return}
+  const raw=localStorage.getItem(LS_KEY);if(!raw){toast('لا يوجد حفظ');return}
   try{loadFromData(JSON.parse(raw));toast('تم الاسترجاع')}catch(e){toast('ملف تالف')}
 });
 document.getElementById('btnExport').addEventListener('click',()=>{
-  const d={v:9,exportedAt:new Date().toISOString(),...state};
+  const d={v:9.1,exportedAt:new Date().toISOString(),...state};
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='theme-studio-'+Date.now()+'.json';a.click();URL.revokeObjectURL(a.href);toast('نُزّل JSON');
 });
@@ -795,7 +795,7 @@ document.getElementById('btnImport').addEventListener('click',()=>document.getEl
 document.getElementById('importInput').addEventListener('change',e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=()=>{try{loadFromData(JSON.parse(r.result));localStorage.setItem(LS_KEY,r.result);toast('تم الاستيراد')}catch(_){toast('JSON غير صالح')}};
+  r.onload=()=>{try{loadFromData(JSON.parse(r.result));localStorage.setItem(LS_KEY,r.result);toast('تم')}catch(_){toast('JSON غير صالح')}};
   r.readAsText(f);e.target.value='';
 });
 document.getElementById('btnResetAll').addEventListener('click',()=>{
@@ -835,7 +835,7 @@ renderColorGroup('ctrlMisc',COLOR_GROUPS.misc);
 try{
   if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
 }catch(_){}
-console.log('[Theme Studio] v9 Forensic Enhanced loaded successfully');
+console.log('[Theme Studio] v9.1 loaded — sendBtnIcon fixed');
 </script>
 </body>
 </html>
