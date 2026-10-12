@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Theme Studio v7</title>
+<title>Theme Studio v8 — Bot-Mimic</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0e1116;--bg2:#161b22;--bg3:#1f2630;--line:#2a3240;--txt:#e6edf3;--muted:#8b98a9;--accent:#5b8def;--accent2:#7aa2f7;--danger:#f7768e;--r:12px;--r2:8px}
@@ -35,24 +35,19 @@ header.top{display:flex;align-items:center;gap:10px;padding:12px 14px;background
 .upload input{display:none}
 .upload .ico{font-size:24px;margin-bottom:6px}
 .upload .hint{color:var(--muted);font-size:11px;margin-top:4px}
-
-/* بطاقات اللوحات - معاينة مصغرة حقيقية */
+.diagnostic{background:rgba(91,141,239,.08);border:1px solid rgba(91,141,239,.3);border-radius:8px;padding:10px;font-size:11px;color:#a9c1ea;margin-top:10px;line-height:1.7;font-family:ui-monospace,monospace}
+.diagnostic b{color:#e6edf3}
 .palettes{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
 .palette{border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(--line);transition:.15s;background:#000}
 .palette:hover{transform:translateY(-2px);border-color:var(--accent)}
-.palette .mini{
-  height:78px;padding:6px;display:flex;flex-direction:column;gap:4px;position:relative;
-}
+.palette.bot{border-color:#9ece6a;box-shadow:0 0 0 1px #9ece6a}
+.palette .mini{height:78px;padding:6px;display:flex;flex-direction:column;gap:4px;position:relative}
 .palette .mini-bar{height:7px;border-radius:2px;opacity:.9}
-.palette .mini-bubble{
-  font-size:8px;padding:3px 6px;border-radius:7px;max-width:70%;
-  line-height:1.2;white-space:nowrap;overflow:hidden;
-}
+.palette .mini-bubble{font-size:8px;padding:3px 6px;border-radius:7px;max-width:70%;line-height:1.2;white-space:nowrap;overflow:hidden}
 .palette .mini-bubble.in{align-self:flex-start;border-end-start-radius:2px}
 .palette .mini-bubble.out{align-self:flex-end;border-end-end-radius:2px}
 .palette .lbl{font-size:10px;padding:5px;background:var(--bg3);text-align:center;color:var(--txt);font-weight:600}
 .palette .lbl small{display:block;color:var(--muted);font-size:8px;font-weight:400;margin-top:1px}
-
 .ctrl{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,50,64,.5)}
 .ctrl:last-child{border-bottom:none}
 .ctrl .lbl{font-size:12px}
@@ -99,13 +94,14 @@ details.acc summary::after{content:"▾";margin-inline-start:auto;color:var(--mu
 details.acc[open] summary::after{transform:rotate(180deg)}
 details.acc .body{padding:0 14px 14px}
 .badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:5px;background:var(--bg3);color:var(--muted);margin-inline-start:6px;vertical-align:middle}
+.badge.ok{background:rgba(158,206,106,.15);color:#9ece6a}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
     <div class="logo">T</div>
-    <div class="title">Theme Studio v7<small>محرر ثيمات تيليجرام</small></div>
+    <div class="title">Theme Studio v8<small>محرّك @my_themes_bot</small></div>
     <div class="spacer"></div>
     <div class="modes">
       <button id="modeDark" class="on">داكن</button>
@@ -120,28 +116,27 @@ details.acc .body{padding:0 14px 14px}
         <label class="upload" for="imgInput">
           <div class="ico">🖼️</div>
           <div>اضغط لاختيار صورة</div>
-          <div class="hint">استخراج K-means في Lab + لوحات متنوعة Hue</div>
+          <div class="hint">K-means Lab + كشف تلقائي للوضع + لونان (سطح + تمييز)</div>
           <input type="file" id="imgInput" accept="image/*">
         </label>
         <div class="row" style="margin-top:10px">
-          <button class="btn small primary" id="btnExtract">🎨 استخراج جديد</button>
-          <button class="btn small" id="btnRandom">🎲 عشوائي</button>
+          <button class="btn small primary" id="btnExtract">🎨 استخراج</button>
           <button class="btn small" id="btnToggleImg">👁️ إخفاء الصورة</button>
           <button class="btn small danger" id="btnRemoveImg">🗑️ إزالة</button>
         </div>
+        <div class="diagnostic" id="diag" style="display:none"></div>
       </div>
 
       <div class="card" id="paletteCard" style="display:none">
-        <h3><span class="dot"></span> لوحات مقترحة <span class="badge">8 هويات مختلفة</span></h3>
+        <h3><span class="dot"></span> اقتراحات <span class="badge ok">الأول = البوت</span></h3>
         <div class="palettes" id="palettesList"></div>
       </div>
 
       <div class="card">
         <h3><span class="dot"></span> اللون الأساسي</h3>
-        <div class="slider"><div><label>درجة اللون (Hue)</label><input type="range" id="hRange" min="0" max="360" value="215"></div><div class="val" id="hVal">215</div></div>
-        <div class="slider"><div><label>التشبع</label><input type="range" id="sRange" min="0" max="100" value="65"></div><div class="val" id="sVal">65%</div></div>
-        <div class="slider"><div><label>الإضاءة</label><input type="range" id="lRange" min="0" max="100" value="45"></div><div class="val" id="lVal">45%</div></div>
-        <div class="row" style="margin-top:8px"><button class="btn small primary" id="btnRebuild">♻️ إعادة بناء</button></div>
+        <div class="slider"><div><label>Hue</label><input type="range" id="hRange" min="0" max="360" value="215"></div><div class="val" id="hVal">215</div></div>
+        <div class="slider"><div><label>Saturation</label><input type="range" id="sRange" min="0" max="100" value="65"></div><div class="val" id="sVal">65%</div></div>
+        <div class="slider"><div><label>Lightness</label><input type="range" id="lRange" min="0" max="100" value="45"></div><div class="val" id="lVal">45%</div></div>
       </div>
 
       <details class="acc" open>
@@ -158,8 +153,8 @@ details.acc .body{padding:0 14px 14px}
         <summary><span class="dot"></span> الفقاعات</summary>
         <div class="body">
           <div id="ctrlBubbles"></div>
-          <div class="slider"><div><label>شفافية الفقاعات</label><input type="range" id="bubbleOp" min="0" max="100" value="100"></div><div class="val" id="bubbleOpVal">100%</div></div>
-          <div class="slider"><div><label>شفافية الحدود</label><input type="range" id="borderOp" min="0" max="100" value="100"></div><div class="val" id="borderOpVal">100%</div></div>
+          <div class="slider"><div><label>شفافية الفقاعات <small style="color:var(--muted)">(البوت: 85%)</small></label><input type="range" id="bubbleOp" min="0" max="100" value="85"></div><div class="val" id="bubbleOpVal">85%</div></div>
+          <div class="slider"><div><label>شفافية الحدود <small style="color:var(--muted)">(البوت: 0%)</small></label><input type="range" id="borderOp" min="0" max="100" value="0"></div><div class="val" id="borderOpVal">0%</div></div>
         </div>
       </details>
       <details class="acc"><summary><span class="dot"></span> حقل الإرسال</summary><div class="body"><div id="ctrlInput"></div></div></details>
@@ -168,7 +163,7 @@ details.acc .body{padding:0 14px 14px}
       <div class="card">
         <h3><span class="dot"></span> التصدير</h3>
         <div class="row">
-          <button class="btn small primary" id="btnExportAtTheme">⬇️ تصدير .attheme</button>
+          <button class="btn small primary" id="btnExportAtTheme">⬇️ .attheme</button>
           <button class="btn small" id="btnExport">⬇️ JSON</button>
           <button class="btn small" id="btnImport">⬆️ استيراد</button>
           <button class="btn small" id="btnSave">💾 حفظ</button>
@@ -196,12 +191,12 @@ details.acc .body{padding:0 14px 14px}
               <div class="pv-bg-img" id="pvBgImg"></div>
               <div class="pv-bg-dim" id="pvBgDim"></div>
               <div class="pv-messages">
-                <div class="pv-msg in">مرحباً! 👋 جاهز لتصميم ثيمك؟<span class="time">10:30</span></div>
-                <div class="pv-msg out">أهلاً! جرّب رفع صورة وشاهد كيف تتغير الألوان.<span class="time">10:31</span></div>
-                <div class="pv-msg in">هل يمكنني تخصيص كل عنصر؟<span class="time">10:31</span></div>
-                <div class="pv-msg out">نعم، كل الألوان والشفافية قابلة للتعديل.<span class="time">10:32</span></div>
+                <div class="pv-msg in">مرحباً! 👋 كيف حالك؟<span class="time">10:30</span></div>
+                <div class="pv-msg out">بخير، شكراً!<span class="time">10:31</span></div>
+                <div class="pv-msg in">هل جرّبت الثيم الجديد؟<span class="time">10:31</span></div>
+                <div class="pv-msg out">نعم، ألوانه متناسقة مع الصورة.<span class="time">10:32</span></div>
                 <div class="pv-sep"></div>
-                <div class="pv-msg in">رائع، <a href="#" onclick="return false">اقرأ المزيد</a> عن الميزات.<span class="time">10:32</span></div>
+                <div class="pv-msg in">رائع، <a href="#" onclick="return false">اقرأ المزيد</a>.<span class="time">10:32</span></div>
               </div>
             </div>
             <div class="pv-input">
@@ -219,7 +214,10 @@ details.acc .body{padding:0 14px 14px}
 
 <script>
 'use strict';
-/* ============ 1) أدوات ============ */
+
+/* ============================================================
+   PART 1 — أدوات الألوان الأساسية
+   ============================================================ */
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function hexToRgb(hex){hex=hex.replace('#','').trim();if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');const n=parseInt(hex,16);return{r:(n>>16)&255,g:(n>>8)&255,b:n&255}}
 function rgbToHex(r,g,b){return '#'+[r,g,b].map(x=>clamp(Math.round(x),0,255).toString(16).padStart(2,'0')).join('')}
@@ -228,25 +226,33 @@ function hslToRgb(h,s,l){h=((h%360)+360)%360;const c=(1-Math.abs(2*l-1))*s,x=c*(
 const hslToHex=(h,s,l)=>{const c=hslToRgb(h,s,l);return rgbToHex(c.r,c.g,c.b)};
 const hexToHsl=hex=>{const{r,g,b}=hexToRgb(hex);return rgbToHsl(r,g,b)};
 function relLum({r,g,b}){const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};return 0.2126*f(r)+0.7152*f(g)+0.0722*f(b)}
-function contrastText(bg){const c=hslToRgb(bg.h,bg.s,bg.l);const lum=relLum(c);return lum>0.5?{h:bg.h,s:Math.min(bg.s,0.15),l:0.13}:{h:bg.h,s:Math.min(bg.s,0.10),l:0.97}}
+function contrastText(bgRgb){
+  const bg=typeof bgRgb==='object'&&'r' in bgRgb?bgRgb:hslToRgb(bgRgb.h,bgRgb.s,bgRgb.l);
+  const lum=relLum(bg);
+  return lum>0.5?{r:30,g:30,b:30}:{r:245,g:245,b:245};
+}
 const rgbStr=hex=>{const{r,g,b}=hexToRgb(hex);return`${r}, ${g}, ${b}`};
 
-/* ============ 2) Lab ============ */
+/* ============================================================
+   PART 2 — التحويل إلى Lab (فضاء إدراكي)
+   ============================================================ */
 function rgbToLab(r,g,b){
   let R=r/255,G=g/255,B=b/255;
   R=R>0.04045?Math.pow((R+0.055)/1.055,2.4):R/12.92;
   G=G>0.04045?Math.pow((G+0.055)/1.055,2.4):G/12.92;
   B=B>0.04045?Math.pow((B+0.055)/1.055,2.4):B/12.92;
-  let X=(R*0.4124+G*0.3576+B*0.1805)/0.95047;
-  let Y=(R*0.2126+G*0.7152+B*0.0722)/1.00000;
-  let Z=(R*0.0193+G*0.1192+B*0.9505)/1.08883;
+  const X=(R*0.4124+G*0.3576+B*0.1805)/0.95047;
+  const Y=(R*0.2126+G*0.7152+B*0.0722)/1.00000;
+  const Z=(R*0.0193+G*0.1192+B*0.9505)/1.08883;
   const f=t=>t>0.008856?Math.cbrt(t):(7.787*t+16/116);
   const fx=f(X),fy=f(Y),fz=f(Z);
   return {L:116*fy-16, a:500*(fx-fy), b:200*(fy-fz)};
 }
 function labDist(p1,p2){const dL=p1.L-p2.L,da=p1.a-p2.a,db=p1.b-p2.b;return Math.sqrt(dL*dL+da*da+db*db)}
 
-/* ============ 3) K-means Lab ============ */
+/* ============================================================
+   PART 3 — K-means في Lab (K-means++)
+   ============================================================ */
 function kmeansLab(pixels,k,maxIter){
   if(pixels.length===0) return [];
   if(pixels.length<=k) return pixels.map(p=>({...p,w:p.w||1}));
@@ -285,166 +291,169 @@ function kmeansLab(pixels,k,maxIter){
   return centers.filter(c=>c.w>0);
 }
 
-/* ============ 4) استخراج الألوان ============ */
+/* ============================================================
+   PART 4 — محرّك البوت: من صورة → سطح + تمييز
+   ============================================================ */
 function loadImage(src){return new Promise((res,rej)=>{const i=new Image();i.crossOrigin='anonymous';i.onload=()=>res(i);i.onerror=rej;i.src=src})}
 
-async function extractColors(src){
+async function analyzeImage(src){
   const img=await loadImage(src);
-  const S=140,c=document.createElement('canvas');c.width=c.height=S;
-  const ctx=c.getContext('2d');
-  const k=Math.max(S/img.width,S/img.height),w=img.width*k,h=img.height*k;
-  ctx.drawImage(img,(S-w)/2,(S-h)/2,w,h);
-  const data=ctx.getImageData(0,0,S,S).data;
-  const pixels=[];let avgL=0,total=0;
+
+  /* --- Step 1: تصغير إلى ≤300px --- */
+  const LONG=300;
+  const k0=Math.min(1, LONG/Math.max(img.width,img.height));
+  const W=Math.max(1,Math.round(img.width*k0));
+  const H=Math.max(1,Math.round(img.height*k0));
+  const cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d');
+  ctx.drawImage(img,0,0,W,H);
+  const data=ctx.getImageData(0,0,W,H).data;
+
+  /* --- Step 2: بناء البكسلات + حساب L̄ --- */
+  const pixels=[];
+  let sumL=0,total=0;
   for(let i=0;i<data.length;i+=4){
     const r=data[i],g=data[i+1],b=data[i+2],a=data[i+3];
     if(a<128) continue;
     const {h,s,l}=rgbToHsl(r,g,b);
-    avgL+=l;total++;
-    if(l<0.10||l>0.92||s<0.10) continue;
+    sumL+=l; total++;
+    if(l<0.05||l>0.95) continue;   // استبعاد الأسود/الأبيض
+    if(s<0.05) continue;            // استبعاد الرمادي
     const lab=rgbToLab(r,g,b);
     const chroma=Math.sqrt(lab.a*lab.a+lab.b*lab.b);
-    const midFactor=1-Math.abs(lab.L-55)/65;
-    const wgt=Math.max(0.05,chroma*(0.5+Math.max(0,midFactor)));
-    pixels.push({L:lab.L,a:lab.a,b:lab.b,r,g,blue:b,h,s,l,w:wgt});
+    pixels.push({L:lab.L,a:lab.a,b:lab.b,r,g,blue:b,h,s,l,w:Math.max(0.1,chroma)});
   }
-  avgL=total?avgL/total:0.5;
-  const K=10;
+  const avgL = total? sumL/total : 0.5;
+
+  /* --- Step 3: K-means (k=6) --- */
+  const K=6;
   let clusters=kmeansLab(pixels,K,15);
-  clusters.sort((x,y)=>y.w-x.w);
-  const merged=[];
-  for(const c2 of clusters){
-    let isDupe=false;
-    for(const m of merged){if(labDist(c2,m)<12){m.w+=c2.w;isDupe=true;break}}
-    if(!isDupe) merged.push({...c2});
+
+  /* --- حساب coverage --- */
+  const totalW=clusters.reduce((s,c)=>s+c.w,0)||1;
+  clusters=clusters.map(c=>{
+    const {h,s,l}=rgbToHsl(c.r,c.g,c.blue);
+    return {...c,coverage:c.w/totalW,h,s,l};
+  });
+
+  /* --- Step 4: فلترة (coverage ≥ 3%) --- */
+  let filtered=clusters.filter(c=>c.coverage>=0.03);
+  if(filtered.length<2) filtered=clusters.slice().sort((a,b)=>b.coverage-a.coverage).slice(0,Math.max(2,clusters.length));
+
+  /* --- Step 5: اختيار الوضع حسب L̄ --- */
+  const mode = avgL < 0.40 ? 'dark' : 'light';
+
+  /* --- Step 6: اختيار السطح --- */
+  let surface;
+  if(mode==='dark'){
+    surface = filtered.slice().sort((a,b)=>a.l-b.l)[0];
+  } else {
+    const mids = filtered.filter(c=>c.l>=0.40&&c.l<=0.70);
+    const pool = mids.length? mids : filtered;
+    surface = pool.slice().sort((a,b)=>b.coverage-a.coverage)[0];
   }
-  merged.sort((a,b)=>{
-    const ca=Math.sqrt(a.a*a.a+a.b*a.b),cb=Math.sqrt(b.a*b.a+b.b*b.b);
-    return (b.w*cb)-(a.w*ca);
-  });
-  const colors=merged.slice(0,10).map(m=>{
-    const {h,s,l}=rgbToHsl(m.r,m.g,m.blue);
-    const chroma=Math.sqrt(m.a*m.a+m.b*m.b);
-    return {h:Math.round(h),s:clamp(s,0,1),l:clamp(l,0,1),hex:rgbToHex(m.r,m.g,m.blue),count:Math.round(m.w),chroma};
-  });
-  return {colors,avgL};
-}
 
-/* ============ 5) اللون الأساسي ============ */
-function pickAccent(colors, mode){
-  if(!colors.length) return {h:215,s:0.70,l:0.45};
-  const dark=mode==='dark';
-  const ranked=[...colors].sort((a,b)=>{
-    const sa=(a.chroma||a.s*100)*Math.sqrt(a.count||1);
-    const sb=(b.chroma||b.s*100)*Math.sqrt(b.count||1);
-    return sb-sa;
-  });
-  const top=ranked[0];
-  return {h:top.h, s:clamp(top.s,0.55,0.90), l:dark?0.45:0.55};
-}
+  /* --- Step 7: اختيار التمييز --- */
+  const sKey = c=>`${Math.round(c.r)}|${Math.round(c.g)}|${Math.round(c.blue)}`;
+  const surfaceKey = sKey(surface);
+  let candidates = filtered.filter(c=>sKey(c)!==surfaceKey && c.l<=0.55);
+  if(!candidates.length){
+    candidates = filtered.filter(c=>sKey(c)!==surfaceKey);
+  }
+  if(!candidates.length){
+    candidates = [{h:(surface.h+180)%360,s:Math.max(0.5,surface.s),l:0.30,r:0,g:0,blue:0,coverage:1}];
+  }
+  let accent = candidates.slice().sort((a,b)=>(b.s*Math.sqrt(b.coverage))-(a.s*Math.sqrt(a.coverage)))[0];
 
-/* ============ 6) توليد الاقتراحات ============ */
-function generateSuggestions(colors, mode){
-  const dark=mode==='dark';
-  const ranked=[...colors].sort((a,b)=>{
-    const sa=(a.chroma||a.s*100)*Math.sqrt(a.count||1);
-    const sb=(b.chroma||b.s*100)*Math.sqrt(b.count||1);
-    return sb-sa;
-  });
-  const L=dark?0.45:0.55;
-  const c1=ranked[0]||{h:215,s:0.70};
-  const c2=ranked[1]||{h:(c1.h+40)%360,s:0.65};
-  const c3=ranked[2]||{h:(c1.h+80)%360,s:0.60};
-  const c4=ranked[3]||{h:(c1.h+160)%360,s:0.60};
+  /* --- Step 8: تصحيح L للتمييز إلى ≈ 0.30 --- */
+  let accentL = accent.l;
+  if(accentL>0.35) accentL=0.30;
+  else if(accentL<0.20) accentL=0.30;
 
-  // ← كل اقتراح له Hue مختلف جذريًا
-  return [
-    // 4 اقتراحات من ألوان الصورة نفسها
-    { name:'الأساسي',  desc:'لون الصورة الأول', h:c1.h,                  s:clamp(c1.s,0.55,0.90), l:L },
-    { name:'الثانوي',  desc:'لون الصورة الثاني', h:c2.h,                 s:clamp(c2.s,0.50,0.85), l:L },
-    { name:'الثالث',   desc:'لون الصورة الثالث', h:c3.h,                 s:clamp(c3.s,0.50,0.85), l:L },
-    { name:'الرابع',   desc:'لون الصورة الرابع', h:c4.h,                 s:clamp(c4.s,0.50,0.85), l:L },
-
-    // 2 اقتراحات هارموني حقيقي
-    { name:'المكمّل',  desc:'معاكس 180°',        h:(c1.h+180)%360,       s:clamp(c1.s,0.55,0.85), l:L },
-    { name:'المثلث',   desc:'مثلثي 120°',        h:(c1.h+120)%360,       s:clamp(c1.s,0.55,0.85), l:L },
-
-    // 2 اقتراحات تشبع مختلف من لونين مختلفين
-    { name:'هادئ',     desc:'تشبع منخفض',        h:c1.h,                 s:clamp(c1.s*0.35,0.18,0.45), l:L },
-    { name:'زاهي',     desc:'تشبع مرتفع',        h:c2.h,                 s:clamp(c2.s*1.35,0.70,0.95), l:L }
-  ];
-}
-
-/* ============ 7) بناء اللوحة ============ */
-function buildPalette(colors, mode, accent){
-  const dark=mode==='dark';
-  const A=accent||pickAccent(colors,mode);
-
-  const bgSat     = clamp(A.s*0.28,0,0.35);
-  const headerSat = clamp(A.s*0.45,0,0.55);
-  const inSat     = clamp(A.s*0.70,0.15,0.65);
-
-  const chatBgL   = dark?0.07:0.96;
-  const headerBgL = dark?clamp(0.10+(A.l-0.45)*0.15,0.09,0.16):0.92;
-  const inBubbleL = dark?clamp(0.14+(A.l-0.45)*0.30,0.12,0.24):0.98;
-
-  const chatBg   = {h:A.h,s:bgSat,l:chatBgL};
-  const headerBg = {h:A.h,s:headerSat,l:headerBgL};
-  const inBubble = {h:A.h,s:inSat,l:inBubbleL};
-
-  const outL=dark?clamp(A.l,0.30,0.55):clamp(A.l+0.18,0.50,0.75);
-  const outBubble={h:A.h,s:clamp(A.s,0.40,0.90),l:outL};
-
-  const inBorder ={h:A.h,s:clamp(A.s*0.80,0.15,0.80),l:dark?Math.min(inBubble.l+0.14,0.40):Math.max(inBubble.l-0.10,0.55)};
-  const outBorder={h:A.h,s:clamp(A.s*0.90,0.30,0.95),l:dark?Math.min(outBubble.l+0.15,0.70):Math.max(outBubble.l-0.15,0.35)};
-
-  const inputBg={h:A.h,s:clamp(A.s*0.35,0,0.45),l:dark?0.14:0.90};
-  const sendBg ={h:A.h,s:clamp(A.s,0.50,0.90),l:clamp(A.l,0.45,0.58)};
-
-  const chatText   = contrastText(chatBg);
-  const headerText = contrastText(headerBg);
-  const inText     = contrastText(inBubble);
-  const outText    = contrastText(outBubble);
-  const inputText  = contrastText(inputBg);
-  const sendIcon   = contrastText(sendBg);
-
-  const linkCol={h:A.h,s:clamp(A.s*1.05,0.40,0.90),l:dark?0.70:0.42};
-  const sepCol ={h:A.h,s:clamp(A.s*0.25,0,0.32),   l:dark?0.20:0.86};
+  /* --- Step 9: تنقية السطح --- */
+  // تأكد أن السطح داكن بما يكفي في الوضع الداكن، وفاتح في الفاتح
+  let surfaceL=surface.l;
+  if(mode==='dark') surfaceL=clamp(surfaceL,0.05,0.18);
+  else surfaceL=clamp(surfaceL,0.55,0.92);
 
   return {
-    accentColor:    hslToHex(A.h,A.s,A.l),
-    chatBg:         hslToHex(chatBg.h,chatBg.s,chatBg.l),
-    chatText:       hslToHex(chatText.h,chatText.s,chatText.l),
-    headerBg:       hslToHex(headerBg.h,headerBg.s,headerBg.l),
-    headerText:     hslToHex(headerText.h,headerText.s,headerText.l),
-    inBubbleBg:     hslToHex(inBubble.h,inBubble.s,inBubble.l),
-    inBubbleText:   hslToHex(inText.h,inText.s,inText.l),
-    inBubbleBorder: hslToHex(inBorder.h,inBorder.s,inBorder.l),
-    outBubbleBg:    hslToHex(outBubble.h,outBubble.s,outBubble.l),
-    outBubbleText:  hslToHex(outText.h,outText.s,outText.l),
-    outBubbleBorder:hslToHex(outBorder.h,outBorder.s,outBorder.l),
-    inputBg:        hslToHex(inputBg.h,inputBg.s,inputBg.l),
-    inputText:      hslToHex(inputText.h,inputText.s,inputText.l),
-    sendBtnBg:      hslToHex(sendBg.h,sendBg.s,sendBg.l),
-    sendBtnIcon:    hslToHex(sendIcon.h,sendIcon.s,sendIcon.l),
-    linkColor:      hslToHex(linkCol.h,linkCol.s,linkCol.l),
-    separatorColor: hslToHex(sepCol.h,sepCol.s,sepCol.l)
+    mode, avgL,
+    surface: {h:surface.h, s:surface.s, l:surfaceL, rgb:{r:surface.r,g:surface.g,b:surface.blue}, coverage:surface.coverage},
+    accent:  {h:accent.h,  s:clamp(accent.s,0.35,0.95), l:accentL, coverage:accent.coverage},
+    clusters: filtered
   };
 }
 
-/* ============ 8) الحالة ============ */
+/* ============================================================
+   PART 5 — بناء الثيم من سطح + تمييز (نفس قواعد البوت)
+   ============================================================ */
+function buildThemeFromBot(mode, surface, accent){
+  const sHex = hslToHex(surface.h,surface.s,surface.l);
+  const aHex = hslToHex(accent.h, accent.s, accent.l);
+  const sRgb = hslToRgb(surface.h,surface.s,surface.l);
+  const aRgb = hslToRgb(accent.h, accent.s, accent.l);
+  const iconRgb = contrastText(aRgb);
+  const iconHex = rgbToHex(iconRgb.r, iconRgb.g, iconRgb.b);
+
+  return {
+    // اللون الأساسي للواجهة
+    accentColor: aHex,
+
+    // الخلفية
+    chatBg: sHex,
+    chatText: aHex,
+
+    // شريط العنوان
+    headerBg: sHex,
+    headerText: aHex,
+
+    // الفقاعات (نفس اللون للوارد والصادر — قاعدة البوت)
+    inBubbleBg: sHex,
+    inBubbleText: aHex,
+    inBubbleBorder: aHex,
+    outBubbleBg: sHex,
+    outBubbleText: aHex,
+    outBubbleBorder: aHex,
+
+    // حقل الإرسال
+    inputBg: sHex,
+    inputText: aHex,
+    sendBtnBg: aHex,
+    sendBtnIcon: iconHex,
+
+    // عناصر أخرى
+    linkColor: aHex,
+    separatorColor: sHex
+  };
+}
+
+/* ============================================================
+   PART 6 — الحالة والتخزين
+   ============================================================ */
 const DEFAULTS={
   accentColor:'#4a86e8',chatBg:'#0f1218',chatText:'#e6edf3',
   headerBg:'#151a22',headerText:'#e6edf3',
   inBubbleBg:'#1a1f2a',inBubbleText:'#e6edf3',inBubbleBorder:'#2b3342',
-  outBubbleBg:'#3a6cb5',outBubbleText:'#ffffff',outBubbleBorder:'#5b8def',
+  outBubbleBg:'#1a1f2a',outBubbleText:'#e6edf3',outBubbleBorder:'#2b3342',
   inputBg:'#1a1f2a',inputText:'#e6edf3',
   sendBtnBg:'#4a86e8',sendBtnIcon:'#ffffff',
-  linkColor:'#7aa2f7',separatorColor:'#20262f'
+  linkColor:'#7aa2f7',separatorColor:'#0f1218'
 };
-const state={mode:'dark',colors:{...DEFAULTS},image:null,imgOpacity:100,dim:45,bubbleOp:100,borderOp:100,sourceColors:[],accentOverride:null,imgHidden:false};
+const state={
+  mode:'dark',
+  colors:{...DEFAULTS},
+  image:null,
+  imgOpacity:100,
+  dim:45,
+  bubbleOp:85,
+  borderOp:0,
+  botData:null,
+  imgHidden:false
+};
 
-/* ============ 9) مجموعات ============ */
+/* ============================================================
+   PART 7 — مجموعات التحكم
+   ============================================================ */
 const COLOR_GROUPS={
   background:[['chatBg','خلفية المحادثة'],['chatText','نص المحادثة']],
   header:[['headerBg','خلفية الشريط'],['headerText','نص الشريط']],
@@ -455,7 +464,8 @@ const COLOR_GROUPS={
 function renderColorGroup(containerId,keys){
   const el=document.getElementById(containerId);el.innerHTML='';
   for(const [key,label] of keys){
-    const row=document.createElement('div');row.className='ctrl';
+    const row=document.createElement('div');
+    row.className='ctrl';
     row.innerHTML=`<div class="lbl">${label}</div><div class="tools"><input type="color" data-k="${key}" value="${state.colors[key]}"><input class="hex" data-k="${key}" value="${state.colors[key]}"><button class="reset" data-reset="${key}">↺</button></div>`;
     el.appendChild(row);
   }
@@ -484,7 +494,9 @@ function syncInputs(){
   document.getElementById('lVal').textContent=Math.round(h.l*100)+'%';
 }
 
-/* ============ 10) المعاينة ============ */
+/* ============================================================
+   PART 8 — المعاينة
+   ============================================================ */
 function applyPreview(){
   const p=document.getElementById('phone'),c=state.colors;
   p.style.setProperty('--pv-chat-bg',c.chatBg);
@@ -513,18 +525,32 @@ function applyPreview(){
   try{if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.setHeaderColor)Telegram.WebApp.setHeaderColor(c.headerBg)}catch(_){}
 }
 
-/* ============ 11) عرض اللوحات ============ */
-function renderPalettes(colors){
+/* ============================================================
+   PART 9 — اقتراحات من نتيجة البوت
+   ============================================================ */
+function buildVariants(bot){
+  const A={...bot.accent};
+  const dark=bot.mode==='dark';
+  const L=dark?0.30:0.45;
+  return [
+    {name:'البوت',    desc:'مطابق تمامًا',  accent:{h:A.h,          s:A.s,                    l:dark?A.l:0.32}, isBot:true},
+    {name:'مضاد',     desc:'+180°',         accent:{h:(A.h+180)%360,s:clamp(A.s,0.5,0.9),   l:L}},
+    {name:'دافئ',     desc:'+30°',          accent:{h:(A.h+30)%360, s:clamp(A.s,0.5,0.9),   l:L}},
+    {name:'بارد',     desc:'-30°',          accent:{h:(A.h-30+360)%360,s:clamp(A.s,0.5,0.9),l:L}},
+    {name:'بنفسجي',   desc:'+90°',          accent:{h:(A.h+90)%360, s:clamp(A.s,0.5,0.9),   l:L}},
+    {name:'أخضر',     desc:'+150°',         accent:{h:(A.h+150)%360,s:clamp(A.s,0.5,0.9),   l:L}},
+    {name:'هادئ',     desc:'تشبع منخفض',    accent:{h:A.h,          s:clamp(A.s*0.5,0.2,0.5), l:L}},
+    {name:'زاهي',     desc:'تشبع مرتفع',    accent:{h:A.h,          s:clamp(A.s*1.4,0.7,0.98),l:L}}
+  ];
+}
+function renderPalettes(bot){
   const card=document.getElementById('paletteCard'),list=document.getElementById('palettesList');
-  if(!colors.length){card.style.display='none';return}
   card.style.display='block';list.innerHTML='';
-  const suggestions=generateSuggestions(colors,state.mode);
-
-  for(const v of suggestions){
-    const tuned={h:v.h,s:v.s,l:v.l};
-    const pal=buildPalette(colors,state.mode,tuned);
+  const variants=buildVariants(bot);
+  for(const v of variants){
+    const pal=buildThemeFromBot(bot.mode, bot.surface, v.accent);
     const el=document.createElement('div');
-    el.className='palette';
+    el.className='palette'+(v.isBot?' bot':'');
     el.innerHTML=`
       <div class="mini" style="background:${pal.chatBg}">
         <div class="mini-bar" style="background:${pal.headerBg}"></div>
@@ -533,65 +559,105 @@ function renderPalettes(colors){
       </div>
       <div class="lbl">${v.name}<small>${v.desc}</small></div>`;
     el.addEventListener('click',()=>{
-      const palNow=buildPalette(state.sourceColors,state.mode,tuned);
+      // نبني من جديد في اللحظة نفسها بالوضع الحالي
+      const palNow=buildThemeFromBot(state.mode, bot.surface, v.accent);
       Object.assign(state.colors,palNow);
-      state.accentOverride=tuned;
-      syncInputs();applyPreview();
+      state.mode=bot.mode;
+      document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
+      document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
+      // شفافية البوت
+      state.bubbleOp=85; state.borderOp=0;
+      document.getElementById('bubbleOp').value=85; document.getElementById('bubbleOpVal').textContent='85%';
+      document.getElementById('borderOp').value=0;  document.getElementById('borderOpVal').textContent='0%';
+      syncInputs(); applyPreview();
       toast('تم تطبيق: '+v.name);
     });
     list.appendChild(el);
   }
 }
 
-/* ============ 12) Toast ============ */
-let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2000)}
+/* ============================================================
+   PART 10 — Toast
+   ============================================================ */
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200)}
 
-/* ============ 13) الوضع ============ */
+/* ============================================================
+   PART 11 — الوضع
+   ============================================================ */
 document.getElementById('modeDark').addEventListener('click',()=>setMode('dark'));
 document.getElementById('modeLight').addEventListener('click',()=>setMode('light'));
 function setMode(m){
   state.mode=m;
   document.getElementById('modeDark').classList.toggle('on',m==='dark');
   document.getElementById('modeLight').classList.toggle('on',m==='light');
-  if(state.sourceColors.length){
-    const acc=state.accentOverride
-      ?{...state.accentOverride,l:m==='dark'?clamp(state.accentOverride.l,0.30,0.55):clamp(state.accentOverride.l,0.45,0.68)}
-      :null;
-    state.accentOverride=acc;
-    Object.assign(state.colors,buildPalette(state.sourceColors,m,acc));
-    renderPalettes(state.sourceColors);
+  if(state.botData){
+    // أعد بناء الثيم من نفس السطح والتمييز لكن بالوضع الجديد
+    const surface={...state.botData.surface};
+    if(m==='dark') surface.l=clamp(surface.l,0.05,0.18);
+    else surface.l=clamp(surface.l,0.55,0.92);
+    const accent={...state.botData.accent};
+    if(m==='dark'&&accent.l>0.35) accent.l=0.30;
+    if(m==='light'&&accent.l<0.32) accent.l=0.42;
+    Object.assign(state.colors,buildThemeFromBot(m,surface,accent));
+    renderPalettes({...state.botData, surface, accent, mode:m});
   }
   syncInputs();applyPreview();
 }
 
-/* ============ 14) رفع الصورة ============ */
+/* ============================================================
+   PART 12 — رفع الصورة + التحليل
+   ============================================================ */
 document.getElementById('imgInput').addEventListener('change',e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
   if(f.size>4*1024*1024){toast('الصورة كبيرة (>4MB)');return}
   const r=new FileReader();
-  r.onload=async()=>{state.image=r.result;state.imgHidden=false;await runExtraction()};
+  r.onload=async()=>{state.image=r.result;state.imgHidden=false;await runAnalysis()};
   r.readAsDataURL(f);e.target.value='';
 });
-async function runExtraction(){
+
+async function runAnalysis(){
   if(!state.image){toast('ارفع صورة أولاً');return}
   try{
     toast('جاري التحليل…');
-    const {colors,avgL}=await extractColors(state.image);
-    if(!colors.length){toast('لا ألوان مناسبة');return}
-    state.sourceColors=colors;state.accentOverride=null;
-    state.dim=Math.round(clamp(30+(avgL-0.5)*70,15,75));
+    const bot=await analyzeImage(state.image);
+    state.botData=bot;
+
+    // اضبط الوضع تلقائيًا كما يفعل البوت
+    state.mode=bot.mode;
+    document.getElementById('modeDark').classList.toggle('on',bot.mode==='dark');
+    document.getElementById('modeLight').classList.toggle('on',bot.mode==='light');
+
+    // تعتيم تلقائي من L̄
+    state.dim=Math.round(clamp(30+(bot.avgL-0.5)*70,15,75));
     document.getElementById('bgDim').value=state.dim;
     document.getElementById('bgDimVal').textContent=state.dim+'%';
-    Object.assign(state.colors,buildPalette(colors,state.mode));
-    renderPalettes(colors);
-    syncInputs();applyPreview();
-    toast('تم استخراج '+colors.length+' ألوان');
+
+    // شفافية الفقاعات كما يفعل البوت
+    state.bubbleOp=85; state.borderOp=0;
+    document.getElementById('bubbleOp').value=85; document.getElementById('bubbleOpVal').textContent='85%';
+    document.getElementById('borderOp').value=0;  document.getElementById('borderOpVal').textContent='0%';
+
+    // ابنِ الثيم
+    Object.assign(state.colors, buildThemeFromBot(bot.mode, bot.surface, bot.accent));
+    renderPalettes(bot);
+
+    // عرض التشخيص
+    const diag=document.getElementById('diag');
+    diag.style.display='block';
+    diag.innerHTML=`<b>الوضع:</b> ${bot.mode==='dark'?'داكن':'فاتح'} (L̄=${bot.avgL.toFixed(2)})<br>
+<b>السطح:</b> hsl(${Math.round(bot.surface.h)}, ${Math.round(bot.surface.s*100)}%, ${Math.round(bot.surface.l*100)}%) — تغطية ${Math.round(bot.surface.coverage*100)}%<br>
+<b>التمييز:</b> hsl(${Math.round(bot.accent.h)}, ${Math.round(bot.accent.s*100)}%, ${Math.round(bot.accent.l*100)}%)<br>
+<b>العناقيد:</b> ${bot.clusters.length} بعد الفلترة`;
+
+    syncInputs(); applyPreview();
+    toast('تم التحليل — '+bot.clusters.length+' عناقيد');
   }catch(err){console.error(err);toast('فشل التحليل')}
 }
-document.getElementById('btnExtract').addEventListener('click',runExtraction);
+document.getElementById('btnExtract').addEventListener('click',runAnalysis);
 document.getElementById('btnRemoveImg').addEventListener('click',()=>{
-  state.image=null;state.sourceColors=[];state.accentOverride=null;
+  state.image=null;state.botData=null;
   document.getElementById('paletteCard').style.display='none';
+  document.getElementById('diag').style.display='none';
   applyPreview();toast('أُزيلت الصورة');
 });
 document.getElementById('btnToggleImg').addEventListener('click',e=>{
@@ -599,16 +665,10 @@ document.getElementById('btnToggleImg').addEventListener('click',e=>{
   e.target.textContent=state.imgHidden?'👁️ إظهار الصورة':'👁️ إخفاء الصورة';
   applyPreview();
 });
-document.getElementById('btnRandom').addEventListener('click',()=>{
-  const h=Math.floor(Math.random()*360);
-  const s=0.55+Math.random()*0.35;
-  const l=state.mode==='dark'?0.40+Math.random()*0.12:0.50+Math.random()*0.14;
-  const acc={h,s,l};
-  Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,acc));
-  state.accentOverride=acc;syncInputs();applyPreview();
-});
 
-/* ============ 15) HSL ============ */
+/* ============================================================
+   PART 13 — HSL Sliders (تعديل يدوي للتمييز)
+   ============================================================ */
 ['h','s','l'].forEach(k=>{
   document.getElementById(k+'Range').addEventListener('input',()=>{
     const h=+document.getElementById('hRange').value;
@@ -617,20 +677,16 @@ document.getElementById('btnRandom').addEventListener('click',()=>{
     document.getElementById('hVal').textContent=h;
     document.getElementById('sVal').textContent=Math.round(s*100)+'%';
     document.getElementById('lVal').textContent=Math.round(l*100)+'%';
-    state.accentOverride={h,s,l};
-    Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,state.accentOverride));
-    for(const key in state.colors){
-      const v=state.colors[key];
-      document.querySelectorAll(`input[type=color][data-k="${key}"]`).forEach(i=>i.value=v);
-      document.querySelectorAll(`input.hex[data-k="${key}"]`).forEach(i=>i.value=v);
+    if(state.botData){
+      Object.assign(state.colors, buildThemeFromBot(state.mode, state.botData.surface, {h,s,l}));
+      syncInputs(); applyPreview();
     }
-    applyPreview();
   });
 });
-document.getElementById('btnRebuild').addEventListener('click',()=>{
-  Object.assign(state.colors,buildPalette(state.sourceColors,state.mode,state.accentOverride));
-  syncInputs();applyPreview();toast('تم');
-});
+
+/* ============================================================
+   PART 14 — Sliders عامة
+   ============================================================ */
 function bindSlider(id,valId,key,unit='%'){
   const s=document.getElementById(id),v=document.getElementById(valId);
   s.addEventListener('input',()=>{state[key]=+s.value;v.textContent=s.value+unit;applyPreview()});
@@ -640,16 +696,23 @@ bindSlider('bgDim','bgDimVal','dim');
 bindSlider('bubbleOp','bubbleOpVal','bubbleOp');
 bindSlider('borderOp','borderOpVal','borderOp');
 
-/* ============ 16) .attheme ============ */
+/* ============================================================
+   PART 15 — تصدير .attheme
+   ============================================================ */
 function hexToArgb(hex,alpha=1){
   const{r,g,b}=hexToRgb(hex);
   const a=Math.round(clamp(alpha,0,1)*255).toString(16).padStart(2,'0');
   return '#'+a+r.toString(16).padStart(2,'0')+g.toString(16).padStart(2,'0')+b.toString(16).padStart(2,'0');
 }
 function buildAtTheme(){
-  const c=state.colors,bA=state.bubbleOp/100,bdA=state.borderOp/100;
-  return [
-    '// Theme Studio v7','// Telegram Android','// '+new Date().toISOString(),'',
+  const c=state.colors;
+  const bA=state.bubbleOp/100;
+  const bdA=state.borderOp/100;
+  const lines=[
+    '// Theme Studio v8 — Bot-Mimic export',
+    '// Telegram Android .attheme',
+    '// '+new Date().toISOString(),
+    '',
     'chat_wallpaper='+hexToArgb(c.chatBg),
     'chat_wallpaper_gradient_to='+hexToArgb(c.chatBg),
     'chat_inBubble='+hexToArgb(c.inBubbleBg,bA),
@@ -671,46 +734,60 @@ function buildAtTheme(){
     'actionBarDefault='+hexToArgb(c.headerBg),
     'actionBarDefaultIcon='+hexToArgb(c.headerText),
     'actionBarDefaultTitle='+hexToArgb(c.headerText),
-    'actionBarDefaultSubtitle='+hexToArgb(c.headerText)
-  ].join('\n');
+    'actionBarDefaultSubtitle='+hexToArgb(c.headerText),
+    'windowBackgroundWhite='+hexToArgb(c.chatBg),
+    'windowBackgroundGray='+hexToArgb(c.chatBg),
+    'dialogBackground='+hexToArgb(c.chatBg),
+    'divider='+hexToArgb(c.linkColor,0)
+  ];
+  return lines.join('\n');
 }
 document.getElementById('btnExportAtTheme').addEventListener('click',()=>{
   const blob=new Blob([buildAtTheme()],{type:'text/plain;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='theme-studio.attheme';a.click();URL.revokeObjectURL(a.href);
-  toast('نُزّل ملف .attheme');
+  toast('نُزّل .attheme');
 });
 
-/* ============ 17) JSON + حفظ ============ */
-const LS_KEY='theme-studio-v7';
+/* ============================================================
+   PART 16 — JSON / حفظ
+   ============================================================ */
+const LS_KEY='theme-studio-v8';
 document.getElementById('btnSave').addEventListener('click',()=>{
   try{
-    const d={v:7,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:state.image};
+    const d={v:8,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:state.image};
     localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ');
   }catch(_){
     try{
-      const d={v:7,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,sourceColors:state.sourceColors,accentOverride:state.accentOverride,image:null};
+      const d={v:8,mode:state.mode,colors:state.colors,imgOpacity:state.imgOpacity,dim:state.dim,bubbleOp:state.bubbleOp,borderOp:state.borderOp,botData:state.botData,image:null};
       localStorage.setItem(LS_KEY,JSON.stringify(d));toast('حُفظ بدون الصورة');
     }catch(e){toast('فشل الحفظ')}
   }
 });
 function loadFromData(d){
-  Object.assign(state,{mode:d.mode||'dark',colors:{...DEFAULTS,...(d.colors||{})},imgOpacity:d.imgOpacity??100,dim:d.dim??45,bubbleOp:d.bubbleOp??100,borderOp:d.borderOp??100,sourceColors:d.sourceColors||[],accentOverride:d.accentOverride||null,image:d.image||null,imgHidden:false});
+  Object.assign(state,{
+    mode:d.mode||'dark',
+    colors:{...DEFAULTS,...(d.colors||{})},
+    imgOpacity:d.imgOpacity??100, dim:d.dim??45,
+    bubbleOp:d.bubbleOp??85, borderOp:d.borderOp??0,
+    botData:d.botData||null,
+    image:d.image||null, imgHidden:false
+  });
   document.getElementById('modeDark').classList.toggle('on',state.mode==='dark');
   document.getElementById('modeLight').classList.toggle('on',state.mode==='light');
   ['imgOpacity','bgDim','bubbleOp','borderOp'].forEach((id,i)=>{
     const k=['imgOpacity','dim','bubbleOp','borderOp'][i],v=['imgOpacityVal','bgDimVal','bubbleOpVal','borderOpVal'][i];
     document.getElementById(id).value=state[k];document.getElementById(v).textContent=state[k]+'%';
   });
-  if(state.sourceColors.length)renderPalettes(state.sourceColors);
-  syncInputs();applyPreview();
+  if(state.botData) renderPalettes(state.botData);
+  syncInputs(); applyPreview();
 }
 document.getElementById('btnLoad').addEventListener('click',()=>{
   const raw=localStorage.getItem(LS_KEY);if(!raw){toast('لا يوجد حفظ');return}
   try{loadFromData(JSON.parse(raw));toast('تم الاسترجاع')}catch(e){toast('ملف تالف')}
 });
 document.getElementById('btnExport').addEventListener('click',()=>{
-  const d={v:7,exportedAt:new Date().toISOString(),...state};
+  const d={v:8,exportedAt:new Date().toISOString(),...state};
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='theme-studio-'+Date.now()+'.json';a.click();URL.revokeObjectURL(a.href);toast('نُزّل JSON');
 });
@@ -723,19 +800,24 @@ document.getElementById('importInput').addEventListener('change',e=>{
 });
 document.getElementById('btnResetAll').addEventListener('click',()=>{
   if(!confirm('إعادة ضبط كل الإعدادات؟'))return;
-  state.colors={...DEFAULTS};state.image=null;state.sourceColors=[];state.accentOverride=null;state.imgHidden=false;
-  state.imgOpacity=100;state.dim=45;state.bubbleOp=100;state.borderOp=100;
-  document.getElementById('imgOpacity').value=100;document.getElementById('bgDim').value=45;
-  document.getElementById('bubbleOp').value=100;document.getElementById('borderOp').value=100;
+  state.colors={...DEFAULTS};state.image=null;state.botData=null;state.imgHidden=false;
+  state.imgOpacity=100;state.dim=45;state.bubbleOp=85;state.borderOp=0;
+  document.getElementById('imgOpacity').value=100;
+  document.getElementById('bgDim').value=45;
+  document.getElementById('bubbleOp').value=85;
+  document.getElementById('borderOp').value=0;
   document.getElementById('imgOpacityVal').textContent='100%';
   document.getElementById('bgDimVal').textContent='45%';
-  document.getElementById('bubbleOpVal').textContent='100%';
-  document.getElementById('borderOpVal').textContent='100%';
+  document.getElementById('bubbleOpVal').textContent='85%';
+  document.getElementById('borderOpVal').textContent='0%';
   document.getElementById('paletteCard').style.display='none';
+  document.getElementById('diag').style.display='none';
   syncInputs();applyPreview();toast('تمت إعادة الضبط');
 });
 
-/* ============ 18) تهيئة ============ */
+/* ============================================================
+   PART 17 — التهيئة
+   ============================================================ */
 renderColorGroup('ctrlBackground',COLOR_GROUPS.background);
 renderColorGroup('ctrlHeader',COLOR_GROUPS.header);
 renderColorGroup('ctrlBubbles',COLOR_GROUPS.bubbles);
@@ -753,7 +835,7 @@ renderColorGroup('ctrlMisc',COLOR_GROUPS.misc);
 try{
   if(window.Telegram&&Telegram.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();}
 }catch(_){}
-console.log('[Theme Studio] v7 loaded — multi-hue suggestions');
+console.log('[Theme Studio] v8 loaded — bot-mimic engine');
 </script>
 </body>
 </html>
