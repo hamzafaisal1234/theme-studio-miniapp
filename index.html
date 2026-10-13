@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صانع ثيمات تيليجرام المتطور</title>
+    <title>صانع ثيمات تيليجرام الذكي</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -33,7 +33,6 @@
             font-weight: bold;
         }
 
-        /* معاينة حية */
         .preview-box {
             background: var(--card-bg);
             border-radius: 14px;
@@ -53,7 +52,6 @@
         }
         .chat-bubble.incoming { background: rgba(255,255,255,0.08); }
 
-        /* شبكة الألوان المستخرجة */
         .section-title { font-size: 15px; margin: 15px 0 10px; font-weight: bold; color: #93c5fd; }
         .palette-grid {
             display: grid;
@@ -78,7 +76,6 @@
         .color-info { font-size: 12px; word-break: break-all; }
         .color-info span { display: block; opacity: 0.6; font-size: 10px; }
 
-        /* أدوات التحكم اليدوي */
         .controls-box {
             background: var(--card-bg);
             padding: 15px;
@@ -97,10 +94,9 @@
         .slider-group { margin-bottom: 15px; }
         .slider-group input { width: 100%; cursor: pointer; }
 
-        /* أزرار العمليات */
-        .btn-group { display: flex; gap: 10px; }
+        .btn-group { display: flex; gap: 10px; flex-direction: column; }
         .action-btn {
-            flex: 1;
+            width: 100%;
             background: #2563eb;
             color: white;
             border: none;
@@ -112,31 +108,38 @@
             text-align: center;
         }
         .action-btn.success { background: #16a34a; }
+        
+        #resultArea {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        #resultArea a { color: #60a5fa; font-weight: bold; word-break: break-all; }
     </style>
 </head>
 <body>
 
-    <h2>🎨 صانع الثيمات الديناميكي المتطور</h2>
+    <h2>🎨 صانع الثيمات السحابي</h2>
 
     <label class="upload-card">
         📁 اضغط هنا لاختيار صورة وتحليل ألوانها بدقة
         <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
     </label>
 
-    <!-- المعاينة الحية -->
     <div class="preview-box" id="previewBox">
         <div class="preview-title">معاينة واجهة تيليجرام الحية</div>
         <div class="chat-bubble incoming">أهلاً بك! هذه معاينة للرسائل الواردة.</div>
         <div class="chat-bubble" id="liveBubble">هنا تظهر عينة اللون الأساسي للثيم.</div>
     </div>
 
-    <!-- شبكة الألوان المستخرجة الكاملة -->
     <div class="section-title">لوحة الألوان المستخرجة بالكامل:</div>
     <div class="palette-grid" id="paletteGrid">
         <div style="opacity: 0.5; font-size: 13px; grid-column: 1/-1; text-align: center;">لم يتم رفع صورة بعد...</div>
     </div>
 
-    <!-- أدوات التحكم المخصصة -->
     <div class="controls-box">
         <div class="section-title" style="margin-top:0;">لوحة التحكم اليدوي:</div>
         <div class="control-row">
@@ -158,10 +161,14 @@
         </div>
     </div>
 
-    <!-- أزرار الإرسال والتحميل -->
     <div class="btn-group">
-        <button class="action-btn" onclick="copyThemeJson()">📋 نسخ الأكواد</button>
-        <button class="action-btn success" onclick="downloadThemeFile()">📥 تحميل ملف الثيم</button>
+        <button class="action-btn" onclick="copyThemeJson()">📋 نسخ أكواد الثيم</button>
+        <button class="action-btn success" id="cloudUploadBtn" onclick="uploadThemeToCloud()">☁️ توليد ورفع ملف الثيم للسحابة</button>
+    </div>
+
+    <div id="resultArea">
+        <p>✨ تم رفع ملف الثيم بنجاح!</p>
+        <a id="downloadLink" href="#" target="_blank">انقر هنا لتحميل ملف الثيم المباشر</a>
     </div>
 
     <canvas id="canvas" style="display:none;"></canvas>
@@ -274,9 +281,13 @@
             alert("✅ تم نسخ أكواد الثيم بنجاح!");
         }
 
-        function downloadThemeFile() {
+        // الحل الثاني: رفع الملف للسحابة وإعطاء رابط تحميل مباشر
+        async function uploadThemeToCloud() {
+            let btn = document.getElementById('cloudUploadBtn');
+            btn.innerText = "⏳ جاري الرفع للسحابة...";
+            
             let themeData = {
-                theme_name: "Custom AI Telegram Theme",
+                theme_name: "Custom Telegram Theme",
                 primary: document.getElementById('primaryPicker').value,
                 background: document.getElementById('bgPicker').value,
                 card: document.getElementById('cardPicker').value,
@@ -284,15 +295,32 @@
                 extracted_palette: allExtractedColors.slice(0, 8)
             };
 
-            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(themeData, null, 2));
-            let downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "telegram_custom_theme.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            
-            alert("📥 تم تجهيز وتحميل ملف الثيم إلى جهازك بنجاح!");
+            let blob = new Blob([JSON.stringify(themeData, null, 2)], { type: "application/json" });
+            let formData = new FormData();
+            formData.append("file", blob, "telegram_theme.json");
+
+            try {
+                let response = await fetch("https://file.io/?expires=1d", {
+                    method: "POST",
+                    body: formData
+                });
+                let result = await response.json();
+                
+                if (result.success) {
+                    let resultArea = document.getElementById('resultArea');
+                    let downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = result.link;
+                    downloadLink.innerText = result.link;
+                    resultArea.style.display = "block";
+                    alert("✅ تم رفع الملف بنجاح! ظهر لك رابط التحميل في أسفل الصفحة.");
+                } else {
+                    alert("❌ حدث خطأ أثناء الرفع، حاول مرة أخرى.");
+                }
+            } catch (error) {
+                alert("❌ تعذر الاتصال بخدمة الرفع، تأكد من اتصالك بالإنترنت.");
+            } finally {
+                btn.innerText = "☁️ توليد ورفع ملف الثيم للسحابة";
+            }
         }
     </script>
 </body>
