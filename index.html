@@ -3,295 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>معاينة ثيمات تيليجرام الاحترافية</title>
+    <title>منشئ ثيمات تيليجرام الاحترافي الدقيق</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #dbeafe;
-            color: #1e293b;
+            background-color: #0b1017;
+            color: #ffffff;
             margin: 0;
-            padding: 10px;
+            padding: 15px;
             box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
-        h2 { font-size: 16px; margin: 5px 0 10px; color: #1e3a8a; text-align: center; }
-
-        .upload-card {
-            background: #ffffff;
-            border: 2px dashed #3b82f6;
-            padding: 10px 15px;
+        h2 { text-align: center; color: #38bdf8; font-size: 16px; margin-bottom: 15px; }
+        .card {
+            background: #17212b;
             border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .upload-btn {
+            display: block;
+            background: #2563eb;
+            color: white;
             text-align: center;
-            cursor: pointer;
-            margin-bottom: 12px;
-            font-weight: bold;
-            font-size: 13px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 380px;
-            box-sizing: border-box;
-        }
-
-        /* حاوية الهواتف المجاورة للمعاينة (تطابق صورة البوت) */
-        .phones-wrapper {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 12px;
-            width: 100%;
-            max-width: 420px;
-        }
-
-        /* تصميم هيكل الهاتف */
-        .phone-mockup {
-            width: 180px;
-            height: 340px;
-            border-radius: 24px;
-            padding: 8px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            border: 3px solid #0f172a;
-        }
-
-        /* شاشة المحادثة (الهاتف الأيمن) */
-        #chatPhone {
-            background-size: cover;
-            background-position: center;
-        }
-
-        .mock-header {
-            height: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 6px;
-            margin-bottom: 8px;
-        }
-        .mock-bar-pill {
-            height: 6px;
-            border-radius: 3px;
-            width: 45px;
-        }
-        .mock-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-        }
-
-        /* فقرات الرسائل في المعاينة */
-        .mock-chat-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            overflow: hidden;
-            padding: 4px;
-        }
-        .mock-bubble {
-            border-radius: 10px;
-            padding: 6px 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            max-width: 85%;
-        }
-        .mock-bubble.in { align-self: flex-start; border-bottom-left-radius: 2px; }
-        .mock-bubble.out { align-self: flex-end; border-bottom-right-radius: 2px; }
-        
-        .line-short { height: 5px; border-radius: 3px; width: 60%; }
-        .line-long { height: 5px; border-radius: 3px; width: 90%; }
-
-        /* شاشة القائمة الرئيسية (الهاتف الأيسر) */
-        .mock-chats-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 4px;
-            overflow: hidden;
-        }
-        .chat-row-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .chat-avatar-circle {
-            width: 24px; height: 24px; border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .chat-text-lines {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        /* أدوات التحكم وتوليد الثيم */
-        .controls-box {
-            background: #ffffff;
             padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            width: 100%;
-            max-width: 380px;
-            box-sizing: border-box;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
         }
-        .control-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 12px;
-        }
-        input[type="color"] { border: none; width: 28px; height: 28px; cursor: pointer; background: none; border-radius: 50%; }
-
-        .code-box {
-            background: #090d16;
+        .code-output {
+            background: #020617;
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px;
-            padding: 8px;
+            padding: 12px;
             font-family: monospace;
-            font-size: 10px;
+            font-size: 11px;
             direction: ltr;
             text-align: left;
             white-space: pre-wrap;
-            margin-bottom: 10px;
-            max-height: 100px;
+            height: 250px;
             overflow-y: auto;
             color: #38bdf8;
+            margin-bottom: 12px;
         }
-
-        .btn-group { display: flex; gap: 8px; flex-direction: column; width: 100%; max-width: 380px; }
         .action-btn {
             width: 100%;
-            background: #2563eb;
+            background: #16a34a;
             color: white;
             border: none;
-            padding: 11px;
+            padding: 12px;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            text-align: center;
+            margin-bottom: 8px;
         }
-        .action-btn.success { background: #16a34a; }
+        .action-btn.secondary { background: #2563eb; }
     </style>
 </head>
 <body>
 
-    <h2> معاينة الثيم المطابقة تماماً لـ ThemePreviewBot</h2>
+    <h2>مولد ثيمات تيليجرام المعتمد على القيم الحقيقية</h2>
 
-    <label class="upload-card">
-        📁 اختر صورة الطاحونة أو خلفية الثيم
-        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
-    </label>
-
-    <!-- الهواتف المجاورة تماماً لصورة البوت -->
-    <div class="phones-wrapper">
+    <div class="card">
+        <label class="upload-btn">
+            📁 اختر صورة الثيم الخلفية
+            <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
+        </label>
         
-        <!-- الهاتف الأيمن: شاشة المحادثة مع الخلفية -->
-        <div class="phone-mockup" id="chatPhone">
-            <div class="mock-header">
-                <div class="mock-dot" id="cDot1"></div>
-                <div class="mock-bar-pill" id="cBarPill"></div>
-                <div class="mock-dot" id="cDot2"></div>
-            </div>
-            <div class="mock-chat-content">
-                <div class="mock-bubble in" id="mIn1">
-                    <div class="line-short" id="lIn1"></div>
-                    <div class="line-long" id="lIn2"></div>
-                </div>
-                <div class="mock-bubble out" id="mOut1">
-                    <div class="line-long" id="lOut1"></div>
-                </div>
-                <div class="mock-bubble in" id="mIn2">
-                    <div class="line-short" id="lIn3"></div>
-                </div>
-                <div class="mock-bubble out" id="mOut2">
-                    <div class="line-long" id="lOut2"></div>
-                </div>
-            </div>
-        </div>
+        <div style="font-size: 12px; margin-bottom: 6px; color: #94a3b8;">محتوى ملف الثيم (.attheme) الدقيق الناتج:</div>
+        <div class="code-output" id="codeOutput">جارٍ تحميل القيم الأصلية المعتمدة...</div>
 
-        <!-- الهاتف الأيسر: الشاشة الرئيسية (القوائم) -->
-        <div class="phone-mockup" id="chatsPhone">
-            <div class="mock-header">
-                <div class="mock-dot" id="sDot1"></div>
-                <div class="mock-bar-pill" id="sBarPill"></div>
-                <div class="mock-dot" id="sDot2"></div>
-            </div>
-            <div class="mock-chats-content" id="chatsContainerBg">
-                <!-- صف محادثة وهمي 1 -->
-                <div class="chat-row-item">
-                    <div class="chat-avatar-circle" id="av1"></div>
-                    <div class="chat-text-lines">
-                        <div class="line-short" id="txt1"></div>
-                        <div class="line-long" id="txt2"></div>
-                    </div>
-                </div>
-                <!-- صف محادثة وهمي 2 -->
-                <div class="chat-row-item">
-                    <div class="chat-avatar-circle" id="av2"></div>
-                    <div class="chat-text-lines">
-                        <div class="line-short" id="txt3"></div>
-                        <div class="line-long" id="txt4"></div>
-                    </div>
-                </div>
-                <!-- صف محادثة وهمي 3 -->
-                <div class="chat-row-item">
-                    <div class="chat-avatar-circle" id="av3"></div>
-                    <div class="chat-text-lines">
-                        <div class="line-short" id="txt5"></div>
-                        <div class="line-long" id="txt6"></div>
-                    </div>
-                </div>
-                <!-- صف محادثة وهمي 4 -->
-                <div class="chat-row-item">
-                    <div class="chat-avatar-circle" id="av4"></div>
-                    <div class="chat-text-lines">
-                        <div class="line-short" id="txt7"></div>
-                        <div class="line-long" id="txt8"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="controls-box">
-        <div class="control-row">
-            <span>شريط العنوان (actionBarDefault):</span>
-            <input type="color" id="pHeader" value="#101921" oninput="updateLiveTheme()">
-        </div>
-        <div class="control-row">
-            <span>خلفية القوائم (windowBackgroundWhite):</span>
-            <input type="color" id="pChatBg" value="#0b1017" oninput="updateLiveTheme()">
-        </div>
-        <div class="control-row">
-            <span>رسائل الصادر (chat_outBubble):</span>
-            <input type="color" id="pOutBubble" value="#2b5278" oninput="updateLiveTheme()">
-        </div>
-        <div class="control-row">
-            <span>رسائل الوارد (chat_inBubble):</span>
-            <input type="color" id="pInBubble" value="#18222d" oninput="updateLiveTheme()">
-        </div>
-        <div class="control-row">
-            <span>ألوان الخطوط والأيقونات (Text):</span>
-            <input type="color" id="pText" value="#38bdf8" oninput="updateLiveTheme()">
-        </div>
-
-        <div style="font-size: 12px; margin: 8px 0 4px; font-weight: bold; color: #1e3a8a;">كود الثيم الناتج (.attheme):</div>
-        <div class="code-box" id="codeOutput">اختر صورة لتوليد كود الثيم بدقة...</div>
-    </div>
-
-    <div class="btn-group">
-        <button class="action-btn" onclick="copyThemeText()">📋 نسخ أكواد الثيم</button>
-        <button class="action-btn success" onclick="downloadThemeFile()">📥 تحميل ملف theme_new.attheme</button>
+        <button class="action-btn secondary" onclick="copyCode()">📋 نسخ محتوى الثيم</button>
+        <button class="action-btn" onclick="downloadFile()">📥 تحميل ملف theme_accurate.attheme</button>
     </div>
 
     <canvas id="canvas" style="display:none;"></canvas>
@@ -299,23 +85,515 @@
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        let currentBgImage = "";
+
+        // قاعدة البيانات الحقيقية والدقيقة بالكامل المستمدة من ثيمك المعتمد
+        let themeKeys = {
+            "WallpaperFileOffset": -1,
+            "dialogBackground": -14803426,
+            "dialogBackgroundGray": -14013910,
+            "dialogTextBlack": -592138,
+            "dialogTextLink": -9972771,
+            "dialogLinkSelection": 862242258,
+            "dialogTextBlue": -9972771,
+            "dialogTextBlue2": -9972771,
+            "dialogTextBlue4": -9972771,
+            "dialogTextGray": -8553091,
+            "dialogTextGray2": -8553091,
+            "dialogTextGray3": -8553091,
+            "dialogTextGray4": -8553091,
+            "dialogTextHint": -8553091,
+            "dialogInputField": -8553091,
+            "dialogInputFieldActivated": -12462626,
+            "dialogCheckboxSquareBackground": -11942706,
+            "dialogCheckboxSquareUnchecked": -10855846,
+            "dialogCheckboxSquareDisabled": -12040120,
+            "dialogScrollGlow": -657931,
+            "dialogRoundCheckBox": -14034709,
+            "dialogRadioBackground": -10855846,
+            "dialogRadioBackgroundChecked": -12462626,
+            "dialogLineProgress": -10762028,
+            "dialogLineProgressBackground": -12303292,
+            "dialogButton": -9972771,
+            "dialogButtonSelector": 436207615,
+            "dialogIcon": -7566196,
+            "dialogGrayLine": -12040120,
+            "dialogTopBackground": -9451053,
+            "dialogSearchBackground": -13816531,
+            "dialogSearchHint": -8421505,
+            "dialogSearchIcon": -8882056,
+            "dialogSearchText": -1,
+            "dialogShadowLine": 335544320,
+            "windowBackgroundWhite": -15198183,
+            "windowBackgroundUnchecked": -14803424,
+            "windowBackgroundChecked": -13265762,
+            "windowBackgroundCheckText": -1,
+            "progressCircle": -9905942,
+            "listSelectorSDK21": 234881023,
+            "windowBackgroundWhiteInputField": -11513776,
+            "windowBackgroundWhiteInputFieldActivated": -9450019,
+            "windowBackgroundWhiteGrayIcon": -8553091,
+            "windowBackgroundWhiteBlueText": -9972771,
+            "windowBackgroundWhiteBlueText2": -12334117,
+            "windowBackgroundWhiteBlueText3": -11286307,
+            "windowBackgroundWhiteBlueText4": -9972771,
+            "windowBackgroundWhiteBlueText5": -9972771,
+            "windowBackgroundWhiteBlueText6": -12472129,
+            "windowBackgroundWhiteBlueText7": -8790295,
+            "windowBackgroundWhiteGreenText": -10371737,
+            "windowBackgroundWhiteGreenText2": -10366101,
+            "windowBackgroundWhiteGrayText": 1862270975,
+            "windowBackgroundWhiteGrayText2": 1862139391,
+            "windowBackgroundWhiteGrayText3": -7960954,
+            "windowBackgroundWhiteGrayText4": -9803158,
+            "windowBackgroundWhiteGrayText5": -8613739,
+            "windowBackgroundWhiteGrayText6": -8553091,
+            "windowBackgroundWhiteGrayText8": -8553091,
+            "windowBackgroundWhiteBlackText": -1,
+            "windowBackgroundWhiteHintText": -8553091,
+            "windowBackgroundWhiteValueText": -529737750,
+            "windowBackgroundWhiteLinkText": -10762801,
+            "windowBackgroundWhiteLinkSelection": 1030281450,
+            "windowBackgroundWhiteBlueHeader": -9513755,
+            "switchTrack": -10461088,
+            "switchTrackChecked": -11812142,
+            "switchTrackBlue": -9934742,
+            "switchTrackBlueChecked": -8852501,
+            "switchTrackBlueThumb": -14803424,
+            "switchTrackBlueThumbChecked": -13260876,
+            "switchTrackBlueSelector": 431483376,
+            "switchTrackBlueSelectorChecked": 848030957,
+            "switch2TrackChecked": -11022377,
+            "checkboxSquareBackground": -10039341,
+            "checkboxSquareUnchecked": -11309709,
+            "checkboxSquareDisabled": 1682135389,
+            "windowBackgroundGray": -16777216,
+            "emptyListPlaceholder": -8553091,
+            "divider": -16777216,
+            "graySection": -16053492,
+            "key_graySectionText": -8158332,
+            "radioBackground": -10461088,
+            "radioBackgroundChecked": -11546915,
+            "fastScrollActive": -12532009,
+            "fastScrollInactive": -12500671,
+            "text_RedRegular": -1152913,
+            "text_RedBold": -1152913,
+            "inappPlayerPerformer": -1,
+            "inappPlayerTitle": 1862270975,
+            "inappPlayerBackground": -15066597,
+            "inappPlayerPlayPause": -9972771,
+            "inappPlayerClose": 1862270975,
+            "returnToCallBackground": -10435371,
+            "contextProgressInner1": 1526726655,
+            "contextProgressOuter1": -11086619,
+            "contextProgressInner2": -4331026,
+            "avatar_backgroundSaved": -11221546,
+            "avatar_background2Saved": -14172459,
+            "avatar_backgroundArchived": -12829636,
+            "avatar_backgroundArchivedHidden": -11810602,
+            "avatar_backgroundRed": -2326437,
+            "avatar_backgroundOrange": -869276,
+            "avatar_background2Red": -2530993,
+            "avatar_background2Orange": -1734333,
+            "avatar_backgroundInProfileBlue": -10961972,
+            "avatar_backgroundActionBarBlue": -14737632,
+            "avatar_actionBarSelectorBlue": 436207615,
+            "avatar_subtitleInProfileBlue": 2029911551,
+            "avatar_nameInMessageRed": -1537928,
+            "avatar_nameInMessageOrange": -1528998,
+            "avatar_nameInMessageViolet": -7565846,
+            "avatar_nameInMessageGreen": -8531855,
+            "avatar_nameInMessageCyan": -11285306,
+            "avatar_nameInMessageBlue": -10703382,
+            "avatar_nameInMessagePink": -1543014,
+            "actionBarDefault": -14474202,
+            "actionBarDefaultSelector": 385875967,
+            "actionBarWhiteSelector": 285212671,
+            "actionBarDefaultIcon": -34471,
+            "actionBarActionModeDefault": -14211289,
+            "actionBarActionModeDefaultTop": -14277082,
+            "actionBarActionModeDefaultIcon": -1,
+            "actionBarActionModeDefaultSelector": 520093695,
+            "actionBarDefaultSubtitle": 1945301746,
+            "actionBarDefaultSearchPlaceholder": -2097152001,
+            "actionBarDefaultSubmenuItem": -1,
+            "actionBarDefaultSubmenuItemIcon": 2029911551,
+            "actionBarDefaultSubmenuBackground": -14145495,
+            "actionBarDefaultSubmenuSeparator": -14803425,
+            "actionBarTabActiveText": -10361365,
+            "actionBarTabUnactiveText": -7434609,
+            "actionBarTabLine": -11738133,
+            "actionBarTabSelector": 827811431,
+            "actionBarDefaultArchived": -13882323,
+            "actionBarDefaultArchivedSelector": -12698049,
+            "chats_onlineCircle": -12462874,
+            "chats_unreadCounter": -12399136,
+            "chats_unreadCounterMuted": -12237499,
+            "chats_name": -921103,
+            "chats_nameArchived": -5592406,
+            "chats_secretName": -9316522,
+            "chats_secretIcon": -9316522,
+            "chats_pinnedIcon": -10197916,
+            "chats_archiveBackground": -11883070,
+            "chats_archivePinBackground": -13619152,
+            "chats_message": -8224126,
+            "chats_messageArchived": -8224126,
+            "chats_message_threeLines": -8224126,
+            "chats_draft": -637778102,
+            "chats_nameMessage": -1315861,
+            "chats_nameMessageArchived": -8553091,
+            "chats_nameMessage_threeLines": -1315861,
+            "chats_attachMessage": -8224126,
+            "chats_actionMessage": -10040361,
+            "chats_date": -8882056,
+            "chats_pinnedOverlay": 201326591,
+            "chats_tabletSelectedOverlay": 268435455,
+            "chats_sentCheck": -11675936,
+            "chats_sentReadCheck": -11675936,
+            "chats_sentClock": -9539986,
+            "chats_verifiedBackground": -11610652,
+            "chats_muteIcon": -11184811,
+            "chats_menuTopShadow": -16711704,
+            "chats_menuBackground": -14408666,
+            "chats_menuItemText": -184549377,
+            "chats_menuItemCheck": -10902612,
+            "chats_menuItemIcon": -8224126,
+            "chats_menuPhone": -1,
+            "chats_menuPhoneCats": -8224126,
+            "chats_menuTopBackgroundCats": -15000805,
+            "chats_actionBackground": -10437686,
+            "chats_actionPressedBackground": -9383212,
+            "chats_archivePullDownBackground": -14145496,
+            "chat_attachActiveTab": -9576469,
+            "chat_attachUnactiveTab": -9659491,
+            "chat_attachGalleryBackground": -11692299,
+            "chat_attachAudioBackground": -626837,
+            "chat_attachFileBackground": -10830604,
+            "chat_attachContactBackground": -2183099,
+            "chat_attachPollBackground": -2183099,
+            "chat_status": -9053978,
+            "chat_inBubble": -1038147038,
+            "chat_inBubbleShadow": 838860800,
+            "chat_outBubble": -1182389985,
+            "chat_outBubbleSelected": -5553602,
+            "chat_outBubbleShadow": 838860800,
+            "chat_outBubbleGradient": -7456627,
+            "chat_outBubbleGradient2": -5059785,
+            "chat_outBubbleGradient3": -12617844,
+            "chat_outUpCall": -1,
+            "chat_outSentCheck": -1,
+            "chat_outSentCheckSelected": -1,
+            "chat_outSentCheckRead": -1,
+            "chat_outSentCheckReadSelected": -1,
+            "chat_outSentClock": -1,
+            "chat_outSentClockSelected": -1,
+            "chat_outMediaIcon": -7984865,
+            "chat_outMediaIconSelected": -7984865,
+            "chat_outViews": -1,
+            "chat_outViewsSelected": -1,
+            "chat_outMenu": -1,
+            "chat_outMenuSelected": -1,
+            "chat_outInstant": -1,
+            "chat_outInstantSelected": -1,
+            "chat_outPreviewInstantText": -1,
+            "chat_outForwardedNameText": -1,
+            "chat_outViaBotNameText": -1,
+            "chat_outReplyLine": -1,
+            "chat_outReplyLine2": -1,
+            "chat_outReplyNameText": -1,
+            "chat_outReplyMessageText": -1,
+            "chat_outReplyMediaMessageText": -1,
+            "chat_outReplyMediaMessageSelectedText": -1,
+            "chat_outPreviewLine": -1,
+            "chat_outSiteNameText": -1,
+            "chat_outContactNameText": -1,
+            "chat_outContactPhoneText": -1118482,
+            "chat_outContactPhoneSelectedText": -1118482,
+            "chat_outAudioPerfomerText": -1,
+            "chat_outAudioPerfomerSelectedText": -1,
+            "chat_outTimeSelectedText": -1,
+            "chat_outAudioProgress": 1308622847,
+            "chat_outAudioSelectedProgress": 1308622847,
+            "chat_outTimeText": -1,
+            "chat_outAudioTitleText": -1,
+            "chat_outAudioDurationText": -1118482,
+            "chat_outAudioDurationSelectedText": -1118482,
+            "chat_outAudioSeekbar": 1308622847,
+            "chat_outAudioCacheSeekbar": 1308622847,
+            "chat_outAudioSeekbarSelected": 1308622847,
+            "chat_outAudioSeekbarFill": -1,
+            "chat_outVoiceSeekbar": 1308622847,
+            "chat_outVoiceSeekbarSelected": 1308622847,
+            "chat_outVoiceSeekbarFill": -1,
+            "chat_outFileProgress": -7984865,
+            "chat_outFileProgressSelected": -7984865,
+            "chat_outFileNameText": -1,
+            "chat_outFileInfoText": -1118482,
+            "chat_outFileInfoSelectedText": -1118482,
+            "chat_outFileBackground": 520093695,
+            "chat_outFileBackgroundSelected": 520093695,
+            "chat_outVenueInfoText": -1118482,
+            "chat_outVenueInfoSelectedText": -1118482,
+            "chat_outLinkSelectBackground": 872085495,
+            "chat_outLoader": -1,
+            "chat_outLoaderSelected": -1,
+            "chat_outLocationIcon": -1,
+            "chat_outContactBackground": -2991527,
+            "chat_outContactIcon": -1,
+            "chat_outTextSelectionHighlight": 2122175964,
+            "chat_outBubbleLocationPlaceholder": 520093695,
+            "chat_outBubbleGradientAnimated": 1,
+            "chat_outBubbleGradientSelectedOverlay": 352321535,
+            "chat_inBubbleSelected": -13544358,
+            "chat_messageTextIn": -328966,
+            "chat_messageTextOut": -1,
+            "chat_messageLinkIn": -8790295,
+            "chat_messageLinkOut": -1,
+            "chat_serviceBackground": -1774766281,
+            "chat_serviceBackgroundSelected": 1503308203,
+            "chat_muteIcon": 1688577445,
+            "chat_inSentClock": -11116192,
+            "chat_inSentClockSelected": -7618360,
+            "chat_mediaSentClock": -1291845633,
+            "chat_inMediaIcon": -1,
+            "chat_inMediaIconSelected": -1,
+            "chat_inViews": -8946049,
+            "chat_inViewsSelected": -7618360,
+            "chat_inMenu": -10656926,
+            "chat_inMenuSelected": -1517567800,
+            "chat_mediaMenu": -1,
+            "chat_inInstant": -8790295,
+            "chat_inInstantSelected": -5776157,
+            "chat_sentError": -633010,
+            "chat_selectedBackground": 711113682,
+            "chat_inPreviewInstantText": -8790295,
+            "chat_secretTimeText": -3289650,
+            "chat_inForwardedNameText": -8857367,
+            "chat_inViaBotNameText": -8790295,
+            "chat_inQuote": -8790295,
+            "chat_inReplyLine": -8790295,
+            "chat_inReplyNameText": -8790295,
+            "chat_inReplyMessageText": -1,
+            "chat_inReplyMediaMessageText": -8421247,
+            "chat_inReplyMediaMessageSelectedText": -7618360,
+            "chat_inPreviewLine": -8790295,
+            "chat_inSiteNameText": -8790295,
+            "chat_inContactNameText": -8790295,
+            "chat_inContactPhoneText": -8486527,
+            "chat_inContactPhoneSelectedText": -7618360,
+            "chat_inAudioProgress": -1,
+            "chat_inAudioSelectedProgress": -1,
+            "chat_adminText": -8552320,
+            "chat_adminSelectedText": -7618360,
+            "chat_inTimeText": -8552320,
+            "chat_inTimeSelectedText": -7618360,
+            "chat_inAudioPerfomerText": -8749699,
+            "chat_inAudioPerfomerSelectedText": -7618360,
+            "chat_inAudioTitleText": -8790295,
+            "chat_inAudioDurationText": -9013641,
+            "chat_inAudioDurationSelectedText": -7618360,
+            "chat_inAudioSeekbar": -11119018,
+            "chat_inAudioCacheSeekbar": -10461088,
+            "chat_inAudioSeekbarSelected": -9331550,
+            "chat_inAudioSeekbarFill": -9253674,
+            "chat_inVoiceSeekbar": -10263709,
+            "chat_inVoiceSeekbarSelected": -9331550,
+            "chat_inVoiceSeekbarFill": -9972771,
+            "chat_inFileProgress": -1,
+            "chat_inFileProgressSelected": -1,
+            "chat_inFileNameText": -1,
+            "chat_inFileInfoText": -9013641,
+            "chat_inFileInfoSelectedText": -7618360,
+            "chat_inFileBackground": -13882324,
+            "chat_inFileBackgroundSelected": -12753809,
+            "chat_inVenueInfoText": -9013641,
+            "chat_inVenueInfoSelectedText": -7618360,
+            "chat_linkSelectBackground": 864405969,
+            "chat_textSelectBackground": 1516553682,
+            "chat_messagePanelBackground": -1222762977,
+            "chat_messagePanelShadow": 2030043136,
+            "chat_messagePanelText": -1,
+            "chat_messagePanelHint": 1694498815,
+            "chat_messagePanelCursor": -10960950,
+            "chat_messagePanelIcons": 1694498815,
+            "chat_messagePanelSend": -11283999,
+            "key_chat_messagePanelVoiceLock": -1,
+            "key_chat_messagePanelVoiceLockBackground": -14606046,
+            "key_chat_messagePanelVoiceLockShadow": 0,
+            "chat_topPanelBackground": -15066597,
+            "chat_topPanelClose": 1694498815,
+            "chat_topPanelLine": -10566958,
+            "chat_topPanelTitle": -10170143,
+            "chat_topPanelMessage": 1694498815,
+            "chat_addContact": -8790295,
+            "chat_inLoader": -11157801,
+            "chat_inLoaderSelected": -10959650,
+            "chat_inLoaderPhoto": -13882324,
+            "chat_inLocationBackground": -12829636,
+            "chat_inLocationIcon": -1,
+            "chat_inContactBackground": -11157802,
+            "chat_inContactIcon": -1,
+            "chat_replyPanelIcons": -10829609,
+            "chat_replyPanelClose": 1694498815,
+            "chat_replyPanelName": -10037530,
+            "chat_replyPanelLine": 838860800,
+            "chat_searchPanelIcons": 1694498815,
+            "chat_searchPanelText": -10430487,
+            "chat_secretChatStatusText": 1862270975,
+            "chat_fieldOverlayText": -9972771,
+            "chat_stickersHintPanel": -14606046,
+            "chat_botSwitchToInlineText": -8790295,
+            "chat_unreadMessagesStartArrowIcon": -9605777,
+            "chat_unreadMessagesStartText": -620756993,
+            "chat_unreadMessagesStartBackground": -14606046,
+            "chat_inlineResultIcon": -8790295,
+            "chat_emojiPanelBackground": -14803425,
+            "chat_emojiSearchIcon": -9211020,
+            "chat_emojiPanelShadowLine": -1610612736,
+            "chat_emojiPanelEmptyText": -8553090,
+            "chat_emojiPanelIcon": -9539985,
+            "chat_emojiBottomPanelIcon": -9539985,
+            "chat_emojiPanelIconSelected": -9972771,
+            "chat_emojiPanelStickerPackSelector": 181138423,
+            "chat_emojiPanelStickerPackSelectorLine": -9972771,
+            "chat_emojiPanelBackspace": -9539985,
+            "chat_emojiPanelTrendingTitle": -1,
+            "chat_emojiPanelStickerSetName": -8286319,
+            "chat_emojiPanelStickerSetNameIcon": -5195590,
+            "chat_emojiPanelTrendingDescription": -8553090,
+            "chat_botKeyboardButtonText": -1,
+            "chat_botKeyboardButtonBackground": -13882322,
+            "chat_botKeyboardButtonBackgroundPressed": -11974325,
+            "chat_emojiPanelNewTrending": -11285544,
+            "chat_messagePanelVoicePressed": -1,
+            "chat_messagePanelVoiceBackground": -11948868,
+            "chat_messagePanelVoiceDelete": -1,
+            "chat_messagePanelVoiceDuration": -1,
+            "chat_recordedVoiceProgress": -5247501,
+            "chat_recordedVoiceDot": -1221292,
+            "chat_recordedVoiceBackground": -11287076,
+            "chat_recordVoiceCancel": -10434086,
+            "chat_recordTime": 2030043135,
+            "chat_messagePanelCancelInlineBot": 1694498815,
+            "chat_goDownButton": -14606046,
+            "chat_goDownButtonIcon": -1,
+            "chat_goDownButtonCounter": -1,
+            "chat_goDownButtonCounterBackground": -11088164,
+            "chat_inTextSelectionHighlight": 1515510240,
+            "chat_TextSelectionCursor": -10758181,
+            "chat_inBubbleLocationPlaceholder": 520093695,
+            "chat_BlurAlpha": -1056964608,
+            "chat_editMediaButton": -14034709,
+            "passport_authorizeBackground": -12083284,
+            "passport_authorizeBackgroundSelected": -11357242,
+            "profile_creatorIcon": -9972771,
+            "profile_actionIcon": -1,
+            "profile_actionBackground": -11289910,
+            "profile_actionPressedBackground": -8988965,
+            "profile_verifiedBackground": -10365467,
+            "profile_verifiedCheck": -1,
+            "profile_status": -9641751,
+            "profile_tabText": 2030043135,
+            "profile_tabSelector": 268435455,
+            "sharedMedia_startStopLoadIcon": -9972771,
+            "sharedMedia_linkPlaceholder": -14474460,
+            "sharedMedia_linkPlaceholderText": -9474192,
+            "featuredStickers_addedIcon": -11350819,
+            "featuredStickers_addButton": -11154215,
+            "featuredStickers_addButtonPressed": -11943731,
+            "featuredStickers_removeButtonText": -11226685,
+            "featuredStickers_unread": -11285544,
+            "stickers_menu": -10724260,
+            "stickers_menuSelector": 402653183,
+            "changephoneinfo_image2": -11154472,
+            "groupcreate_hintText": -8553091,
+            "groupcreate_cursor": -9972771,
+            "groupcreate_sectionText": -1711276033,
+            "groupcreate_spanText": -657931,
+            "groupcreate_spanBackground": -13816531,
+            "login_progressInner": -2036241,
+            "login_progressOuter": -10242368,
+            "picker_enabledButton": -9576469,
+            "picker_disabledButton": -11111046,
+            "picker_badge": -10759708,
+            "location_sendLocationBackground": -9913658,
+            "location_liveLocationProgress": -9913658,
+            "location_placeLocationBackground": -9913658,
+            "dialog_liveLocationProgress": -9913658,
+            "files_folderIcon": -1,
+            "files_folderIconBackground": -10432807,
+            "calls_callReceivedGreenIcon": -12001930,
+            "undo_background": -182970344,
+            "undo_cancelColor": -9447189,
+            "key_sheet_scrollUp": 637534207,
+            "key_sheet_other": 1140850687,
+            "player_actionBarSelector": -14013910,
+            "player_actionBarTitle": -1,
+            "player_actionBarSubtitle": 1694498815,
+            "player_actionBarItems": -1,
+            "player_background": -14474461,
+            "player_time": -8553091,
+            "player_progressBackground": -12829636,
+            "key_player_progressCachedBackground": -11184811,
+            "player_progress": -10956067,
+            "player_button": -1,
+            "player_buttonActive": -9972771,
+            "statisticChartSignature": -1214138435,
+            "statisticChartSignatureAlpha": -1946157057,
+            "statisticChartHintLine": 452984831,
+            "statisticChartInactivePickerChart": -667926976,
+            "statisticChartActivePickerChart": -665293196,
+            "statisticChartRipple": 748865227,
+            "statisticChartBackZoomColor": -11677220,
+            "statisticChartChevronColor": -9076861,
+            "statisticChartLine_blue": -11362305,
+            "statisticChartLine_green": -12729793,
+            "statisticChartLine_red": -832444,
+            "statisticChartLine_golden": -2184161,
+            "statisticChartLine_lightblue": -12814100,
+            "statisticChartLine_lightgreen": -7352519,
+            "statisticChartLine_orange": -881607,
+            "statisticChartLine_indigo": -7906075,
+            "color_lightblue": -12814100,
+            "color_blue": -11362305,
+            "color_green": -12729793,
+            "color_lightgreen": -7352519,
+            "color_red": -832444,
+            "color_orange": -881607,
+            "color_yellow": -2184161,
+            "color_purple": -7906075,
+            "chat_inReactionButtonText": -1,
+            "chat_inReactionButtonTextSelected": -1,
+            "premiumGradientBackground1": -16578545,
+            "premiumGradientBackground2": -16645625,
+            "premiumGradientBackground3": -16777216,
+            "premiumGradientBackground4": -16777216,
+            "premiumStartSmallStarsColor": -8290049,
+            "premiumStarGradient1": -2342678,
+            "premiumStarGradient2": -9992961,
+            "premiumGradientBottomSheet1": -10567979,
+            "chat_inCodeBackground": 1074268168,
+            "chat_outCodeBackground": 1073741824,
+            "code_keyword": -27776,
+            "code_operator": 2147483647,
+            "code_constant": -27776,
+            "code_string": -7806088,
+            "code_number": -10887465,
+            "code_comment": -2130706433,
+            "code_function": -27776
+        };
 
         function processImage(input) {
             if (input.files && input.files[0]) {
                 let reader = new FileReader();
                 reader.onload = function(e) {
-                    currentBgImage = e.target.result;
-                    document.getElementById('chatPhone').style.backgroundImage = `url(${currentBgImage})`;
-
                     let img = new Image();
                     img.onload = function() {
                         let canvas = document.getElementById('canvas');
                         let ctx = canvas.getContext('2d');
-                        canvas.width = 60; canvas.height = 60;
-                        ctx.drawImage(img, 0, 0, 60, 60);
+                        canvas.width = 50; canvas.height = 50;
+                        ctx.drawImage(img, 0, 0, 50, 50);
                         
-                        let imgData = ctx.getImageData(0, 0, 60, 60).data;
+                        let imgData = ctx.getImageData(0, 0, 50, 50).data;
                         let rSum = 0, gSum = 0, bSum = 0, total = 0;
 
                         for (let i = 0; i < imgData.length; i += 4) {
@@ -329,124 +607,58 @@
                         let g = Math.round(gSum / total);
                         let b = Math.round(bSum / total);
 
-                        let chatBgHex = rgbToHex(Math.max(0, r - 50), Math.max(0, g - 50), Math.max(0, b - 50));
-                        let headerHex = rgbToHex(Math.max(0, r - 30), Math.max(0, g - 30), Math.max(0, b - 30));
-                        let outBubbleHex = rgbToHex(r, g, b);
-                        let inBubbleHex = rgbToHex(Math.min(255, r + 20), Math.min(255, g + 20), Math.min(255, b + 20));
+                        let dynamicColorInt = rgbToSignedInt(r, g, b);
 
-                        document.getElementById('pHeader').value = headerHex;
-                        document.getElementById('pChatBg').value = chatBgHex;
-                        document.getElementById('pOutBubble').value = outBubbleHex;
-                        document.getElementById('pInBubble').value = inBubbleHex;
+                        // تحديث الخلفيات والعناصر الأساسية استناداً للقيم الحقيقية للثيم دون العبث بالهيكلة الثابتة
+                        themeKeys["windowBackgroundWhite"] = rgbToSignedInt(Math.max(0, r-35), Math.max(0, g-35), Math.max(0, b-35));
+                        themeKeys["dialogBackground"] = themeKeys["windowBackgroundWhite"];
+                        themeKeys["actionBarDefault"] = dynamicColorInt;
 
-                        updateLiveTheme();
+                        renderOutput();
                     }
-                    img.src = currentBgImage;
+                    img.src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
         }
 
-        function rgbToHex(r, g, b) {
-            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-        }
-
-        function hexToTelegramSignedInt(hex) {
-            let c = hex.replace('#', '');
-            let red = parseInt(c.substring(0, 2), 16);
-            let green = parseInt(c.substring(2, 4), 16);
-            let blue = parseInt(c.substring(4, 6), 16);
-            let val = (255 << 24) | (red << 16) | (green << 8) | blue;
+        function rgbToSignedInt(r, g, b) {
+            let val = (255 << 24) | (r << 16) | (g << 8) | b;
             if (val > 0x7FFFFFFF) val -= 0x100000000;
             return val;
         }
 
-        function generateThemeContent() {
-            let header = hexToTelegramSignedInt(document.getElementById('pHeader').value);
-            let chatBg = hexToTelegramSignedInt(document.getElementById('pChatBg').value);
-            let outBubble = hexToTelegramSignedInt(document.getElementById('pOutBubble').value);
-            let inBubble = hexToTelegramSignedInt(document.getElementById('pInBubble').value);
-            let textColor = hexToTelegramSignedInt(document.getElementById('pText').value);
-
-            let keys = [
-                `actionBarDefault=${header}`,
-                `actionBarDefaultIcon=${textColor}`,
-                `actionBarDefaultTitle=${textColor}`,
-                `windowBackgroundWhite=${chatBg}`,
-                `windowBackgroundGray=${chatBg}`,
-                `dialogBackground=${chatBg}`,
-                `chat_background=${chatBg}`,
-                `chat_inBubble=${inBubble}`,
-                `chat_outBubble=${outBubble}`,
-                `chat_messageTextIn=${textColor}`,
-                `chat_messageTextOut=${textColor}`,
-                `chat_messagePanelBackground=${header}`,
-                `chat_messagePanelText=${textColor}`,
-                `chats_actionBackground=${outBubble}`,
-                `chats_name=${textColor}`,
-                `chats_message=${textColor}`,
-                `chats_date=${textColor}`
-            ];
-
-            return keys.join("\n");
+        function getFileContent() {
+            let lines = [];
+            for (let key in themeKeys) {
+                lines.push(`${key}=${themeKeys[key]}`);
+            }
+            return lines.join("\n");
         }
 
-        function updateLiveTheme() {
-            let header = document.getElementById('pHeader').value;
-            let chatBg = document.getElementById('pChatBg').value;
-            let outBubble = document.getElementById('pOutBubble').value;
-            let inBubble = document.getElementById('pInBubble').value;
-            let textColor = document.getElementById('pText').value;
-
-            // تحديث الهاتف الأيمن (المحادثة)
-            document.getElementById('cBarPill').style.backgroundColor = header;
-            document.getElementById('cDot1').style.backgroundColor = textColor;
-            document.getElementById('cDot2').style.backgroundColor = textColor;
-            document.getElementById('mIn1').style.backgroundColor = inBubble;
-            document.getElementById('mIn2').style.backgroundColor = inBubble;
-            document.getElementById('mOut1').style.backgroundColor = outBubble;
-            document.getElementById('mOut2').style.backgroundColor = outBubble;
-
-            document.getElementById('lIn1').style.backgroundColor = textColor;
-            document.getElementById('lIn2').style.backgroundColor = textColor;
-            document.getElementById('lIn3').style.backgroundColor = textColor;
-            document.getElementById('lOut1').style.backgroundColor = textColor;
-            document.getElementById('lOut2').style.backgroundColor = textColor;
-
-            // تحديث الهاتف الأيسر (القائمة الرئيسية)
-            document.getElementById('chatsPhone').style.backgroundColor = chatBg;
-            document.getElementById('sBarPill').style.backgroundColor = header;
-            document.getElementById('sDot1').style.backgroundColor = textColor;
-            document.getElementById('sDot2').style.backgroundColor = textColor;
-
-            let avatars = document.querySelectorAll('.chat-avatar-circle');
-            avatars.forEach(av => av.style.backgroundColor = outBubble);
-
-            let textLines = document.querySelectorAll('.chat-text-lines div');
-            textLines.forEach(line => line.style.backgroundColor = textColor);
-
-            document.getElementById('codeOutput').innerText = generateThemeContent();
+        function renderOutput() {
+            document.getElementById('codeOutput').innerText = getFileContent();
         }
 
-        function copyThemeText() {
-            navigator.clipboard.writeText(generateThemeContent());
-            alert("✅ تم نسخ أكواد الثيم بنجاح!");
+        function copyCode() {
+            navigator.clipboard.writeText(getFileContent());
+            alert("✅ تم نسخ مصفوفة الثيم الدقيقة بالكامل!");
         }
 
-        function downloadThemeFile() {
-            let content = generateThemeContent();
+        function downloadFile() {
+            let content = getFileContent();
             let blob = new Blob([content], { type: "text/plain;charset=utf-8" });
             let link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = "theme_new.attheme";
+            link.download = "theme_accurate.attheme";
             document.body.appendChild(link);
             link.click();
             link.remove();
-            alert("📥 تم تحميل ملف 'theme_new.attheme' بنجاح!");
+            alert("📥 تم تحميل ملف الثيم الدقيق بنجاح!");
         }
 
         window.onload = function() {
-            updateLiveTheme();
+            renderOutput();
         };
     </script>
 </body>
