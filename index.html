@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منشئ ثيمات تيليجرام الاحترافي</title>
+    <title>صانع ثيمات تيليجرام الدقيق</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -32,7 +32,6 @@
             font-size: 14px;
         }
 
-        /* حاوية المعاينة الحية المطابقة لتيليجرام */
         .preview-container {
             border-radius: 14px;
             overflow: hidden;
@@ -156,20 +155,19 @@
 </head>
 <body>
 
-    <h2>🎨 تطبيق صانع الثيمات المطابق لتيليجرام</h2>
+    <h2>🎨 صانع ثيمات تيليجرام (المطابقة الدقيقة)</h2>
 
     <label class="upload-card">
-        📁 اختر صورة لاستخراج الألوان وتطبيق الثيم عليها
+        📁 اختر صورة لاستخراج الألوان وتوزيعها بدقة
         <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
     </label>
 
-    <!-- المعاينة الحية لشاشة الدردشة -->
     <div class="preview-container">
         <div class="tg-header" id="prevHeader">
             <div class="tg-chat-info">
                 <div class="tg-avatar" id="prevAvatar">م</div>
                 <div class="tg-titles">
-                    <span class="tg-name">معاينة الثيم المخصص</span>
+                    <span class="tg-name" id="prevNameText">معاينة الثيم المخصص</span>
                     <span class="tg-status">آخر ظهور الان</span>
                 </div>
             </div>
@@ -177,40 +175,40 @@
         </div>
         <div class="tg-chat-body" id="prevChatBody">
             <div class="tg-message in" id="prevMsgIn">
-                أهلاً بك! تم ضبط ألوان الثيم والدردشة بنجاح.
+                أهلاً بك! هذا النص واللون يتبع المفاتيح الرسمية.
                 <span class="tg-time">8:00</span>
             </div>
             <div class="tg-message out" id="prevMsgOut">
-                هذا يطابق تماماً هيكلة الثيمات الأصلية لتيليجرام.
+                تم ربط كل عنصر بمفتاحه الحقيقي من الثيم القديم.
                 <span class="tg-time">8:01</span>
             </div>
         </div>
         <div class="tg-footer" id="prevFooter">
-            <div class="tg-input">رسالة...</div>
+            <div class="tg-input" id="prevInputText">رسالة...</div>
             <div class="tg-send" id="prevSendBtn">➔</div>
         </div>
     </div>
 
     <div class="controls-box">
         <div class="control-row">
-            <span>شريط العنوان (ActionBar):</span>
+            <span>شريط العنوان (actionBarDefault):</span>
             <input type="color" id="pHeader" value="#101921" oninput="updateLiveTheme()">
         </div>
         <div class="control-row">
-            <span>خلفية شاشة الدردشة:</span>
+            <span>خلفية شاشة الدردشة (windowBackgroundWhite):</span>
             <input type="color" id="pChatBg" value="#0b1017" oninput="updateLiveTheme()">
         </div>
         <div class="control-row">
-            <span>فقرة الرسائل الصادرة:</span>
+            <span>فقرة الرسائل الصادرة (chat_outBubble):</span>
             <input type="color" id="pOutBubble" value="#2b5278" oninput="updateLiveTheme()">
         </div>
         <div class="control-row">
-            <span>فقرة الرسائل الواردة:</span>
+            <span>فقرة الرسائل الواردة (chat_inBubble):</span>
             <input type="color" id="pInBubble" value="#18222d" oninput="updateLiveTheme()">
         </div>
 
         <div style="font-size: 13px; margin: 10px 0 6px; font-weight: bold; color: #38bdf8;">معاينة ملف الثيم (.attheme):</div>
-        <div class="code-box" id="codeOutput">قم برفع صورة لتوليد كود الثيم الكامل...</div>
+        <div class="code-box" id="codeOutput">قم برفع صورة لتوليد كود الثيم بدقة...</div>
     </div>
 
     <div class="btn-group">
@@ -249,11 +247,11 @@
                         let g = Math.round(gSum / total);
                         let b = Math.round(bSum / total);
 
-                        // خوارزمية استخراج التدرجات اللونية بناءً على الثيم الليلي (مثل الثيم الأزرق/البنفسجي)
-                        let chatBgHex = rgbToHex(Math.max(0, r - 50), Math.max(0, g - 50), Math.max(0, b - 50));
-                        let headerHex = rgbToHex(Math.max(0, r - 30), Math.max(0, g - 30), Math.max(0, b - 30));
+                        // ألوان متناسقة مستخرجة من الصورة المرفوعة
+                        let chatBgHex = rgbToHex(Math.max(0, r - 45), Math.max(0, g - 45), Math.max(0, b - 45));
+                        let headerHex = rgbToHex(Math.max(0, r - 25), Math.max(0, g - 25), Math.max(0, b - 25));
                         let outBubbleHex = rgbToHex(r, g, b);
-                        let inBubbleHex = rgbToHex(Math.min(255, r + 20), Math.min(255, g + 20), Math.min(255, b + 20));
+                        let inBubbleHex = rgbToHex(Math.min(255, r + 25), Math.min(255, g + 25), Math.min(255, b + 25));
 
                         document.getElementById('pHeader').value = headerHex;
                         document.getElementById('pChatBg').value = chatBgHex;
@@ -289,15 +287,16 @@
             let inBubble = hexToTelegramSignedInt(document.getElementById('pInBubble').value);
             let white = hexToTelegramSignedInt("#ffffff");
 
-            // القائمة الشاملة المستندة إلى ملفات الثيم الحقيقية التي أرسلتها
+            // القائمة المحدثة بالكامل بناءً على مفاتيحك الأصلية الدقيقة
             let keys = [
                 `actionBarDefault=${header}`,
                 `actionBarDefaultIcon=${white}`,
                 `actionBarDefaultTitle=${white}`,
                 `actionBarDefaultSelector=${header}`,
-                `chat_background=${chatBg}`,
                 `windowBackgroundWhite=${chatBg}`,
                 `windowBackgroundGray=${chatBg}`,
+                `dialogBackground=${chatBg}`,
+                `chat_background=${chatBg}`,
                 `chat_inBubble=${inBubble}`,
                 `chat_outBubble=${outBubble}`,
                 `chat_messageTextIn=${white}`,
@@ -310,7 +309,6 @@
                 `chats_name=${white}`,
                 `chats_message=${white}`,
                 `chats_date=${white}`,
-                `dialogBackground=${chatBg}`,
                 `dialogTextBlack=${white}`
             ];
 
@@ -335,7 +333,7 @@
 
         function copyThemeText() {
             navigator.clipboard.writeText(generateThemeContent());
-            alert("✅ تم نسخ أكواد الثيم بنجاح إلى الحافظة!");
+            alert("✅ تم نسخ أكواد الثيم بدقة!");
         }
 
         function downloadThemeFile() {
