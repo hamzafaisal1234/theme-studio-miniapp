@@ -3,91 +3,271 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منسق الثيمات بالذكاء الاصطناعي</title>
+    <title>صانع ثيمات تيليجرام الذكي</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: Tahoma, sans-serif; background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); padding: 20px; text-align: center; }
-        .upload-btn { background: #2481cc; color: white; padding: 12px 20px; border-radius: 8px; cursor: pointer; display: inline-block; margin-bottom: 20px; }
-        .palette-container { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
-        .color-box { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #ccc; display: inline-block; }
-        .controls { margin-top: 20px; text-align: right; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 10px; }
-        .control-group { margin-bottom: 10px; }
-        input[type="color"] { border: none; width: 40px; height: 40px; cursor: pointer; background: none; }
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --primary-color: #2481cc;
+            --chat-bg: #1e1e1e;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            box-sizing: border-box;
+            transition: background 0.3s, color 0.3s;
+        }
+        h2 { text-align: center; font-size: 18px; margin-bottom: 10px; }
+        
+        .upload-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px dashed var(--primary-color);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        
+        /* معاينة حية لواجهة تيليجرام */
+        .tg-preview {
+            background: var(--chat-bg);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .tg-header { font-size: 12px; opacity: 0.7; margin-bottom: 8px; text-align: center; }
+        .tg-bubble {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 12px;
+            max-width: 80%;
+            margin-bottom: 8px;
+            font-size: 14px;
+            position: relative;
+        }
+        .tg-bubble.incoming { background: rgba(255,255,255,0.1); color: var(--text-color); }
+
+        /* لوحة الألوان المقترحة */
+        .section-title { font-size: 14px; margin: 10px 0 5px; font-weight: bold; }
+        .palette-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
+        .color-chip {
+            width: 35px; height: 35px; border-radius: 50%; cursor: pointer;
+            border: 2px solid #fff; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* أدوات التحكم اليدوي */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .control-item {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+        .control-item input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; }
+        
+        .slider-box { margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 13px; }
+        .slider-box input { width: 100%; cursor: pointer; }
+
+        /* زر التصدير النهائي */
+        .export-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
     <h2>🎨 صانع الثيمات الديناميكي</h2>
-    <p>ارفع صورة لتنسيق ألوان الثيم تلقائياً</p>
 
-    <label class="upload-btn">
-        اختر صورة
-        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="uploadImage(this)">
+    <!-- زر رفع الصورة -->
+    <label class="upload-card">
+        📁 اضغط هنا لرفع أو اختيار صورة الثيم
+        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
     </label>
 
-    <div id="result" style="display: none;">
-        <h3>لوحة الألوان المستخرجة:</h3>
-        <div class="palette-container" id="paletteBox"></div>
-
-        <div class="controls">
-            <h3>أدوات التحكم المخصصة:</h3>
-            <div class="control-group">
-                <label>اللون الأساسي: </label>
-                <input type="color" id="primaryColorPicker" oninput="updateThemeLive()">
-            </div>
-            <div class="control-group">
-                <label>لون الخلفية: </label>
-                <input type="color" id="bgColorPicker" oninput="updateThemeLive()">
-            </div>
-        </div>
-        
-        <button onclick="saveTheme()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 15px; cursor: pointer;">تطبيق وتثبيت الثيم</button>
+    <!-- المعاينة الحية لواجهة تيليجرام -->
+    <div class="tg-preview" id="tgPreviewBox">
+        <div class="tg-header">معاينة حية لشكل الثيم في تيليجرام</div>
+        <div class="tg-bubble incoming">مرحباً! هذه معاينة للرسائل الواردة.</div>
+        <div class="tg-bubble" id="sampleBubble">هذه رسالتك باللون الأساسي المستخرج.</div>
     </div>
+
+    <!-- الألوان المقترحة من الصورة -->
+    <div class="section-title">الألوان المستخرجة (اضغط لأي لون لتعديله):</div>
+    <div class="palette-row" id="paletteContainer">
+        <span style="font-size: 12px; opacity: 0.6;">ارفع صورة لتظهر لوحة الألوان هنا...</span>
+    </div>
+
+    <!-- أدوات التحكم في الألوان -->
+    <div class="section-title">أدوات التحكم اليدوي:</div>
+    <div class="controls-grid">
+        <div class="control-item">
+            <span>اللون الأساسي</span>
+            <input type="color" id="primaryPicker" value="#2481cc" oninput="updateThemeLive()">
+        </div>
+        <div class="control-item">
+            <span>لون الخلفية</span>
+            <input type="color" id="bgPicker" value="#121212" oninput="updateThemeLive()">
+        </div>
+        <div class="control-item">
+            <span>لون الرسائل</span>
+            <input type="color" id="bubblePicker" value="#1e1e1e" oninput="updateThemeLive()">
+        </div>
+        <div class="control-item">
+            <span>لون النص</span>
+            <input type="color" id="textPicker" value="#ffffff" oninput="updateThemeLive()">
+        </div>
+    </div>
+
+    <!-- شريط التحكم في الشفافية -->
+    <div class="slider-box">
+        <label>شفافية فقاعات الرسائل (الخلفية): <span id="opacityVal">85</span>%</label>
+        <input type="range" id="opacitySlider" min="20" max="100" value="85" oninput="updateThemeLive()">
+    </div>
+
+    <!-- زر التصدير للبوت -->
+    <button class="export-btn" onclick="exportTheme()">📤 تصدير وتثبيت الثيم في البوت</button>
+
+    <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        async function uploadImage(input) {
+        let extractedColors = [];
+
+        // خوارزمية تحليل الصورة استخراج الألوان مباشرة داخل المتصفح
+        function processImage(input) {
             if (input.files && input.files[0]) {
-                let formData = new FormData();
-                formData.append("file", input.files[0]);
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let img = new Image();
+                    img.onload = function() {
+                        let canvas = document.getElementById('canvas');
+                        let ctx = canvas.getContext('2d');
+                        canvas.width = 50; 
+                        canvas.height = 50;
+                        ctx.drawImage(img, 0, 0, 50, 50);
+                        
+                        let imgData = ctx.getImageData(0, 0, 50, 50).data;
+                        let colorCounts = {};
+                        
+                        // تجميع الألوان وتقريبها
+                        for (let i = 0; i < imgData.length; i += 4) {
+                            let r = Math.round(imgData[i] / 30) * 30;
+                            let g = Math.round(imgData[i+1] / 30) * 30;
+                            let b = Math.round(imgData[i+2] / 30) * 30;
+                            let hex = rgbToHex(r, g, b);
+                            colorCounts[hex] = (colorCounts[hex] || 0) + 1;
+                        }
 
-                let response = await fetch('https://YOUR_SERVER_URL/api/extract-theme', {
-                    method: 'POST',
-                    body: formData
-                });
-                let data = await response.json();
-
-                // تعبئة البيانات في الواجهة
-                document.getElementById('result').style.display = 'block';
-                document.getElementById('primaryColorPicker').value = data.primary;
-                document.getElementById('bgColorPicker').value = data.background;
-
-                let paletteBox = document.getElementById('paletteBox');
-                paletteBox.innerHTML = '';
-                data.palette.forEach(hex => {
-                    let span = document.createElement('span');
-                    span.className = 'color-box';
-                    span.style.backgroundColor = hex;
-                    paletteBox.appendChild(span);
-                });
+                        // ترتيب الألوان الأكثر ظهوراً
+                        extractedColors = Object.keys(colorCounts).sort((a,b) => colorCounts[b] - colorCounts[a]);
+                        
+                        if(extractedColors.length > 0) {
+                            let primary = extractedColors[0];
+                            let bg = isDarkImage(primary) ? "#121212" : "#f0f2f5";
+                            let bubble = extractedColors[1] || primary;
+                            
+                            document.getElementById('primaryPicker').value = primary;
+                            document.getElementById('bgPicker').value = bg;
+                            document.getElementById('bubblePicker').value = bubble;
+                            
+                            renderPalette();
+                            updateThemeLive();
+                        }
+                    }
+                    img.src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
             }
         }
 
-        function updateThemeLive() {
-            // معاينة حية لتغيير الألوان
-            let primary = document.getElementById('primaryColorPicker').value;
-            let bg = document.getElementById('bgColorPicker').value;
-            document.body.style.backgroundColor = bg;
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
         }
 
-        function saveTheme() {
+        function isDarkImage(hex) {
+            let r = parseInt(hex.slice(1,3), 16);
+            let g = parseInt(hex.slice(3,5), 16);
+            let b = parseInt(hex.slice(5,7), 16);
+            let brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+            return brightness < 128;
+        }
+
+        // عرض الألوان المقترحة كدوائر دائرية
+        function renderPalette() {
+            let container = document.getElementById('paletteContainer');
+            container.innerHTML = '';
+            extractedColors.slice(0, 8).forEach(hex => {
+                let chip = document.createElement('div');
+                chip.className = 'color-chip';
+                chip.style.backgroundColor = hex;
+                chip.onclick = function() {
+                    // عند الضغط على أي لون مقترح يتم تعيينه كلون أساسي فوراً
+                    document.getElementById('primaryPicker').value = hex;
+                    updateThemeLive();
+                };
+                container.appendChild(chip);
+            });
+        }
+
+        // تحديث المعاينة الحية فوراً بناءً على خيارات المستخدم
+        function updateThemeLive() {
+            let primary = document.getElementById('primaryPicker').value;
+            let bg = document.getElementById('bgPicker').value;
+            let bubble = document.getElementById('bubblePicker').value;
+            let text = document.getElementById('textPicker').value;
+            let opacity = document.getElementById('opacitySlider').value / 100;
+
+            document.body.style.backgroundColor = bg;
+            document.body.style.color = text;
+            
+            let previewBox = document.getElementById('tgPreviewBox');
+            previewBox.style.backgroundColor = bubble;
+            previewBox.style.opacity = opacity;
+
+            let sampleBubble = document.getElementById('sampleBubble');
+            sampleBubble.style.backgroundColor = primary;
+            
+            document.getElementById('opacityVal').innerText = Math.round(opacity * 100);
+        }
+
+        // إرسال الثيم النهائي للبوت عبر Telegram Web App API
+        function exportTheme() {
             let themeData = {
-                primary: document.getElementById('primaryColorPicker').value,
-                background: document.getElementById('bgColorPicker').value
+                primary: document.getElementById('primaryPicker').value,
+                background: document.getElementById('bgPicker').value,
+                bubble: document.getElementById('bubblePicker').value,
+                text: document.getElementById('textPicker').value,
+                opacity: document.getElementById('opacitySlider').value
             };
-            tg.sendData(JSON.stringify(themeData)); // إرسال الثيم إلى البوت في تيليجرام
+
+            // إرسال البيانات للبوت وإغلاق التطبيق المصغر
+            tg.sendData(JSON.stringify(themeData));
             tg.close();
         }
     </script>
