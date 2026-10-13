@@ -53,7 +53,7 @@
         }
         .chat-bubble.incoming { background: rgba(255,255,255,0.08); }
 
-        /* تفاصيل الألوان المستخرجة الكاملة */
+        /* شبكة الألوان المستخرجة */
         .section-title { font-size: 15px; margin: 15px 0 10px; font-weight: bold; color: #93c5fd; }
         .palette-grid {
             display: grid;
@@ -69,6 +69,7 @@
             align-items: center;
             gap: 10px;
             border: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
         }
         .color-circle {
             width: 35px; height: 35px; border-radius: 50%;
@@ -157,10 +158,10 @@
         </div>
     </div>
 
-    <!-- أزرار الإرسال -->
+    <!-- أزرار الإرسال والتحميل -->
     <div class="btn-group">
-        <button class="action-btn" onclick="copyThemeJson()">📋 نسخ أكواد الثيم</button>
-        <button class="action-btn success" onclick="exportThemeToBot()">📤 إرسال للبوت</button>
+        <button class="action-btn" onclick="copyThemeJson()">📋 نسخ الأكواد</button>
+        <button class="action-btn success" onclick="downloadThemeFile()">📥 تحميل ملف الثيم</button>
     </div>
 
     <canvas id="canvas" style="display:none;"></canvas>
@@ -229,14 +230,13 @@
             let grid = document.getElementById('paletteGrid');
             grid.innerHTML = '';
             
-            // نعرض أبرز 8 ألوان مستخرجة بشكل تفصيلي
             allExtractedColors.slice(0, 8).forEach((hex, index) => {
                 let card = document.createElement('div');
                 card.className = 'color-card';
                 card.innerHTML = `
                     <div class="color-circle" style="background-color: ${hex}"></div>
                     <div class="color-info">
-                        <span>لون رقم ${index + 1}</span>
+                        <span>لون ${index + 1}</span>
                         <strong>${hex}</strong>
                     </div>
                 `;
@@ -267,23 +267,32 @@
                 primary: document.getElementById('primaryPicker').value,
                 background: document.getElementById('bgPicker').value,
                 card: document.getElementById('cardPicker').value,
-                opacity: document.getElementById('opacitySlider').value
+                opacity: document.getElementById('opacitySlider').value,
+                palette: allExtractedColors.slice(0, 8)
             };
             navigator.clipboard.writeText(JSON.stringify(data, null, 2));
-            alert("✅ تم نسخ أكواد الثيم بنجاح إلى الحافظة!");
+            alert("✅ تم نسخ أكواد الثيم بنجاح!");
         }
 
-        function exportThemeToBot() {
+        function downloadThemeFile() {
             let themeData = {
+                theme_name: "Custom AI Telegram Theme",
                 primary: document.getElementById('primaryPicker').value,
                 background: document.getElementById('bgPicker').value,
                 card: document.getElementById('cardPicker').value,
-                opacity: document.getElementById('opacitySlider').value
+                opacity: document.getElementById('opacitySlider').value,
+                extracted_palette: allExtractedColors.slice(0, 8)
             };
 
-            // إرسال البيانات للبوت دون إغلاق التطبيق فجأة، مع إظهار تنبيه نجاح
-            tg.sendData(JSON.stringify(themeData));
-            alert("🚀 تم إرسال الثيم إلى البوت بنجاح!");
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(themeData, null, 2));
+            let downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "telegram_custom_theme.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            
+            alert("📥 تم تجهيز وتحميل ملف الثيم إلى جهازك بنجاح!");
         }
     </script>
 </body>
