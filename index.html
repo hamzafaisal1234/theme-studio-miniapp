@@ -3,663 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منشئ ثيمات تيليجرام الاحترافي الدقيق</title>
+    <title>منسق الثيمات بالذكاء الاصطناعي</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #0b1017;
-            color: #ffffff;
-            margin: 0;
-            padding: 15px;
-            box-sizing: border-box;
-        }
-        h2 { text-align: center; color: #38bdf8; font-size: 16px; margin-bottom: 15px; }
-        .card {
-            background: #17212b;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        .upload-btn {
-            display: block;
-            background: #2563eb;
-            color: white;
-            text-align: center;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-        .code-output {
-            background: #020617;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            padding: 12px;
-            font-family: monospace;
-            font-size: 11px;
-            direction: ltr;
-            text-align: left;
-            white-space: pre-wrap;
-            height: 250px;
-            overflow-y: auto;
-            color: #38bdf8;
-            margin-bottom: 12px;
-        }
-        .action-btn {
-            width: 100%;
-            background: #16a34a;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 8px;
-        }
-        .action-btn.secondary { background: #2563eb; }
+        body { font-family: Tahoma, sans-serif; background: var(--tg-theme-bg-color, #fff); color: var(--tg-theme-text-color, #000); padding: 20px; text-align: center; }
+        .upload-btn { background: #2481cc; color: white; padding: 12px 20px; border-radius: 8px; cursor: pointer; display: inline-block; margin-bottom: 20px; }
+        .palette-container { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+        .color-box { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #ccc; display: inline-block; }
+        .controls { margin-top: 20px; text-align: right; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 10px; }
+        .control-group { margin-bottom: 10px; }
+        input[type="color"] { border: none; width: 40px; height: 40px; cursor: pointer; background: none; }
     </style>
 </head>
 <body>
 
-    <h2>مولد ثيمات تيليجرام المعتمد على القيم الحقيقية</h2>
+    <h2>🎨 صانع الثيمات الديناميكي</h2>
+    <p>ارفع صورة لتنسيق ألوان الثيم تلقائياً</p>
 
-    <div class="card">
-        <label class="upload-btn">
-            📁 اختر صورة الثيم الخلفية
-            <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
-        </label>
+    <label class="upload-btn">
+        اختر صورة
+        <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="uploadImage(this)">
+    </label>
+
+    <div id="result" style="display: none;">
+        <h3>لوحة الألوان المستخرجة:</h3>
+        <div class="palette-container" id="paletteBox"></div>
+
+        <div class="controls">
+            <h3>أدوات التحكم المخصصة:</h3>
+            <div class="control-group">
+                <label>اللون الأساسي: </label>
+                <input type="color" id="primaryColorPicker" oninput="updateThemeLive()">
+            </div>
+            <div class="control-group">
+                <label>لون الخلفية: </label>
+                <input type="color" id="bgColorPicker" oninput="updateThemeLive()">
+            </div>
+        </div>
         
-        <div style="font-size: 12px; margin-bottom: 6px; color: #94a3b8;">محتوى ملف الثيم (.attheme) الدقيق الناتج:</div>
-        <div class="code-output" id="codeOutput">جارٍ تحميل القيم الأصلية المعتمدة...</div>
-
-        <button class="action-btn secondary" onclick="copyCode()">📋 نسخ محتوى الثيم</button>
-        <button class="action-btn" onclick="downloadFile()">📥 تحميل ملف theme_accurate.attheme</button>
+        <button onclick="saveTheme()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin-top: 15px; cursor: pointer;">تطبيق وتثبيت الثيم</button>
     </div>
-
-    <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // قاعدة البيانات الحقيقية والدقيقة بالكامل المستمدة من ثيمك المعتمد
-        let themeKeys = {
-            "WallpaperFileOffset": -1,
-            "dialogBackground": -14803426,
-            "dialogBackgroundGray": -14013910,
-            "dialogTextBlack": -592138,
-            "dialogTextLink": -9972771,
-            "dialogLinkSelection": 862242258,
-            "dialogTextBlue": -9972771,
-            "dialogTextBlue2": -9972771,
-            "dialogTextBlue4": -9972771,
-            "dialogTextGray": -8553091,
-            "dialogTextGray2": -8553091,
-            "dialogTextGray3": -8553091,
-            "dialogTextGray4": -8553091,
-            "dialogTextHint": -8553091,
-            "dialogInputField": -8553091,
-            "dialogInputFieldActivated": -12462626,
-            "dialogCheckboxSquareBackground": -11942706,
-            "dialogCheckboxSquareUnchecked": -10855846,
-            "dialogCheckboxSquareDisabled": -12040120,
-            "dialogScrollGlow": -657931,
-            "dialogRoundCheckBox": -14034709,
-            "dialogRadioBackground": -10855846,
-            "dialogRadioBackgroundChecked": -12462626,
-            "dialogLineProgress": -10762028,
-            "dialogLineProgressBackground": -12303292,
-            "dialogButton": -9972771,
-            "dialogButtonSelector": 436207615,
-            "dialogIcon": -7566196,
-            "dialogGrayLine": -12040120,
-            "dialogTopBackground": -9451053,
-            "dialogSearchBackground": -13816531,
-            "dialogSearchHint": -8421505,
-            "dialogSearchIcon": -8882056,
-            "dialogSearchText": -1,
-            "dialogShadowLine": 335544320,
-            "windowBackgroundWhite": -15198183,
-            "windowBackgroundUnchecked": -14803424,
-            "windowBackgroundChecked": -13265762,
-            "windowBackgroundCheckText": -1,
-            "progressCircle": -9905942,
-            "listSelectorSDK21": 234881023,
-            "windowBackgroundWhiteInputField": -11513776,
-            "windowBackgroundWhiteInputFieldActivated": -9450019,
-            "windowBackgroundWhiteGrayIcon": -8553091,
-            "windowBackgroundWhiteBlueText": -9972771,
-            "windowBackgroundWhiteBlueText2": -12334117,
-            "windowBackgroundWhiteBlueText3": -11286307,
-            "windowBackgroundWhiteBlueText4": -9972771,
-            "windowBackgroundWhiteBlueText5": -9972771,
-            "windowBackgroundWhiteBlueText6": -12472129,
-            "windowBackgroundWhiteBlueText7": -8790295,
-            "windowBackgroundWhiteGreenText": -10371737,
-            "windowBackgroundWhiteGreenText2": -10366101,
-            "windowBackgroundWhiteGrayText": 1862270975,
-            "windowBackgroundWhiteGrayText2": 1862139391,
-            "windowBackgroundWhiteGrayText3": -7960954,
-            "windowBackgroundWhiteGrayText4": -9803158,
-            "windowBackgroundWhiteGrayText5": -8613739,
-            "windowBackgroundWhiteGrayText6": -8553091,
-            "windowBackgroundWhiteGrayText8": -8553091,
-            "windowBackgroundWhiteBlackText": -1,
-            "windowBackgroundWhiteHintText": -8553091,
-            "windowBackgroundWhiteValueText": -529737750,
-            "windowBackgroundWhiteLinkText": -10762801,
-            "windowBackgroundWhiteLinkSelection": 1030281450,
-            "windowBackgroundWhiteBlueHeader": -9513755,
-            "switchTrack": -10461088,
-            "switchTrackChecked": -11812142,
-            "switchTrackBlue": -9934742,
-            "switchTrackBlueChecked": -8852501,
-            "switchTrackBlueThumb": -14803424,
-            "switchTrackBlueThumbChecked": -13260876,
-            "switchTrackBlueSelector": 431483376,
-            "switchTrackBlueSelectorChecked": 848030957,
-            "switch2TrackChecked": -11022377,
-            "checkboxSquareBackground": -10039341,
-            "checkboxSquareUnchecked": -11309709,
-            "checkboxSquareDisabled": 1682135389,
-            "windowBackgroundGray": -16777216,
-            "emptyListPlaceholder": -8553091,
-            "divider": -16777216,
-            "graySection": -16053492,
-            "key_graySectionText": -8158332,
-            "radioBackground": -10461088,
-            "radioBackgroundChecked": -11546915,
-            "fastScrollActive": -12532009,
-            "fastScrollInactive": -12500671,
-            "text_RedRegular": -1152913,
-            "text_RedBold": -1152913,
-            "inappPlayerPerformer": -1,
-            "inappPlayerTitle": 1862270975,
-            "inappPlayerBackground": -15066597,
-            "inappPlayerPlayPause": -9972771,
-            "inappPlayerClose": 1862270975,
-            "returnToCallBackground": -10435371,
-            "contextProgressInner1": 1526726655,
-            "contextProgressOuter1": -11086619,
-            "contextProgressInner2": -4331026,
-            "avatar_backgroundSaved": -11221546,
-            "avatar_background2Saved": -14172459,
-            "avatar_backgroundArchived": -12829636,
-            "avatar_backgroundArchivedHidden": -11810602,
-            "avatar_backgroundRed": -2326437,
-            "avatar_backgroundOrange": -869276,
-            "avatar_background2Red": -2530993,
-            "avatar_background2Orange": -1734333,
-            "avatar_backgroundInProfileBlue": -10961972,
-            "avatar_backgroundActionBarBlue": -14737632,
-            "avatar_actionBarSelectorBlue": 436207615,
-            "avatar_subtitleInProfileBlue": 2029911551,
-            "avatar_nameInMessageRed": -1537928,
-            "avatar_nameInMessageOrange": -1528998,
-            "avatar_nameInMessageViolet": -7565846,
-            "avatar_nameInMessageGreen": -8531855,
-            "avatar_nameInMessageCyan": -11285306,
-            "avatar_nameInMessageBlue": -10703382,
-            "avatar_nameInMessagePink": -1543014,
-            "actionBarDefault": -14474202,
-            "actionBarDefaultSelector": 385875967,
-            "actionBarWhiteSelector": 285212671,
-            "actionBarDefaultIcon": -34471,
-            "actionBarActionModeDefault": -14211289,
-            "actionBarActionModeDefaultTop": -14277082,
-            "actionBarActionModeDefaultIcon": -1,
-            "actionBarActionModeDefaultSelector": 520093695,
-            "actionBarDefaultSubtitle": 1945301746,
-            "actionBarDefaultSearchPlaceholder": -2097152001,
-            "actionBarDefaultSubmenuItem": -1,
-            "actionBarDefaultSubmenuItemIcon": 2029911551,
-            "actionBarDefaultSubmenuBackground": -14145495,
-            "actionBarDefaultSubmenuSeparator": -14803425,
-            "actionBarTabActiveText": -10361365,
-            "actionBarTabUnactiveText": -7434609,
-            "actionBarTabLine": -11738133,
-            "actionBarTabSelector": 827811431,
-            "actionBarDefaultArchived": -13882323,
-            "actionBarDefaultArchivedSelector": -12698049,
-            "chats_onlineCircle": -12462874,
-            "chats_unreadCounter": -12399136,
-            "chats_unreadCounterMuted": -12237499,
-            "chats_name": -921103,
-            "chats_nameArchived": -5592406,
-            "chats_secretName": -9316522,
-            "chats_secretIcon": -9316522,
-            "chats_pinnedIcon": -10197916,
-            "chats_archiveBackground": -11883070,
-            "chats_archivePinBackground": -13619152,
-            "chats_message": -8224126,
-            "chats_messageArchived": -8224126,
-            "chats_message_threeLines": -8224126,
-            "chats_draft": -637778102,
-            "chats_nameMessage": -1315861,
-            "chats_nameMessageArchived": -8553091,
-            "chats_nameMessage_threeLines": -1315861,
-            "chats_attachMessage": -8224126,
-            "chats_actionMessage": -10040361,
-            "chats_date": -8882056,
-            "chats_pinnedOverlay": 201326591,
-            "chats_tabletSelectedOverlay": 268435455,
-            "chats_sentCheck": -11675936,
-            "chats_sentReadCheck": -11675936,
-            "chats_sentClock": -9539986,
-            "chats_verifiedBackground": -11610652,
-            "chats_muteIcon": -11184811,
-            "chats_menuTopShadow": -16711704,
-            "chats_menuBackground": -14408666,
-            "chats_menuItemText": -184549377,
-            "chats_menuItemCheck": -10902612,
-            "chats_menuItemIcon": -8224126,
-            "chats_menuPhone": -1,
-            "chats_menuPhoneCats": -8224126,
-            "chats_menuTopBackgroundCats": -15000805,
-            "chats_actionBackground": -10437686,
-            "chats_actionPressedBackground": -9383212,
-            "chats_archivePullDownBackground": -14145496,
-            "chat_attachActiveTab": -9576469,
-            "chat_attachUnactiveTab": -9659491,
-            "chat_attachGalleryBackground": -11692299,
-            "chat_attachAudioBackground": -626837,
-            "chat_attachFileBackground": -10830604,
-            "chat_attachContactBackground": -2183099,
-            "chat_attachPollBackground": -2183099,
-            "chat_status": -9053978,
-            "chat_inBubble": -1038147038,
-            "chat_inBubbleShadow": 838860800,
-            "chat_outBubble": -1182389985,
-            "chat_outBubbleSelected": -5553602,
-            "chat_outBubbleShadow": 838860800,
-            "chat_outBubbleGradient": -7456627,
-            "chat_outBubbleGradient2": -5059785,
-            "chat_outBubbleGradient3": -12617844,
-            "chat_outUpCall": -1,
-            "chat_outSentCheck": -1,
-            "chat_outSentCheckSelected": -1,
-            "chat_outSentCheckRead": -1,
-            "chat_outSentCheckReadSelected": -1,
-            "chat_outSentClock": -1,
-            "chat_outSentClockSelected": -1,
-            "chat_outMediaIcon": -7984865,
-            "chat_outMediaIconSelected": -7984865,
-            "chat_outViews": -1,
-            "chat_outViewsSelected": -1,
-            "chat_outMenu": -1,
-            "chat_outMenuSelected": -1,
-            "chat_outInstant": -1,
-            "chat_outInstantSelected": -1,
-            "chat_outPreviewInstantText": -1,
-            "chat_outForwardedNameText": -1,
-            "chat_outViaBotNameText": -1,
-            "chat_outReplyLine": -1,
-            "chat_outReplyLine2": -1,
-            "chat_outReplyNameText": -1,
-            "chat_outReplyMessageText": -1,
-            "chat_outReplyMediaMessageText": -1,
-            "chat_outReplyMediaMessageSelectedText": -1,
-            "chat_outPreviewLine": -1,
-            "chat_outSiteNameText": -1,
-            "chat_outContactNameText": -1,
-            "chat_outContactPhoneText": -1118482,
-            "chat_outContactPhoneSelectedText": -1118482,
-            "chat_outAudioPerfomerText": -1,
-            "chat_outAudioPerfomerSelectedText": -1,
-            "chat_outTimeSelectedText": -1,
-            "chat_outAudioProgress": 1308622847,
-            "chat_outAudioSelectedProgress": 1308622847,
-            "chat_outTimeText": -1,
-            "chat_outAudioTitleText": -1,
-            "chat_outAudioDurationText": -1118482,
-            "chat_outAudioDurationSelectedText": -1118482,
-            "chat_outAudioSeekbar": 1308622847,
-            "chat_outAudioCacheSeekbar": 1308622847,
-            "chat_outAudioSeekbarSelected": 1308622847,
-            "chat_outAudioSeekbarFill": -1,
-            "chat_outVoiceSeekbar": 1308622847,
-            "chat_outVoiceSeekbarSelected": 1308622847,
-            "chat_outVoiceSeekbarFill": -1,
-            "chat_outFileProgress": -7984865,
-            "chat_outFileProgressSelected": -7984865,
-            "chat_outFileNameText": -1,
-            "chat_outFileInfoText": -1118482,
-            "chat_outFileInfoSelectedText": -1118482,
-            "chat_outFileBackground": 520093695,
-            "chat_outFileBackgroundSelected": 520093695,
-            "chat_outVenueInfoText": -1118482,
-            "chat_outVenueInfoSelectedText": -1118482,
-            "chat_outLinkSelectBackground": 872085495,
-            "chat_outLoader": -1,
-            "chat_outLoaderSelected": -1,
-            "chat_outLocationIcon": -1,
-            "chat_outContactBackground": -2991527,
-            "chat_outContactIcon": -1,
-            "chat_outTextSelectionHighlight": 2122175964,
-            "chat_outBubbleLocationPlaceholder": 520093695,
-            "chat_outBubbleGradientAnimated": 1,
-            "chat_outBubbleGradientSelectedOverlay": 352321535,
-            "chat_inBubbleSelected": -13544358,
-            "chat_messageTextIn": -328966,
-            "chat_messageTextOut": -1,
-            "chat_messageLinkIn": -8790295,
-            "chat_messageLinkOut": -1,
-            "chat_serviceBackground": -1774766281,
-            "chat_serviceBackgroundSelected": 1503308203,
-            "chat_muteIcon": 1688577445,
-            "chat_inSentClock": -11116192,
-            "chat_inSentClockSelected": -7618360,
-            "chat_mediaSentClock": -1291845633,
-            "chat_inMediaIcon": -1,
-            "chat_inMediaIconSelected": -1,
-            "chat_inViews": -8946049,
-            "chat_inViewsSelected": -7618360,
-            "chat_inMenu": -10656926,
-            "chat_inMenuSelected": -1517567800,
-            "chat_mediaMenu": -1,
-            "chat_inInstant": -8790295,
-            "chat_inInstantSelected": -5776157,
-            "chat_sentError": -633010,
-            "chat_selectedBackground": 711113682,
-            "chat_inPreviewInstantText": -8790295,
-            "chat_secretTimeText": -3289650,
-            "chat_inForwardedNameText": -8857367,
-            "chat_inViaBotNameText": -8790295,
-            "chat_inQuote": -8790295,
-            "chat_inReplyLine": -8790295,
-            "chat_inReplyNameText": -8790295,
-            "chat_inReplyMessageText": -1,
-            "chat_inReplyMediaMessageText": -8421247,
-            "chat_inReplyMediaMessageSelectedText": -7618360,
-            "chat_inPreviewLine": -8790295,
-            "chat_inSiteNameText": -8790295,
-            "chat_inContactNameText": -8790295,
-            "chat_inContactPhoneText": -8486527,
-            "chat_inContactPhoneSelectedText": -7618360,
-            "chat_inAudioProgress": -1,
-            "chat_inAudioSelectedProgress": -1,
-            "chat_adminText": -8552320,
-            "chat_adminSelectedText": -7618360,
-            "chat_inTimeText": -8552320,
-            "chat_inTimeSelectedText": -7618360,
-            "chat_inAudioPerfomerText": -8749699,
-            "chat_inAudioPerfomerSelectedText": -7618360,
-            "chat_inAudioTitleText": -8790295,
-            "chat_inAudioDurationText": -9013641,
-            "chat_inAudioDurationSelectedText": -7618360,
-            "chat_inAudioSeekbar": -11119018,
-            "chat_inAudioCacheSeekbar": -10461088,
-            "chat_inAudioSeekbarSelected": -9331550,
-            "chat_inAudioSeekbarFill": -9253674,
-            "chat_inVoiceSeekbar": -10263709,
-            "chat_inVoiceSeekbarSelected": -9331550,
-            "chat_inVoiceSeekbarFill": -9972771,
-            "chat_inFileProgress": -1,
-            "chat_inFileProgressSelected": -1,
-            "chat_inFileNameText": -1,
-            "chat_inFileInfoText": -9013641,
-            "chat_inFileInfoSelectedText": -7618360,
-            "chat_inFileBackground": -13882324,
-            "chat_inFileBackgroundSelected": -12753809,
-            "chat_inVenueInfoText": -9013641,
-            "chat_inVenueInfoSelectedText": -7618360,
-            "chat_linkSelectBackground": 864405969,
-            "chat_textSelectBackground": 1516553682,
-            "chat_messagePanelBackground": -1222762977,
-            "chat_messagePanelShadow": 2030043136,
-            "chat_messagePanelText": -1,
-            "chat_messagePanelHint": 1694498815,
-            "chat_messagePanelCursor": -10960950,
-            "chat_messagePanelIcons": 1694498815,
-            "chat_messagePanelSend": -11283999,
-            "key_chat_messagePanelVoiceLock": -1,
-            "key_chat_messagePanelVoiceLockBackground": -14606046,
-            "key_chat_messagePanelVoiceLockShadow": 0,
-            "chat_topPanelBackground": -15066597,
-            "chat_topPanelClose": 1694498815,
-            "chat_topPanelLine": -10566958,
-            "chat_topPanelTitle": -10170143,
-            "chat_topPanelMessage": 1694498815,
-            "chat_addContact": -8790295,
-            "chat_inLoader": -11157801,
-            "chat_inLoaderSelected": -10959650,
-            "chat_inLoaderPhoto": -13882324,
-            "chat_inLocationBackground": -12829636,
-            "chat_inLocationIcon": -1,
-            "chat_inContactBackground": -11157802,
-            "chat_inContactIcon": -1,
-            "chat_replyPanelIcons": -10829609,
-            "chat_replyPanelClose": 1694498815,
-            "chat_replyPanelName": -10037530,
-            "chat_replyPanelLine": 838860800,
-            "chat_searchPanelIcons": 1694498815,
-            "chat_searchPanelText": -10430487,
-            "chat_secretChatStatusText": 1862270975,
-            "chat_fieldOverlayText": -9972771,
-            "chat_stickersHintPanel": -14606046,
-            "chat_botSwitchToInlineText": -8790295,
-            "chat_unreadMessagesStartArrowIcon": -9605777,
-            "chat_unreadMessagesStartText": -620756993,
-            "chat_unreadMessagesStartBackground": -14606046,
-            "chat_inlineResultIcon": -8790295,
-            "chat_emojiPanelBackground": -14803425,
-            "chat_emojiSearchIcon": -9211020,
-            "chat_emojiPanelShadowLine": -1610612736,
-            "chat_emojiPanelEmptyText": -8553090,
-            "chat_emojiPanelIcon": -9539985,
-            "chat_emojiBottomPanelIcon": -9539985,
-            "chat_emojiPanelIconSelected": -9972771,
-            "chat_emojiPanelStickerPackSelector": 181138423,
-            "chat_emojiPanelStickerPackSelectorLine": -9972771,
-            "chat_emojiPanelBackspace": -9539985,
-            "chat_emojiPanelTrendingTitle": -1,
-            "chat_emojiPanelStickerSetName": -8286319,
-            "chat_emojiPanelStickerSetNameIcon": -5195590,
-            "chat_emojiPanelTrendingDescription": -8553090,
-            "chat_botKeyboardButtonText": -1,
-            "chat_botKeyboardButtonBackground": -13882322,
-            "chat_botKeyboardButtonBackgroundPressed": -11974325,
-            "chat_emojiPanelNewTrending": -11285544,
-            "chat_messagePanelVoicePressed": -1,
-            "chat_messagePanelVoiceBackground": -11948868,
-            "chat_messagePanelVoiceDelete": -1,
-            "chat_messagePanelVoiceDuration": -1,
-            "chat_recordedVoiceProgress": -5247501,
-            "chat_recordedVoiceDot": -1221292,
-            "chat_recordedVoiceBackground": -11287076,
-            "chat_recordVoiceCancel": -10434086,
-            "chat_recordTime": 2030043135,
-            "chat_messagePanelCancelInlineBot": 1694498815,
-            "chat_goDownButton": -14606046,
-            "chat_goDownButtonIcon": -1,
-            "chat_goDownButtonCounter": -1,
-            "chat_goDownButtonCounterBackground": -11088164,
-            "chat_inTextSelectionHighlight": 1515510240,
-            "chat_TextSelectionCursor": -10758181,
-            "chat_inBubbleLocationPlaceholder": 520093695,
-            "chat_BlurAlpha": -1056964608,
-            "chat_editMediaButton": -14034709,
-            "passport_authorizeBackground": -12083284,
-            "passport_authorizeBackgroundSelected": -11357242,
-            "profile_creatorIcon": -9972771,
-            "profile_actionIcon": -1,
-            "profile_actionBackground": -11289910,
-            "profile_actionPressedBackground": -8988965,
-            "profile_verifiedBackground": -10365467,
-            "profile_verifiedCheck": -1,
-            "profile_status": -9641751,
-            "profile_tabText": 2030043135,
-            "profile_tabSelector": 268435455,
-            "sharedMedia_startStopLoadIcon": -9972771,
-            "sharedMedia_linkPlaceholder": -14474460,
-            "sharedMedia_linkPlaceholderText": -9474192,
-            "featuredStickers_addedIcon": -11350819,
-            "featuredStickers_addButton": -11154215,
-            "featuredStickers_addButtonPressed": -11943731,
-            "featuredStickers_removeButtonText": -11226685,
-            "featuredStickers_unread": -11285544,
-            "stickers_menu": -10724260,
-            "stickers_menuSelector": 402653183,
-            "changephoneinfo_image2": -11154472,
-            "groupcreate_hintText": -8553091,
-            "groupcreate_cursor": -9972771,
-            "groupcreate_sectionText": -1711276033,
-            "groupcreate_spanText": -657931,
-            "groupcreate_spanBackground": -13816531,
-            "login_progressInner": -2036241,
-            "login_progressOuter": -10242368,
-            "picker_enabledButton": -9576469,
-            "picker_disabledButton": -11111046,
-            "picker_badge": -10759708,
-            "location_sendLocationBackground": -9913658,
-            "location_liveLocationProgress": -9913658,
-            "location_placeLocationBackground": -9913658,
-            "dialog_liveLocationProgress": -9913658,
-            "files_folderIcon": -1,
-            "files_folderIconBackground": -10432807,
-            "calls_callReceivedGreenIcon": -12001930,
-            "undo_background": -182970344,
-            "undo_cancelColor": -9447189,
-            "key_sheet_scrollUp": 637534207,
-            "key_sheet_other": 1140850687,
-            "player_actionBarSelector": -14013910,
-            "player_actionBarTitle": -1,
-            "player_actionBarSubtitle": 1694498815,
-            "player_actionBarItems": -1,
-            "player_background": -14474461,
-            "player_time": -8553091,
-            "player_progressBackground": -12829636,
-            "key_player_progressCachedBackground": -11184811,
-            "player_progress": -10956067,
-            "player_button": -1,
-            "player_buttonActive": -9972771,
-            "statisticChartSignature": -1214138435,
-            "statisticChartSignatureAlpha": -1946157057,
-            "statisticChartHintLine": 452984831,
-            "statisticChartInactivePickerChart": -667926976,
-            "statisticChartActivePickerChart": -665293196,
-            "statisticChartRipple": 748865227,
-            "statisticChartBackZoomColor": -11677220,
-            "statisticChartChevronColor": -9076861,
-            "statisticChartLine_blue": -11362305,
-            "statisticChartLine_green": -12729793,
-            "statisticChartLine_red": -832444,
-            "statisticChartLine_golden": -2184161,
-            "statisticChartLine_lightblue": -12814100,
-            "statisticChartLine_lightgreen": -7352519,
-            "statisticChartLine_orange": -881607,
-            "statisticChartLine_indigo": -7906075,
-            "color_lightblue": -12814100,
-            "color_blue": -11362305,
-            "color_green": -12729793,
-            "color_lightgreen": -7352519,
-            "color_red": -832444,
-            "color_orange": -881607,
-            "color_yellow": -2184161,
-            "color_purple": -7906075,
-            "chat_inReactionButtonText": -1,
-            "chat_inReactionButtonTextSelected": -1,
-            "premiumGradientBackground1": -16578545,
-            "premiumGradientBackground2": -16645625,
-            "premiumGradientBackground3": -16777216,
-            "premiumGradientBackground4": -16777216,
-            "premiumStartSmallStarsColor": -8290049,
-            "premiumStarGradient1": -2342678,
-            "premiumStarGradient2": -9992961,
-            "premiumGradientBottomSheet1": -10567979,
-            "chat_inCodeBackground": 1074268168,
-            "chat_outCodeBackground": 1073741824,
-            "code_keyword": -27776,
-            "code_operator": 2147483647,
-            "code_constant": -27776,
-            "code_string": -7806088,
-            "code_number": -10887465,
-            "code_comment": -2130706433,
-            "code_function": -27776
-        };
-
-        function processImage(input) {
+        async function uploadImage(input) {
             if (input.files && input.files[0]) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let img = new Image();
-                    img.onload = function() {
-                        let canvas = document.getElementById('canvas');
-                        let ctx = canvas.getContext('2d');
-                        canvas.width = 50; canvas.height = 50;
-                        ctx.drawImage(img, 0, 0, 50, 50);
-                        
-                        let imgData = ctx.getImageData(0, 0, 50, 50).data;
-                        let rSum = 0, gSum = 0, bSum = 0, total = 0;
+                let formData = new FormData();
+                formData.append("file", input.files[0]);
 
-                        for (let i = 0; i < imgData.length; i += 4) {
-                            rSum += imgData[i];
-                            gSum += imgData[i+1];
-                            bSum += imgData[i+2];
-                            total++;
-                        }
+                let response = await fetch('https://YOUR_SERVER_URL/api/extract-theme', {
+                    method: 'POST',
+                    body: formData
+                });
+                let data = await response.json();
 
-                        let r = Math.round(rSum / total);
-                        let g = Math.round(gSum / total);
-                        let b = Math.round(bSum / total);
+                // تعبئة البيانات في الواجهة
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('primaryColorPicker').value = data.primary;
+                document.getElementById('bgColorPicker').value = data.background;
 
-                        let dynamicColorInt = rgbToSignedInt(r, g, b);
-
-                        // تحديث الخلفيات والعناصر الأساسية استناداً للقيم الحقيقية للثيم دون العبث بالهيكلة الثابتة
-                        themeKeys["windowBackgroundWhite"] = rgbToSignedInt(Math.max(0, r-35), Math.max(0, g-35), Math.max(0, b-35));
-                        themeKeys["dialogBackground"] = themeKeys["windowBackgroundWhite"];
-                        themeKeys["actionBarDefault"] = dynamicColorInt;
-
-                        renderOutput();
-                    }
-                    img.src = e.target.result;
-                }
-                reader.readAsDataURL(input.files[0]);
+                let paletteBox = document.getElementById('paletteBox');
+                paletteBox.innerHTML = '';
+                data.palette.forEach(hex => {
+                    let span = document.createElement('span');
+                    span.className = 'color-box';
+                    span.style.backgroundColor = hex;
+                    paletteBox.appendChild(span);
+                });
             }
         }
 
-        function rgbToSignedInt(r, g, b) {
-            let val = (255 << 24) | (r << 16) | (g << 8) | b;
-            if (val > 0x7FFFFFFF) val -= 0x100000000;
-            return val;
+        function updateThemeLive() {
+            // معاينة حية لتغيير الألوان
+            let primary = document.getElementById('primaryColorPicker').value;
+            let bg = document.getElementById('bgColorPicker').value;
+            document.body.style.backgroundColor = bg;
         }
 
-        function getFileContent() {
-            let lines = [];
-            for (let key in themeKeys) {
-                lines.push(`${key}=${themeKeys[key]}`);
-            }
-            return lines.join("\n");
+        function saveTheme() {
+            let themeData = {
+                primary: document.getElementById('primaryColorPicker').value,
+                background: document.getElementById('bgColorPicker').value
+            };
+            tg.sendData(JSON.stringify(themeData)); // إرسال الثيم إلى البوت في تيليجرام
+            tg.close();
         }
-
-        function renderOutput() {
-            document.getElementById('codeOutput').innerText = getFileContent();
-        }
-
-        function copyCode() {
-            navigator.clipboard.writeText(getFileContent());
-            alert("✅ تم نسخ مصفوفة الثيم الدقيقة بالكامل!");
-        }
-
-        function downloadFile() {
-            let content = getFileContent();
-            let blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-            let link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = "theme_accurate.attheme";
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            alert("📥 تم تحميل ملف الثيم الدقيق بنجاح!");
-        }
-
-        window.onload = function() {
-            renderOutput();
-        };
     </script>
 </body>
 </html>
