@@ -3,157 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مُصمم ثيمات تيليجرام الرسمي</title>
+    <title>منشئ ثيمات تيليجرام الرسمي</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --text-color: #f8fafc;
+            --tg-bg: #0e1621;
+            --tg-header: #17212b;
+            --tg-text: #ffffff;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: #0f172a;
+            color: #f8fafc;
             margin: 0;
-            padding: 10px;
+            padding: 12px;
             box-sizing: border-box;
         }
-        h2 { text-align: center; font-size: 17px; margin-bottom: 10px; color: #38bdf8; }
-        
+        h2 { text-align: center; font-size: 18px; margin-bottom: 12px; color: #38bdf8; }
+
         .upload-card {
             background: #1e293b;
             border: 2px dashed #38bdf8;
-            padding: 12px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 12px;
             text-align: center;
             cursor: pointer;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 14px;
         }
 
-        /* --- معاينة تيليجرام الحقيقية المطابقة للأصل --- */
-        .tg-app-frame {
-            border-radius: 12px;
+        /* --- واجهة تيليجرام الحقيقية المطابقة للأصل تماماً --- */
+        .tg-screen {
+            border-radius: 14px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.15);
             margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
         }
-        
-        /* شريط التيليجرام العلوي */
-        .tg-header {
+
+        .tg-action-bar {
             background-color: #2b5278;
             color: #ffffff;
-            padding: 10px 12px;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .tg-header-info { display: flex; align-items: center; gap: 10px; }
-        .tg-avatar { width: 35px; height: 35px; border-radius: 50%; background: #4a76a8; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: #fff; }
-        .tg-title-group { display: flex; flex-direction: column; }
-        .tg-chat-title { font-size: 14px; font-weight: bold; }
-        .tg-chat-status { font-size: 11px; opacity: 0.8; }
-        .tg-header-icons { font-size: 16px; letter-spacing: 5px; opacity: 0.9; }
+        .tg-chat-info { display: flex; align-items: center; gap: 10px; }
+        .tg-avatar { width: 38px; height: 38px; border-radius: 50%; background: #4a76a8; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 15px; }
+        .tg-titles { display: flex; flex-direction: column; }
+        .tg-name { font-size: 14px; font-weight: bold; }
+        .tg-status { font-size: 11px; opacity: 0.8; }
+        .tg-actions { font-size: 18px; letter-spacing: 6px; opacity: 0.9; }
 
-        /* شاشة الدردشة والخلفية */
-        .tg-chat-body {
+        .tg-chat-container {
             background-color: #0e1621;
-            padding: 12px;
-            height: 200px;
+            padding: 14px;
+            height: 220px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
-        /* فقرات الرسائل */
-        .tg-msg {
-            padding: 8px 12px;
-            border-radius: 10px;
-            max-width: 80%;
+        .tg-message {
+            padding: 9px 13px;
+            border-radius: 12px;
+            max-width: 78%;
             font-size: 13px;
             line-height: 1.4;
             position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
-        .tg-msg.in {
+        .tg-message.in {
             background-color: #182533;
             color: #ffffff;
             align-self: flex-start;
-            border-bottom-left-radius: 2px;
+            border-bottom-left-radius: 3px;
         }
-        .tg-msg.out {
+        .tg-message.out {
             background-color: #2b5278;
             color: #ffffff;
             align-self: flex-end;
-            border-bottom-right-radius: 2px;
+            border-bottom-right-radius: 3px;
         }
-        .tg-time { font-size: 9px; opacity: 0.7; float: left; margin-top: 4px; margin-right: 6px; }
+        .tg-msg-time { font-size: 9px; opacity: 0.7; float: left; margin-top: 4px; margin-right: 6px; }
 
-        /* صندوق الإدخال السفلي */
-        .tg-footer {
+        .tg-panel {
             background-color: #17212b;
-            padding: 8px 10px;
+            padding: 9px 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-        .tg-input-field {
+        .tg-input {
             flex: 1;
             background: #242f3d;
             color: #ffffff;
-            padding: 8px 12px;
-            border-radius: 18px;
-            font-size: 12px;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 13px;
         }
-        .tg-send-btn {
-            width: 32px; height: 32px; border-radius: 50%; background: #2b5278; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px;
+        .tg-send {
+            width: 35px; height: 35px; border-radius: 50%; background: #2b5278; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px;
         }
-        /* --------------------------------------------- */
+        /* ---------------------------------------------------- */
 
-        .section-title { font-size: 13px; margin: 10px 0 6px; font-weight: bold; color: #38bdf8; }
-        
         .controls-box {
             background: #1e293b;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 12px;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 15px;
         }
         .control-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
-            font-size: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
         }
-        input[type="color"] { border: none; width: 30px; height: 30px; cursor: pointer; background: none; border-radius: 50%; }
+        input[type="color"] { border: none; width: 34px; height: 34px; cursor: pointer; background: none; border-radius: 50%; }
 
-        .code-output-box {
+        .code-box {
             background: #020617;
             border: 1px solid rgba(255,255,255,0.1);
             border-radius: 8px;
-            padding: 8px;
+            padding: 10px;
             font-family: monospace;
-            font-size: 10px;
+            font-size: 11px;
             direction: ltr;
             text-align: left;
             white-space: pre-wrap;
-            margin-bottom: 10px;
-            max-height: 120px;
+            margin-bottom: 12px;
+            max-height: 150px;
             overflow-y: auto;
             color: #38bdf8;
         }
 
-        .btn-group { display: flex; gap: 8px; flex-direction: column; }
+        .btn-group { display: flex; gap: 10px; flex-direction: column; }
         .action-btn {
             width: 100%;
             background: #2563eb;
             color: white;
             border: none;
-            padding: 11px;
-            border-radius: 8px;
-            font-size: 13px;
+            padding: 13px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
@@ -163,67 +159,66 @@
 </head>
 <body>
 
-    <h2>🎨 تطبيق صانع الثيمات الحقيقي</h2>
+    <h2>🎨 منشئ ثيمات تيليجرام الذكي</h2>
 
     <label class="upload-card">
-        📁 اضغط هنا لاختيار صورة لاستخراج ألوان متناسقة
+        📁 اختر صورة لاستخراج ألوان متناسقة وتطبيقها فوراً
         <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
     </label>
 
-    <!-- المعاينة الحية المطابقة لتيليجرام بنسبة 100% -->
-    <div class="tg-app-frame">
-        <div class="tg-header" id="prevHeader">
-            <div class="tg-header-info">
+    <!-- واجهة تيليجرام الحية الأصلية -->
+    <div class="tg-screen">
+        <div class="tg-action-bar" id="prevBar">
+            <div class="tg-chat-info">
                 <div class="tg-avatar" id="prevAvatar">ث</div>
-                <div class="tg-title-group">
-                    <span class="tg-chat-title">ثيم تيليجرام المخصص</span>
-                    <span class="tg-chat-status">آخر ظهور الان</span>
+                <div class="tg-titles">
+                    <span class="tg-name">معاينة ثيم تيليجرام</span>
+                    <span class="tg-status">متصل الان</span>
                 </div>
             </div>
-            <div class="tg-header-icons">🔍 ⋮</div>
+            <div class="tg-actions">🔍 ⋮</div>
         </div>
-        <div class="tg-chat-body" id="prevChatBody">
-            <div class="tg-msg in" id="prevMsgIn">
-                أهلاً بك! هذه معاينة للرسائل الواردة.
-                <span class="tg-time">12:00</span>
+        <div class="tg-chat-container" id="prevChat">
+            <div class="tg-message in" id="prevMsgIn">
+                أهلاً بك! تم ضبط الألوان والتناسق بدقة.
+                <span class="tg-msg-time">12:00</span>
             </div>
-            <div class="tg-msg out" id="prevMsgOut">
-                تم ضبط تناسق الألوان وشاشة الدردشة بنجاح!
-                <span class="tg-time">12:01</span>
+            <div class="tg-message out" id="prevMsgOut">
+                هذه المعاينة توضح شكل الدردشة الحقيقي تماماً.
+                <span class="tg-msg-time">12:01</span>
             </div>
         </div>
-        <div class="tg-footer" id="prevFooter">
-            <div class="tg-input-field">رسالة...</div>
-            <div class="tg-send-btn" id="prevSendBtn">➔</div>
+        <div class="tg-panel" id="prevPanel">
+            <div class="tg-input">اكتب رسالة...</div>
+            <div class="tg-send" id="prevSend">➔</div>
         </div>
     </div>
 
     <div class="controls-box">
-        <div class="section-title" style="margin-top:0;">تخصيص ألوان الثيم يدوياً:</div>
         <div class="control-row">
             <span>شريط العنوان (ActionBar):</span>
-            <input type="color" id="pickerHeader" value="#2b5278" oninput="updateLiveTheme()">
+            <input type="color" id="pBar" value="#2b5278" oninput="updatePreview()">
         </div>
         <div class="control-row">
-            <span>خلفية الدردشة (Chat Background):</span>
-            <input type="color" id="pickerChatBg" value="#0e1621" oninput="updateLiveTheme()">
+            <span>خلفية شاشة الدردشة:</span>
+            <input type="color" id="pChatBg" value="#0e1621" oninput="updatePreview()">
         </div>
         <div class="control-row">
-            <span>فقرة الرسائل الصادرة (Out Bubble):</span>
-            <input type="color" id="pickerOutBubble" value="#2b5278" oninput="updateLiveTheme()">
+            <span>فقرة الرسائل الصادرة:</span>
+            <input type="color" id="pOut" value="#2b5278" oninput="updatePreview()">
         </div>
         <div class="control-row">
-            <span>فقرة الرسائل الواردة (In Bubble):</span>
-            <input type="color" id="pickerInBubble" value="#182533" oninput="updateLiveTheme()">
+            <span>فقرة الرسائل الواردة:</span>
+            <input type="color" id="pIn" value="#182533" oninput="updatePreview()">
         </div>
 
-        <div class="section-title">معاينة ملف الثيم (.attheme):</div>
-        <div class="code-output-box" id="codeOutput">قم برفع صورة لتوليد كود الثيم بدقة...</div>
+        <div style="font-size: 13px; margin: 10px 0 6px; font-weight: bold; color: #38bdf8;">معاينة الكود الناتج (.attheme):</div>
+        <div class="code-box" id="codeOutput">قم برفع صورة لتوليد كود الثيم الشامل...</div>
     </div>
 
     <div class="btn-group">
-        <button class="action-btn" onclick="copyAtthemeText()">📋 نسخ محتوى الثيم</button>
-        <button class="action-btn success" onclick="downloadAtthemeFile()">📥 تحميل ملف theme_new.attheme</button>
+        <button class="action-btn" onclick="copyTheme()">📋 نسخ أكواد الثيم</button>
+        <button class="action-btn success" onclick="downloadTheme()">📥 تحميل ملف theme_new.attheme</button>
     </div>
 
     <canvas id="canvas" style="display:none;"></canvas>
@@ -240,34 +235,34 @@
                     img.onload = function() {
                         let canvas = document.getElementById('canvas');
                         let ctx = canvas.getContext('2d');
-                        canvas.width = 50; canvas.height = 50;
-                        ctx.drawImage(img, 0, 0, 50, 50);
+                        canvas.width = 60; canvas.height = 60;
+                        ctx.drawImage(img, 0, 0, 60, 60);
                         
-                        let imgData = ctx.getImageData(0, 0, 50, 50).data;
-                        let rTotal = 0, gTotal = 0, bTotal = 0, count = 0;
+                        let imgData = ctx.getImageData(0, 0, 60, 60).data;
+                        let rSum = 0, gSum = 0, bSum = 0, total = 0;
 
                         for (let i = 0; i < imgData.length; i += 4) {
-                            rTotal += imgData[i];
-                            gTotal += imgData[i+1];
-                            bTotal += imgData[i+2];
-                            count++;
+                            rSum += imgData[i];
+                            gSum += imgData[i+1];
+                            bSum += imgData[i+2];
+                            total++;
                         }
 
-                        let avgR = Math.round(rTotal / count);
-                        let avgG = Math.round(gTotal / count);
-                        let avgB = Math.round(bTotal / count);
+                        let r = Math.round(rSum / total);
+                        let g = Math.round(gSum / total);
+                        let b = Math.round(bSum / total);
 
-                        let primaryHex = rgbToHex(avgR, avgG, avgB);
-                        // توليد خلفية داكنة متناسقة مبنية على لون الصورة
-                        let bgHex = rgbToHex(Math.max(0, avgR - 40), Math.max(0, avgG - 40), Math.max(0, avgB - 40));
-                        let bubbleInHex = rgbToHex(Math.min(255, avgR + 20), Math.min(255, avgG + 20), Math.min(255, avgB + 20));
+                        let mainColor = rgbToHex(r, g, b);
+                        // خوارزمية ذكية لتوليد ألوان خلفيات وفقرات متناسقة وغير عشوائية
+                        let chatBg = rgbToHex(Math.max(5, r - 35), Math.max(5, g - 35), Math.max(5, b - 35));
+                        let inBubble = rgbToHex(Math.min(245, r + 15), Math.min(245, g + 15), Math.min(245, b + 15));
 
-                        document.getElementById('pickerHeader').value = primaryHex;
-                        document.getElementById('pickerOutBubble').value = primaryHex;
-                        document.getElementById('pickerChatBg').value = bgHex;
-                        document.getElementById('pickerInBubble').value = bubbleInHex;
+                        document.getElementById('pBar').value = mainColor;
+                        document.getElementById('pOut').value = mainColor;
+                        document.getElementById('pChatBg').value = chatBg;
+                        document.getElementById('pIn').value = inBubble;
 
-                        updateLiveTheme();
+                        updatePreview();
                     }
                     img.src = e.target.result;
                 }
@@ -281,84 +276,83 @@
 
         function hexToTelegramSignedInt(hex) {
             let c = hex.replace('#', '');
-            let r = parseInt(c.substring(0, 2), 16);
-            let g = parseInt(c.substring(2, 4), 16);
-            let b = parseInt(c.substring(4, 6), 16);
-            let intVal = (255 << 24) | (r << 16) | (g << 8) | b;
-            if (intVal > 0x7FFFFFFF) {
-                intVal -= 0x100000000;
-            }
-            return intVal;
+            let red = parseInt(c.substring(0, 2), 16);
+            let green = parseInt(c.substring(2, 4), 16);
+            let blue = parseInt(c.substring(4, 6), 16);
+            let val = (255 << 24) | (red << 16) | (green << 8) | blue;
+            if (val > 0x7FFFFFFF) val -= 0x100000000;
+            return val;
         }
 
-        function generateAtthemeContent() {
-            let headerHex = document.getElementById('pickerHeader').value;
-            let chatBgHex = document.getElementById('pickerChatBg').value;
-            let outBubbleHex = document.getElementById('pickerOutBubble').value;
-            let inBubbleHex = document.getElementById('pickerInBubble').value;
+        function generateThemeContent() {
+            let bar = hexToTelegramSignedInt(document.getElementById('pBar').value);
+            let chatBg = hexToTelegramSignedInt(document.getElementById('pChatBg').value);
+            let outBubble = hexToTelegramSignedInt(document.getElementById('pOut').value);
+            let inBubble = hexToTelegramSignedInt(document.getElementById('pIn').value);
+            let white = hexToTelegramSignedInt("#ffffff");
 
-            let hVal = hexToTelegramSignedInt(headerHex);
-            let bgVal = hexToTelegramSignedInt(chatBgHex);
-            let outVal = hexToTelegramSignedInt(outBubbleHex);
-            let inVal = hexToTelegramSignedInt(inBubbleHex);
-
+            // القائمة الأساسية الشاملة والمتوافقة مع تيليجرام
             let keys = [
-                `actionBarDefault=${hVal}`,
-                `actionBarDefaultIcon=${hexToTelegramSignedInt("#ffffff")}`,
-                `actionBarDefaultTitle=${hexToTelegramSignedInt("#ffffff")}`,
-                `chat_background=${bgVal}`,
-                `windowBackgroundWhite=${bgVal}`,
-                `chat_inBubble=${inVal}`,
-                `chat_outBubble=${outVal}`,
-                `chat_messageTextIn=${hexToTelegramSignedInt("#ffffff")}`,
-                `chat_messageTextOut=${hexToTelegramSignedInt("#ffffff")}`,
-                `chat_messagePanelBackground=${bgVal}`,
-                `chat_messagePanelText=${hexToTelegramSignedInt("#ffffff")}`,
-                `chat_messagePanelIcons=${hexToTelegramSignedInt("#ffffff")}`,
-                `chats_actionBackground=${hVal}`
+                `actionBarDefault=${bar}`,
+                `actionBarDefaultIcon=${white}`,
+                `actionBarDefaultTitle=${white}`,
+                `actionBarDefaultSelector=${bar}`,
+                `chat_background=${chatBg}`,
+                `windowBackgroundWhite=${chatBg}`,
+                `chat_inBubble=${inBubble}`,
+                `chat_outBubble=${outBubble}`,
+                `chat_messageTextIn=${white}`,
+                `chat_messageTextOut=${white}`,
+                `chat_messagePanelBackground=${chatBg}`,
+                `chat_messagePanelText=${white}`,
+                `chat_messagePanelIcons=${white}`,
+                `chats_actionBackground=${bar}`,
+                `chats_actionIcon=${white}`,
+                `chats_name=${white}`,
+                `chats_message=${white}`,
+                `chats_date=${white}`,
+                `dialogBackground=${chatBg}`,
+                `dialogTextBlack=${white}`
             ];
 
             return keys.join("\n");
         }
 
-        function updateLiveTheme() {
-            let header = document.getElementById('pickerHeader').value;
-            let chatBg = document.getElementById('pickerChatBg').value;
-            let outBubble = document.getElementById('pickerOutBubble').value;
-            let inBubble = document.getElementById('pickerInBubble').value;
+        function updatePreview() {
+            let bar = document.getElementById('pBar').value;
+            let chatBg = document.getElementById('pChatBg').value;
+            let outBubble = document.getElementById('pOut').value;
+            let inBubble = document.getElementById('pIn').value;
 
-            // تحديث عناصر واجهة تيليجرام الحية بدقة فورية
-            document.getElementById('prevHeader').style.backgroundColor = header;
-            document.getElementById('prevSendBtn').style.backgroundColor = header;
-            document.getElementById('prevChatBody').style.backgroundColor = chatBg;
-            document.getElementById('prevFooter').style.backgroundColor = chatBg;
+            document.getElementById('prevBar').style.backgroundColor = bar;
+            document.getElementById('prevSend').style.backgroundColor = bar;
+            document.getElementById('prevChat').style.backgroundColor = chatBg;
+            document.getElementById('prevPanel').style.backgroundColor = chatBg;
             document.getElementById('prevMsgOut').style.backgroundColor = outBubble;
             document.getElementById('prevMsgIn').style.backgroundColor = inBubble;
 
-            document.getElementById('codeOutput').innerText = generateAtthemeContent();
+            document.getElementById('codeOutput').innerText = generateThemeContent();
         }
 
-        function copyAtthemeText() {
-            let content = generateAtthemeContent();
-            navigator.clipboard.writeText(content);
+        function copyTheme() {
+            navigator.clipboard.writeText(generateThemeContent());
             alert("✅ تم نسخ أكواد الثيم بنجاح!");
         }
 
-        function downloadAtthemeFile() {
-            let content = generateAtthemeContent();
+        function downloadTheme() {
+            let content = generateThemeContent();
             let blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-            let downloadAnchor = document.createElement('a');
-            downloadAnchor.href = URL.createObjectURL(blob);
-            downloadAnchor.download = "theme_new.attheme";
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = "theme_new.attheme";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
             alert("📥 تم تحميل ملف 'theme_new.attheme' بنجاح!");
         }
 
         window.onload = function() {
-            updateLiveTheme();
+            updatePreview();
         };
     </script>
 </body>
