@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صانع ثيمات تيليجرام الرسمية</title>
+    <title>صانع ثيمات تيليجرام الاحترافي</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -91,6 +91,22 @@
         }
         input[type="color"] { border: none; width: 35px; height: 35px; cursor: pointer; background: none; border-radius: 50%; }
 
+        .code-output-box {
+            background: #020617;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 12px;
+            direction: ltr;
+            text-align: left;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #38bdf8;
+        }
+
         .btn-group { display: flex; gap: 10px; flex-direction: column; }
         .action-btn {
             width: 100%;
@@ -109,43 +125,46 @@
 </head>
 <body>
 
-    <h2>🎨 صانع ثيمات تيليجرام الرسمية</h2>
+    <h2>🎨 صانع ثيمات تيليجرام الشامل</h2>
 
     <label class="upload-card">
-        📁 اختر صورة لاستخراج الألوان وإنشاء الثيم
+        📁 اختر صورة لتحويلها بالكامل إلى ثيم تيليجرام
         <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
     </label>
 
     <div class="preview-box" id="previewBox">
         <div class="preview-title">معاينة واجهة تيليجرام الحية</div>
         <div class="chat-bubble incoming">أهلاً بك! هذه معاينة للرسائل الواردة.</div>
-        <div class="chat-bubble" id="liveBubble">هنا تظهر عينة اللون الأساسي للثيم.</div>
+        <div class="chat-bubble" id="liveBubble">هنا عينة اللون الأساسي للثيم.</div>
     </div>
 
-    <div class="section-title">لوحة الألوان المستخرجة:</div>
+    <div class="section-title">الألوان المستخرجة من صورتك:</div>
     <div class="palette-grid" id="paletteGrid">
         <div style="opacity: 0.5; font-size: 13px; grid-column: 1/-1; text-align: center;">لم يتم رفع صورة بعد...</div>
     </div>
 
     <div class="controls-box">
-        <div class="section-title" style="margin-top:0;">التحكم اليدوي بالألوان:</div>
+        <div class="section-title" style="margin-top:0;">تخصيص الألوان الرئيسية:</div>
         <div class="control-row">
-            <span>اللون الأساسي (Primary / Buttons):</span>
-            <input type="color" id="primaryPicker" value="#3b82f6" oninput="updateLiveTheme()">
+            <span>اللون الأساسي (أشرطة وشاشات):</span>
+            <input type="color" id="primaryPicker" value="#1e293b" oninput="updateLiveTheme()">
         </div>
         <div class="control-row">
-            <span>لون الخلفية (Background):</span>
+            <span>لون النصوص والعناصر البارزة:</span>
+            <input type="color" id="textPicker" value="#38bdf8" oninput="updateLiveTheme()">
+        </div>
+        <div class="control-row">
+            <span>لون الخلفية والفقرات:</span>
             <input type="color" id="bgPicker" value="#0f172a" oninput="updateLiveTheme()">
         </div>
-        <div class="control-row">
-            <span>لون الرسائل الصادرة (Out Bubble):</span>
-            <input type="color" id="cardPicker" value="#1e293b" oninput="updateLiveTheme()">
-        </div>
+
+        <div class="section-title">معاينة ملف الثيم (.attheme):</div>
+        <div class="code-output-box" id="codeOutput">قم برفع صورة لتوليد الثيم كاملاً...</div>
     </div>
 
     <div class="btn-group">
-        <button class="action-btn" onclick="copyAtthemeText()">📋 نسخ محتوى ملف الثيم</button>
-        <button class="action-btn success" onclick="downloadAtthemeFile()">📥 تحميل ملف .attheme مباشر</button>
+        <button class="action-btn" onclick="copyAtthemeText()">📋 نسخ محتوى الثيم كاملاً</button>
+        <button class="action-btn success" onclick="downloadAtthemeFile()">📥 تحميل ملف theme_new.attheme</button>
     </div>
 
     <canvas id="canvas" style="display:none;"></canvas>
@@ -182,12 +201,12 @@
                         
                         if(allExtractedColors.length > 0) {
                             let primary = allExtractedColors[0];
+                            let textCol = allExtractedColors[1] || "#38bdf8";
                             let bg = isDark(primary) ? "#0f172a" : "#f1f5f9";
-                            let card = allExtractedColors[1] || primary;
 
                             document.getElementById('primaryPicker').value = primary;
+                            document.getElementById('textPicker').value = textCol;
                             document.getElementById('bgPicker').value = bg;
-                            document.getElementById('cardPicker').value = card;
 
                             renderPaletteGrid();
                             updateLiveTheme();
@@ -203,14 +222,19 @@
             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
         }
 
-        function hexToAthenticInt(hex) {
-            // تحويل كود Hex (مثل #3b82f6) إلى صيغة الألوان الرقمية التي يفهمها تيليجرام في ملف .attheme (ARGB)
+        // تحويل Hex إلى قيمة الأرقام الصحيحة المتوافقة مع تيليجرام
+        function hexToTelegramSignedInt(hex) {
             let c = hex.replace('#', '');
             let r = parseInt(c.substring(0, 2), 16);
             let g = parseInt(c.substring(2, 4), 16);
             let b = parseInt(c.substring(4, 6), 16);
-            // إرجاع القيمة مع قناة الشفافية الكاملة FF
-            return "0xFF" + c.toUpperCase();
+            // تجميع بتات لون ARGB (ألفا 255 + الألوان الثلاثة)
+            let intVal = (255 << 24) | (r << 16) | (g << 8) | b;
+            // تحويلها لرقم صحيح موقع (Signed 32-bit Integer) لتتوافق مع تيليجرام تماماً
+            if (intVal > 0x7FFFFFFF) {
+                intVal -= 0x100000000;
+            }
+            return intVal;
         }
 
         function isDark(hex) {
@@ -242,40 +266,79 @@
             });
         }
 
+        function generateAtthemeContent() {
+            let primaryHex = document.getElementById('primaryPicker').value;
+            let textHex = document.getElementById('textPicker').value;
+            let bgHex = document.getElementById('bgPicker').value;
+
+            let pVal = hexToTelegramSignedInt(primaryHex);
+            let tVal = hexToTelegramSignedInt(textHex);
+            let bgVal = hexToTelegramSignedInt(bgHex);
+
+            // القائمة الكاملة والاحترافية لكافة المفاتيح التي أرسلتها مع إسقاط الألوان عليها بدقة
+            let keys = [
+                `ChatShadow=${pVal}`,
+                `PreviewBack=${tVal}`,
+                `PreviewBackLinear=${tVal}`,
+                `PreviewBackLinearShadow=${pVal}`,
+                `actionBarActionModeDefault=${pVal}`,
+                `actionBarActionModeDefaultIcon=${tVal}`,
+                `actionBarActionModeDefaultSelector=${tVal}`,
+                `actionBarActionModeDefaultTop=${pVal}`,
+                `actionBarDefault=${pVal}`,
+                `actionBarDefaultArchived=${pVal}`,
+                `actionBarDefaultArchivedIcon=${tVal}`,
+                `actionBarDefaultArchivedSearch=${tVal}`,
+                `actionBarDefaultArchivedSelector=${tVal}`,
+                `actionBarDefaultArchivedTitle=${tVal}`,
+                `actionBarDefaultIcon=${tVal}`,
+                `actionBarDefaultSearch=${tVal}`,
+                `actionBarDefaultSearchArchivedPlaceholder=${tVal}`,
+                `actionBarDefaultSearchPlaceholder=${tVal}`,
+                `actionBarDefaultSelector=${tVal}`,
+                `actionBarDefaultSubmenuBackground=${pVal}`,
+                `actionBarDefaultSubmenuItem=${tVal}`,
+                `actionBarDefaultSubtitle=${tVal}`,
+                `actionBarDefaultTitle=${tVal}`,
+                `actionBarWhiteSelector=${tVal}`,
+                `chat_messagePanelBackground=${pVal}`,
+                `chat_messagePanelText=${tVal}`,
+                `chat_messagePanelIcons=${tVal}`,
+                `chat_messagePanelSend=${tVal}`,
+                `chat_messageTextIn=${tVal}`,
+                `chat_messageTextOut=${tVal}`,
+                `chat_inBubble=${pVal}`,
+                `chat_outBubble=${pVal}`,
+                `windowBackgroundWhite=${pVal}`,
+                `windowBackgroundGray=${pVal}`,
+                `windowBackgroundWhiteBlackText=${tVal}`,
+                `windowBackgroundWhiteGrayText=${tVal}`,
+                `chats_name=${tVal}`,
+                `chats_message=${tVal}`,
+                `chats_date=${tVal}`,
+                `dialogBackground=${pVal}`,
+                `dialogTextBlack=${tVal}`
+            ];
+
+            return keys.join("\n");
+        }
+
         function updateLiveTheme() {
             let primary = document.getElementById('primaryPicker').value;
             let bg = document.getElementById('bgPicker').value;
-            let card = document.getElementById('cardPicker').value;
+            let text = document.getElementById('textPicker').value;
 
             document.body.style.backgroundColor = bg;
-            document.getElementById('previewBox').style.backgroundColor = card;
-            document.getElementById('liveBubble').style.backgroundColor = primary;
-        }
+            document.getElementById('previewBox').style.backgroundColor = primary;
+            document.getElementById('liveBubble').style.backgroundColor = text;
 
-        function generateAtthemeContent() {
-            let primary = hexToAthenticInt(document.getElementById('primaryPicker').value);
-            let bg = hexToAthenticInt(document.getElementById('bgPicker').value);
-            let card = hexToAthenticInt(document.getElementById('cardPicker').value);
-
-            // هيكل متغيرات الثيم الرسمية الخاصة بتيليجرام
-            return `windowBg ${bg}
-chat_background ${bg}
-actionBar_background ${primary}
-actionBar_title 0xFFFFFFFF
-actionBar_icon 0xFFFFFFFF
-chat_messageInBubble 0xFF222B38
-chat_messageOutBubble ${card}
-chat_messageTextIn 0xFFFFFFFF
-chat_messageTextOut 0xFFFFFFFF
-featuredStickers_buttonProgress ${primary}
-switchTrackChecked ${primary}
-radioBackgroundChecked ${primary}`;
+            document.getElementById('codeOutput').innerText = generateAtthemeContent();
         }
 
         function copyAtthemeText() {
             let content = generateAtthemeContent();
             navigator.clipboard.writeText(content);
-            alert("✅ تم نسخ أكواد ملف الثيم (.attheme) إلى الحافظة بنجاح!");
+            alert("✅ تم نسخ كافة أكواد الثيم الرسمية بنجاح!");
         }
 
         function downloadAtthemeFile() {
@@ -290,6 +353,10 @@ radioBackgroundChecked ${primary}`;
             
             alert("📥 تم تجهيز وتحميل ملف 'theme_new.attheme' إلى جهازك بنجاح!");
         }
+
+        window.onload = function() {
+            updateLiveTheme();
+        };
     </script>
 </body>
 </html>
