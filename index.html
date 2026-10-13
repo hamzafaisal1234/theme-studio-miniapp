@@ -17,105 +17,163 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 15px;
+            padding: 12px;
             box-sizing: border-box;
         }
-        h2 { text-align: center; font-size: 20px; margin-bottom: 15px; color: #60a5fa; }
+        h2 { text-align: center; font-size: 18px; margin-bottom: 12px; color: #60a5fa; }
         
         .upload-card {
             background: var(--card-bg);
             border: 2px dashed var(--primary-color);
-            padding: 20px;
-            border-radius: 14px;
+            padding: 15px;
+            border-radius: 12px;
             text-align: center;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-weight: bold;
-        }
-
-        .preview-box {
-            background: var(--card-bg);
-            border-radius: 14px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .preview-title { font-size: 13px; opacity: 0.7; margin-bottom: 10px; text-align: center; }
-        .chat-bubble {
-            background: var(--primary-color);
-            color: #fff;
-            padding: 12px 16px;
-            border-radius: 12px;
-            max-width: 85%;
-            margin-bottom: 10px;
             font-size: 14px;
         }
-        .chat-bubble.incoming { background: rgba(255,255,255,0.08); }
 
-        .section-title { font-size: 15px; margin: 15px 0 10px; font-weight: bold; color: #93c5fd; }
-        .palette-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 10px;
-            margin-bottom: 20px;
+        /* المعاينة الحية المطابقة لتيليجرام */
+        .tg-preview-container {
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        .color-card {
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 10px;
+        
+        /* شريط التيليجرام العلوي */
+        .tg-action-bar {
+            background-color: #2b5278;
+            color: #ffffff;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        .tg-action-bar-left { display: flex; align-items: center; gap: 10px; }
+        .tg-avatar-small { width: 32px; height: 32px; border-radius: 50%; background: #4a76a8; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+
+        /* شاشة الدردشة والخلفية */
+        .tg-chat-screen {
+            background-color: #0e1621;
+            padding: 12px;
+            height: 220px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        /* فقرات الرسائل */
+        .tg-bubble {
+            padding: 8px 12px;
+            border-radius: 12px;
+            max-width: 75%;
+            font-size: 13px;
+            line-height: 1.4;
+            position: relative;
+        }
+        .tg-bubble.in {
+            background-color: #182533;
+            color: #ffffff;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .tg-bubble.out {
+            background-color: #2b5278;
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .tg-time { font-size: 10px; opacity: 0.7; float: left; margin-top: 4px; margin-right: 5px; }
+
+        /* شريط إدخال الرسائل السفلي */
+        .tg-input-panel {
+            background-color: #17212b;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        .tg-input-box {
+            flex: 1;
+            background: #242f3d;
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            border: none;
+        }
+
+        .section-title { font-size: 14px; margin: 12px 0 8px; font-weight: bold; color: #93c5fd; }
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .color-card {
+            background: var(--card-bg);
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             border: 1px solid rgba(255,255,255,0.05);
             cursor: pointer;
         }
         .color-circle {
-            width: 35px; height: 35px; border-radius: 50%;
+            width: 30px; height: 30px; border-radius: 50%;
             border: 2px solid #fff; flex-shrink: 0;
         }
-        .color-info { font-size: 12px; word-break: break-all; }
-        .color-info span { display: block; opacity: 0.6; font-size: 10px; }
+        .color-info { font-size: 11px; word-break: break-all; }
+        .color-info span { display: block; opacity: 0.6; font-size: 9px; }
 
         .controls-box {
             background: var(--card-bg);
-            padding: 15px;
-            border-radius: 14px;
-            margin-bottom: 20px;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
         }
         .control-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            font-size: 14px;
+            margin-bottom: 10px;
+            font-size: 13px;
         }
-        input[type="color"] { border: none; width: 35px; height: 35px; cursor: pointer; background: none; border-radius: 50%; }
+        input[type="color"] { border: none; width: 32px; height: 32px; cursor: pointer; background: none; border-radius: 50%; }
 
         .code-output-box {
             background: #020617;
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 8px;
+            padding: 10px;
             font-family: monospace;
-            font-size: 12px;
+            font-size: 11px;
             direction: ltr;
             text-align: left;
             white-space: pre-wrap;
-            margin-bottom: 15px;
-            max-height: 200px;
+            margin-bottom: 12px;
+            max-height: 140px;
             overflow-y: auto;
             color: #38bdf8;
         }
 
-        .btn-group { display: flex; gap: 10px; flex-direction: column; }
+        .btn-group { display: flex; gap: 8px; flex-direction: column; }
         .action-btn {
             width: 100%;
             background: #2563eb;
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
             text-align: center;
@@ -125,45 +183,67 @@
 </head>
 <body>
 
-    <h2>🎨 صانع ثيمات تيليجرام الشامل</h2>
+    <h2>🎨 صانع ثيمات تيليجرام مع معاينة حية</h2>
 
     <label class="upload-card">
-        📁 اختر صورة لتحويلها بالكامل إلى ثيم تيليجرام
+        📁 اختر صورة لاستخراج الألوان وبناء الثيم
         <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="processImage(this)">
     </label>
 
-    <div class="preview-box" id="previewBox">
-        <div class="preview-title">معاينة واجهة تيليجرام الحية</div>
-        <div class="chat-bubble incoming">أهلاً بك! هذه معاينة للرسائل الواردة.</div>
-        <div class="chat-bubble" id="liveBubble">هنا عينة اللون الأساسي للثيم.</div>
+    <!-- المعاينة الحية المطابقة لتيليجرام -->
+    <div class="tg-preview-container" id="previewContainer">
+        <div class="tg-action-bar" id="prevActionBar">
+            <div class="tg-action-bar-left">
+                <div class="tg-avatar-small" id="prevAvatar">م</div>
+                <span id="prevTitle">مجموعة الثيمات</span>
+            </div>
+            <span>⋮</span>
+        </div>
+        <div class="tg-chat-screen" id="prevChatScreen">
+            <div class="tg-bubble in" id="prevBubbleIn">
+                أهلاً بك! هذه معاينة للرسائل الواردة.
+                <span class="tg-time">10:00</span>
+            </div>
+            <div class="tg-bubble out" id="prevBubbleOut">
+                تم تطبيق الثيم وتناسق الألوان بنجاح!
+                <span class="tg-time">10:01</span>
+            </div>
+        </div>
+        <div class="tg-input-panel" id="prevInputPanel">
+            <div class="tg-input-box">رسالة...</div>
+        </div>
     </div>
 
     <div class="section-title">الألوان المستخرجة من صورتك:</div>
     <div class="palette-grid" id="paletteGrid">
-        <div style="opacity: 0.5; font-size: 13px; grid-column: 1/-1; text-align: center;">لم يتم رفع صورة بعد...</div>
+        <div style="opacity: 0.5; font-size: 12px; grid-column: 1/-1; text-align: center;">لم يتم رفع صورة بعد...</div>
     </div>
 
     <div class="controls-box">
-        <div class="section-title" style="margin-top:0;">تخصيص الألوان الرئيسية:</div>
+        <div class="section-title" style="margin-top:0;">تخصيص أركان الثيم:</div>
         <div class="control-row">
-            <span>اللون الأساسي (أشرطة وشاشات):</span>
-            <input type="color" id="primaryPicker" value="#1e293b" oninput="updateLiveTheme()">
+            <span>شريط العنوان العلوي (ActionBar):</span>
+            <input type="color" id="actionBarPicker" value="#2b5278" oninput="updateLiveTheme()">
         </div>
         <div class="control-row">
-            <span>لون النصوص والعناصر البارزة:</span>
-            <input type="color" id="textPicker" value="#38bdf8" oninput="updateLiveTheme()">
+            <span>خلفية شاشة الدردشة (Chat Background):</span>
+            <input type="color" id="chatBgPicker" value="#0e1621" oninput="updateLiveTheme()">
         </div>
         <div class="control-row">
-            <span>لون الخلفية والفقرات:</span>
-            <input type="color" id="bgPicker" value="#0f172a" oninput="updateLiveTheme()">
+            <span>فقرة الرسائل الصادرة (Out Bubble):</span>
+            <input type="color" id="outBubblePicker" value="#2b5278" oninput="updateLiveTheme()">
+        </div>
+        <div class="control-row">
+            <span>فقرة الرسائل الواردة (In Bubble):</span>
+            <input type="color" id="inBubblePicker" value="#182533" oninput="updateLiveTheme()">
         </div>
 
-        <div class="section-title">معاينة ملف الثيم (.attheme):</div>
-        <div class="code-output-box" id="codeOutput">قم برفع صورة لتوليد الثيم كاملاً...</div>
+        <div class="section-title">معاينة نص الثيم (.attheme):</div>
+        <div class="code-output-box" id="codeOutput">قم برفع صورة لتوليد كود الثيم بدقة...</div>
     </div>
 
     <div class="btn-group">
-        <button class="action-btn" onclick="copyAtthemeText()">📋 نسخ محتوى الثيم كاملاً</button>
+        <button class="action-btn" onclick="copyAtthemeText()">📋 نسخ محتوى الثيم</button>
         <button class="action-btn success" onclick="downloadAtthemeFile()">📥 تحميل ملف theme_new.attheme</button>
     </div>
 
@@ -200,13 +280,15 @@
                         allExtractedColors = Object.keys(colorMap).sort((a,b) => colorMap[b] - colorMap[a]);
                         
                         if(allExtractedColors.length > 0) {
-                            let primary = allExtractedColors[0];
-                            let textCol = allExtractedColors[1] || "#38bdf8";
-                            let bg = isDark(primary) ? "#0f172a" : "#f1f5f9";
+                            let c1 = allExtractedColors[0];
+                            let c2 = allExtractedColors[1] || c1;
+                            let c3 = allExtractedColors[2] || "#182533";
+                            let bg = isDark(c1) ? "#0e1621" : "#f1f5f9";
 
-                            document.getElementById('primaryPicker').value = primary;
-                            document.getElementById('textPicker').value = textCol;
-                            document.getElementById('bgPicker').value = bg;
+                            document.getElementById('actionBarPicker').value = c1;
+                            document.getElementById('outBubblePicker').value = c1;
+                            document.getElementById('chatBgPicker').value = bg;
+                            document.getElementById('inBubblePicker').value = c3;
 
                             renderPaletteGrid();
                             updateLiveTheme();
@@ -222,15 +304,12 @@
             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
         }
 
-        // تحويل Hex إلى قيمة الأرقام الصحيحة المتوافقة مع تيليجرام
         function hexToTelegramSignedInt(hex) {
             let c = hex.replace('#', '');
             let r = parseInt(c.substring(0, 2), 16);
             let g = parseInt(c.substring(2, 4), 16);
             let b = parseInt(c.substring(4, 6), 16);
-            // تجميع بتات لون ARGB (ألفا 255 + الألوان الثلاثة)
             let intVal = (255 << 24) | (r << 16) | (g << 8) | b;
-            // تحويلها لرقم صحيح موقع (Signed 32-bit Integer) لتتوافق مع تيليجرام تماماً
             if (intVal > 0x7FFFFFFF) {
                 intVal -= 0x100000000;
             }
@@ -259,7 +338,8 @@
                     </div>
                 `;
                 card.onclick = function() {
-                    document.getElementById('primaryPicker').value = hex;
+                    document.getElementById('actionBarPicker').value = hex;
+                    document.getElementById('outBubblePicker').value = hex;
                     updateLiveTheme();
                 };
                 grid.appendChild(card);
@@ -267,70 +347,47 @@
         }
 
         function generateAtthemeContent() {
-            let primaryHex = document.getElementById('primaryPicker').value;
-            let textHex = document.getElementById('textPicker').value;
-            let bgHex = document.getElementById('bgPicker').value;
+            let actionBarHex = document.getElementById('actionBarPicker').value;
+            let chatBgHex = document.getElementById('chatBgPicker').value;
+            let outBubbleHex = document.getElementById('outBubblePicker').value;
+            let inBubbleHex = document.getElementById('inBubblePicker').value;
 
-            let pVal = hexToTelegramSignedInt(primaryHex);
-            let tVal = hexToTelegramSignedInt(textHex);
-            let bgVal = hexToTelegramSignedInt(bgHex);
+            let actVal = hexToTelegramSignedInt(actionBarHex);
+            let chatBgVal = hexToTelegramSignedInt(chatBgHex);
+            let outVal = hexToTelegramSignedInt(outBubbleHex);
+            let inVal = hexToTelegramSignedInt(inBubbleHex);
 
-            // القائمة الكاملة والاحترافية لكافة المفاتيح التي أرسلتها مع إسقاط الألوان عليها بدقة
             let keys = [
-                `ChatShadow=${pVal}`,
-                `PreviewBack=${tVal}`,
-                `PreviewBackLinear=${tVal}`,
-                `PreviewBackLinearShadow=${pVal}`,
-                `actionBarActionModeDefault=${pVal}`,
-                `actionBarActionModeDefaultIcon=${tVal}`,
-                `actionBarActionModeDefaultSelector=${tVal}`,
-                `actionBarActionModeDefaultTop=${pVal}`,
-                `actionBarDefault=${pVal}`,
-                `actionBarDefaultArchived=${pVal}`,
-                `actionBarDefaultArchivedIcon=${tVal}`,
-                `actionBarDefaultArchivedSearch=${tVal}`,
-                `actionBarDefaultArchivedSelector=${tVal}`,
-                `actionBarDefaultArchivedTitle=${tVal}`,
-                `actionBarDefaultIcon=${tVal}`,
-                `actionBarDefaultSearch=${tVal}`,
-                `actionBarDefaultSearchArchivedPlaceholder=${tVal}`,
-                `actionBarDefaultSearchPlaceholder=${tVal}`,
-                `actionBarDefaultSelector=${tVal}`,
-                `actionBarDefaultSubmenuBackground=${pVal}`,
-                `actionBarDefaultSubmenuItem=${tVal}`,
-                `actionBarDefaultSubtitle=${tVal}`,
-                `actionBarDefaultTitle=${tVal}`,
-                `actionBarWhiteSelector=${tVal}`,
-                `chat_messagePanelBackground=${pVal}`,
-                `chat_messagePanelText=${tVal}`,
-                `chat_messagePanelIcons=${tVal}`,
-                `chat_messagePanelSend=${tVal}`,
-                `chat_messageTextIn=${tVal}`,
-                `chat_messageTextOut=${tVal}`,
-                `chat_inBubble=${pVal}`,
-                `chat_outBubble=${pVal}`,
-                `windowBackgroundWhite=${pVal}`,
-                `windowBackgroundGray=${pVal}`,
-                `windowBackgroundWhiteBlackText=${tVal}`,
-                `windowBackgroundWhiteGrayText=${tVal}`,
-                `chats_name=${tVal}`,
-                `chats_message=${tVal}`,
-                `chats_date=${tVal}`,
-                `dialogBackground=${pVal}`,
-                `dialogTextBlack=${tVal}`
+                `actionBarDefault=${actVal}`,
+                `actionBarDefaultIcon=${hexToTelegramSignedInt("#ffffff")}`,
+                `actionBarDefaultTitle=${hexToTelegramSignedInt("#ffffff")}`,
+                `chat_background=${chatBgVal}`,
+                `windowBackgroundWhite=${chatBgVal}`,
+                `chat_inBubble=${inVal}`,
+                `chat_outBubble=${outVal}`,
+                `chat_messageTextIn=${hexToTelegramSignedInt("#ffffff")}`,
+                `chat_messageTextOut=${hexToTelegramSignedInt("#ffffff")}`,
+                `chat_messagePanelBackground=${chatBgVal}`,
+                `chat_messagePanelText=${hexToTelegramSignedInt("#ffffff")}`,
+                `chat_messagePanelIcons=${hexToTelegramSignedInt("#ffffff")}`,
+                `chats_actionBackground=${actVal}`
             ];
 
             return keys.join("\n");
         }
 
         function updateLiveTheme() {
-            let primary = document.getElementById('primaryPicker').value;
-            let bg = document.getElementById('bgPicker').value;
-            let text = document.getElementById('textPicker').value;
+            let actionBar = document.getElementById('actionBarPicker').value;
+            let chatBg = document.getElementById('chatBgPicker').value;
+            let outBubble = document.getElementById('outBubblePicker').value;
+            let inBubble = document.getElementById('inBubblePicker').value;
 
-            document.body.style.backgroundColor = bg;
-            document.getElementById('previewBox').style.backgroundColor = primary;
-            document.getElementById('liveBubble').style.backgroundColor = text;
+            // تحديث المعاينة الحية المطابقة لتيليجرام بدقة
+            document.getElementById('prevActionBar').style.backgroundColor = actionBar;
+            document.getElementById('prevChatScreen').style.backgroundColor = chatBg;
+            document.getElementById('prevInputPanel').style.backgroundColor = chatBg;
+            document.getElementById('prevBubbleOut').style.backgroundColor = outBubble;
+            document.getElementById('prevBubbleIn').style.backgroundColor = inBubble;
 
             document.getElementById('codeOutput').innerText = generateAtthemeContent();
         }
@@ -338,7 +395,7 @@
         function copyAtthemeText() {
             let content = generateAtthemeContent();
             navigator.clipboard.writeText(content);
-            alert("✅ تم نسخ كافة أكواد الثيم الرسمية بنجاح!");
+            alert("✅ تم نسخ أكواد الثيم بنجاح!");
         }
 
         function downloadAtthemeFile() {
@@ -351,7 +408,7 @@
             downloadAnchor.click();
             downloadAnchor.remove();
             
-            alert("📥 تم تجهيز وتحميل ملف 'theme_new.attheme' إلى جهازك بنجاح!");
+            alert("📥 تم تحميل ملف 'theme_new.attheme' بنجاح!");
         }
 
         window.onload = function() {
